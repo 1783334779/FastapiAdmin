@@ -15,6 +15,8 @@
           <a href="https://github.com/fastapiadmin/FastapiAdmin/forks" target="_blank">
                <img src="https://img.shields.io/github/forks/fastapiadmin/FastapiAdmin?style=social" alt="GitHub Forks">
           </a>
+           <a href="https://atomgit.com/fastapiadmin/FastapiAdmin" target="_blank">
+               <img src="https://atomgit.com/fastapiadmin/FastapiAdmin/star/badge.svg" alt="AtomGit G-Star">
           <br>
           <a href="https://gitee.com/fastapiadmin/FastapiAdmin/blob/master/LICENSE" target="_blank">
                <img src="https://img.shields.io/badge/License-MIT-orange" alt="License">
