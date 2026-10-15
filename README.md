@@ -6,17 +6,17 @@
      <h3>🚀 追求极致代码质量，五分钟搭建企业级中后台，开箱即用</h3>
      <p>基于 <b>FastAPI + Vue3 + TypeScript</b> 的全栈快速开发平台，Web / H5 / 小程序一站式交付</p>
      <p align="center">
-          <a href="https://gitee.com/fastapiadmin/FastapiAdmin.git" target="_blank">
-               <img src="https://gitee.com/fastapiadmin/FastapiAdmin/badge/star.svg?theme=dark" alt="Gitee Stars">
-          </a>
-          <a href="https://gitee.com/fastapiadmin/FastapiAdmin.git" target="_blank">
-               <img src="https://gitee.com/fastapiadmin/FastapiAdmin/badge/fork.svg?theme=dark" alt="Gitee Forks">
-          </a>
           <a href="https://github.com/fastapiadmin/FastapiAdmin.git" target="_blank">
                <img src="https://img.shields.io/github/stars/fastapiadmin/FastapiAdmin?style=social" alt="GitHub Stars">
           </a>
           <a href="https://github.com/fastapiadmin/FastapiAdmin/forks" target="_blank">
                <img src="https://img.shields.io/github/forks/fastapiadmin/FastapiAdmin?style=social" alt="GitHub Forks">
+          </a>
+           <a href="https://gitee.com/fastapiadmin/FastapiAdmin.git" target="_blank">
+               <img src="https://gitee.com/fastapiadmin/FastapiAdmin/badge/star.svg?theme=dark" alt="Gitee Stars">
+          </a>
+          <a href="https://gitee.com/fastapiadmin/FastapiAdmin.git" target="_blank">
+               <img src="https://gitee.com/fastapiadmin/FastapiAdmin/badge/fork.svg?theme=dark" alt="Gitee Forks">
           </a>
            <a href="https://atomgit.com/fastapiadmin/FastapiAdmin" target="_blank">
                <img src="https://atomgit.com/fastapiadmin/FastapiAdmin/star/badge.svg" alt="AtomGit G-Star">
