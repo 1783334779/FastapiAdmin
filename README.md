@@ -9,6 +9,9 @@
           <a href="https://gitee.com/fastapiadmin/FastapiAdmin.git" target="_blank">
                <img src="https://gitee.com/fastapiadmin/FastapiAdmin/badge/star.svg?theme=dark" alt="Gitee Stars">
           </a>
+          <a href="https://gitee.com/fastapiadmin/FastapiAdmin.git" target="_blank">
+               <img src="https://gitee.com/fastapiadmin/FastapiAdmin/badge/fork.svg?theme=dark" alt="Gitee Forks">
+          </a>
           <a href="https://github.com/fastapiadmin/FastapiAdmin.git" target="_blank">
                <img src="https://img.shields.io/github/stars/fastapiadmin/FastapiAdmin?style=social" alt="GitHub Stars">
           </a>
