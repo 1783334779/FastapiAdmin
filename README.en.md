@@ -6,14 +6,20 @@
      <h3>🚀 Exceptional Code Quality, Production-Ready Admin Dashboard in 5 Minutes</h3>
      <p>Full-stack rapid development platform powered by <b>FastAPI + Vue3 + TypeScript</b>. Web, H5, and Mini Program — all in one project.</p>
      <p align="center">
-          <a href="https://gitee.com/fastapiadmin/FastapiAdmin.git" target="_blank">
-               <img src="https://gitee.com/fastapiadmin/FastapiAdmin/badge/star.svg?theme=dark" alt="Gitee Stars">
-          </a>
           <a href="https://github.com/fastapiadmin/FastapiAdmin.git" target="_blank">
                <img src="https://img.shields.io/github/stars/fastapiadmin/FastapiAdmin?style=social" alt="GitHub Stars">
           </a>
           <a href="https://github.com/fastapiadmin/FastapiAdmin/forks" target="_blank">
                <img src="https://img.shields.io/github/forks/fastapiadmin/FastapiAdmin?style=social" alt="GitHub Forks">
+          </a>
+          <a href="https://gitee.com/fastapiadmin/FastapiAdmin.git" target="_blank">
+               <img src="https://gitee.com/fastapiadmin/FastapiAdmin/badge/star.svg?theme=dark" alt="Gitee Stars">
+          </a>
+          <a href="https://gitee.com/fastapiadmin/FastapiAdmin.git" target="_blank">
+               <img src="https://gitee.com/fastapiadmin/FastapiAdmin/badge/fork.svg?theme=dark" alt="Gitee Forks">
+          </a>
+          <a href="https://atomgit.com/fastapiadmin/FastapiAdmin" target="_blank">
+               <img src="https://atomgit.com/fastapiadmin/FastapiAdmin/star/badge.svg" alt="AtomGit G-Star">
           </a>
           <br>
           <a href="https://gitee.com/fastapiadmin/FastapiAdmin/blob/master/LICENSE" target="_blank">
