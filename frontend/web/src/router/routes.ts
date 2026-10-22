@@ -99,6 +99,8 @@ export class IframeRouteManager {
 /** 首页菜单配置（图标、缓存、固定标签） */
 // SQL 控制台页面懒加载：既避免静态路由测试在导入期拉全页面依赖，也减小首屏体积
 const DbConsoleView = defineAsyncComponent(() => import("@views/module_dbconsole/index.vue"));
+// SSH 运维页面懒加载（同 SQL 控制台）
+const SshOpsView = defineAsyncComponent(() => import("@views/module_ops/ssh/index.vue"));
 
 export const HOME_MENU_META: RouteMeta = {
   title: "menus.home.title",
@@ -247,6 +249,13 @@ export const staticRoutes: AppRouteRecordRaw[] = [
         name: HOME_ROUTE_NAME,
         component: DashboardHome,
         meta: HOME_MENU_META,
+      },
+      {
+        // SSH 运维：隐藏菜单，直接访问 /ops/ssh
+        path: "ops/ssh",
+        name: "SshOps",
+        component: SshOpsView,
+        meta: { hidden: true, title: "SSH 运维" },
       },
       {
         // SQL 控制台（仅外部连接）：隐藏菜单，直接访问 /dbconsole

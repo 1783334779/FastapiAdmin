@@ -10,6 +10,7 @@ from app.modules.monitor.cache.controller import CacheRouter
 from app.modules.monitor.health.controller import HealthRouter
 from app.modules.monitor.online.controller import OnlineRouter
 from app.modules.monitor.server.controller import ServerRouter
+from app.modules.ops.ssh.controller import SshRouter
 from app.modules.system.auth.controller import AuthRouter
 from app.modules.system.dept.controller import DeptRouter
 from app.modules.system.dict.controller import DictRouter
@@ -63,6 +64,7 @@ DOMAIN_CONTROLLERS: dict[str, list[APIRouter]] = {
     "/generator": [GenRouter],
     "/common": [FileRouter],
     "/dbconsole": [DbConsoleRouter],
+    "/ops": [SshRouter],
 }
 
 api_v1 = APIRouter()
