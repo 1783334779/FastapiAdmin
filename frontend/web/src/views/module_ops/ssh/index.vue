@@ -135,8 +135,8 @@
                   <ElInput
                     v-model="terminalInput"
                     :disabled="!terminalSessionId"
-                    placeholder="输入命令后回车（发送到当前终端会话）"
-                    @keyup.enter="sendTerminalInput"
+                    placeholder="输入命令后回车（↑/↓ 翻历史）"
+                    @keydown="onTerminalInputKeydown"
                   />
                   <ElButton
                     type="primary"
@@ -169,6 +169,9 @@
                       :value="host.id"
                     />
                   </ElSelect>
+                  <ElButton :disabled="!enabledHostIds.length" @click="selectAllEnabled">
+                    全选启用（{{ enabledHostIds.length }}）
+                  </ElButton>
                   <ElButton
                     v-hasPerm="['module_ops:ssh:exec']"
                     type="primary"
@@ -207,8 +210,13 @@
                         {{ item.exit_status ?? "-" }}
                       </ElTag>
                       <span class="ml-auto text-xs text-[#909399]">{{ item.elapsed_ms }} ms</span>
+                      <ElButton link size="small" @click="toggleResult(item.host_id)">
+                        {{ expandedResults.has(item.host_id) ? "收起" : "查看输出" }}
+                      </ElButton>
                     </div>
-                    <pre class="result-output">{{ item.stdout || item.stderr || item.error }}</pre>
+                    <pre v-if="expandedResults.has(item.host_id)" class="result-output">{{
+                      item.stdout || item.stderr || item.error
+                    }}</pre>
                   </div>
                   <ElEmpty
                     v-if="!batchResults.length"
@@ -233,8 +241,16 @@
                     新增片段
                   </ElButton>
                 </div>
+                <div class="mb-2">
+                  <ElInput
+                    v-model="snippetKeyword"
+                    size="small"
+                    placeholder="搜索片段名称 / 命令"
+                    clearable
+                  />
+                </div>
                 <ElScrollbar class="min-h-0 flex-1">
-                  <div v-for="item in snippets" :key="item.id" class="snippet-card">
+                  <div v-for="item in filteredSnippets" :key="item.id" class="snippet-card">
                     <div class="flex items-center gap-2">
                       <span class="font-medium">{{ item.name }}</span>
                       <span class="ml-auto flex items-center gap-1">
@@ -355,6 +371,17 @@ const hosts = ref<SshHost[]>([]);
 const snippets = ref<SshSnippet[]>([]);
 const hostKeyword = ref("");
 const activeHostId = ref<number>();
+
+const snippetKeyword = ref("");
+
+const filteredSnippets = computed(() => {
+  const keyword = snippetKeyword.value.trim().toLowerCase();
+  if (!keyword) return snippets.value;
+  return snippets.value.filter(
+    (item) =>
+      item.name.toLowerCase().includes(keyword) || item.command.toLowerCase().includes(keyword)
+  );
+});
 
 const filteredHosts = computed(() => {
   const keyword = hostKeyword.value.trim().toLowerCase();
@@ -611,6 +638,25 @@ const batchHostIds = ref<number[]>([]);
 const batchCommand = ref("");
 const batchRunning = ref(false);
 const batchResults = ref<BatchExecResult[]>([]);
+const expandedResults = ref<Set<number>>(new Set());
+
+const enabledHostIds = computed(() =>
+  hosts.value.filter((host) => host.status === 0).map((host) => host.id)
+);
+
+function selectAllEnabled() {
+  batchHostIds.value = [...enabledHostIds.value];
+}
+
+function toggleResult(hostId: number) {
+  const next = new Set(expandedResults.value);
+  if (next.has(hostId)) {
+    next.delete(hostId);
+  } else {
+    next.add(hostId);
+  }
+  expandedResults.value = next;
+}
 
 async function runBatch() {
   if (!batchHostIds.value.length || !batchCommand.value.trim()) {
@@ -624,7 +670,10 @@ async function runBatch() {
       command: batchCommand.value,
       timeout: 15,
     });
-    batchResults.value = res.data.data || [];
+    const results = res.data.data || [];
+    results.sort((a, b) => a.host_name.localeCompare(b.host_name));
+    batchResults.value = results;
+    expandedResults.value = new Set(results.filter((item) => !item.ok).map((item) => item.host_id));
     ElMessage.success("批量执行完成");
   } finally {
     batchRunning.value = false;
@@ -655,11 +704,66 @@ function b64decode(value: string): string {
   return new TextDecoder().decode(bytes);
 }
 
-function appendOutput(text: string) {
-  terminalOutput.value = (terminalOutput.value + text).slice(-200_000);
+// 轻量终端缓冲：处理 ANSI 转义（颜色/光标）、回车覆盖、退格，避免原样显示控制字符
+const MAX_TERM_LINES = 2000;
+const termLines: string[] = [];
+let termRow = 0;
+let termCol = 0;
+
+function resetTerminal() {
+  termLines.length = 0;
+  termRow = 0;
+  termCol = 0;
+  terminalOutput.value = "";
+}
+
+function scrollTerminal() {
   nextTick(() => {
     if (terminalRef.value) terminalRef.value.scrollTop = terminalRef.value.scrollHeight;
   });
+}
+
+function trimTerminal() {
+  if (termLines.length <= MAX_TERM_LINES) return;
+  const drop = termLines.length - MAX_TERM_LINES;
+  termLines.splice(0, drop);
+  termRow = Math.max(0, termRow - drop);
+}
+
+function processTerminalChunk(chunk: string) {
+  // 用 RegExp 构造，避免 eslint no-control-regex（\x1b = ESC, \x07 = BEL）
+  const esc = String.fromCharCode(0x1b);
+  const bel = String.fromCharCode(0x07);
+  const oscRe = new RegExp(`${esc}\\][^${bel}${esc}]*(?:${bel}|${esc}\\\\)`, "g");
+  const csiRe = new RegExp(`${esc}\\[[0-9;?]*[a-zA-Z]`, "g");
+  const charsetRe = new RegExp(`${esc}[()][A-Z0-9]`, "g");
+  const text = chunk.replace(oscRe, "").replace(csiRe, "").replace(charsetRe, "");
+  for (const ch of text) {
+    if (ch === "\r") {
+      termCol = 0;
+    } else if (ch === "\n") {
+      termRow += 1;
+      if (termLines[termRow] === undefined) termLines[termRow] = "";
+      termCol = 0;
+    } else if (ch === "\b") {
+      termCol = Math.max(0, termCol - 1);
+      termLines[termRow] = (termLines[termRow] ?? "").slice(0, termCol);
+    } else if (ch < " ") {
+      continue;
+    } else {
+      const line = termLines[termRow] ?? "";
+      const padded = line.padEnd(termCol, " ");
+      termLines[termRow] = padded.slice(0, termCol) + ch + padded.slice(termCol + 1);
+      termCol += 1;
+    }
+  }
+  trimTerminal();
+  terminalOutput.value = termLines.join("\n");
+  scrollTerminal();
+}
+
+function appendSystemLine(text: string) {
+  processTerminalChunk(`${text}\r\n`);
 }
 
 function startPolling() {
@@ -669,9 +773,9 @@ function startPolling() {
     try {
       const res = await SshAPI.pollTerminal(terminalSessionId.value, 1.2);
       const payload = res.data.data;
-      if (payload?.data) appendOutput(b64decode(payload.data));
+      if (payload?.data) processTerminalChunk(b64decode(payload.data));
       if (payload?.closed) {
-        appendOutput("\n[会话已结束]\n");
+        appendSystemLine("[会话已结束]");
         stopPolling();
       }
     } catch {
@@ -699,8 +803,8 @@ async function openTerminal() {
   try {
     const res = await SshAPI.openTerminal({ host_id: terminalHostId.value, cols: 120, rows: 30 });
     terminalSession.value = res.data.data;
-    terminalOutput.value = "";
-    appendOutput(`[已连接 ${terminalSession.value?.host_name}]\n`);
+    resetTerminal();
+    appendSystemLine(`[已连接 ${terminalSession.value?.host_name}]`);
     startPolling();
   } finally {
     terminalOpening.value = false;
@@ -717,19 +821,53 @@ async function openLogTail() {
       lines: 200,
     });
     terminalSession.value = res.data.data;
-    terminalOutput.value = "";
-    appendOutput(`[日志跟踪 ${logPath.value}]\n`);
+    resetTerminal();
+    appendSystemLine(`[日志跟踪 ${logPath.value}]`);
     startPolling();
   } finally {
     terminalOpening.value = false;
   }
 }
 
+const inputHistory: string[] = [];
+let inputHistoryIndex = -1;
+
 async function sendTerminalInput() {
   if (!terminalSessionId.value) return;
   const text = terminalInput.value;
   terminalInput.value = "";
+  if (text.trim()) {
+    inputHistory.push(text);
+    inputHistoryIndex = inputHistory.length;
+  }
   await SshAPI.inputTerminal(terminalSessionId.value, b64encode(`${text}\r`));
+}
+
+function onTerminalInputKeydown(event: Event | KeyboardEvent) {
+  const key = (event as KeyboardEvent).key;
+  if (key === "Enter") {
+    event.preventDefault();
+    void sendTerminalInput();
+    return;
+  }
+  if (key === "ArrowUp") {
+    event.preventDefault();
+    if (inputHistoryIndex > 0) {
+      inputHistoryIndex -= 1;
+      terminalInput.value = inputHistory[inputHistoryIndex] ?? "";
+    }
+    return;
+  }
+  if (key === "ArrowDown") {
+    event.preventDefault();
+    if (inputHistoryIndex < inputHistory.length - 1) {
+      inputHistoryIndex += 1;
+      terminalInput.value = inputHistory[inputHistoryIndex] ?? "";
+    } else {
+      inputHistoryIndex = inputHistory.length;
+      terminalInput.value = "";
+    }
+  }
 }
 
 async function sendCtrlC() {
@@ -748,7 +886,7 @@ async function closeTerminal() {
   if (sessionId) {
     await SshAPI.closeTerminal(sessionId).catch(() => undefined);
   }
-  appendOutput("\n[已关闭]\n");
+  appendSystemLine("[已关闭]");
 }
 
 onMounted(async () => {

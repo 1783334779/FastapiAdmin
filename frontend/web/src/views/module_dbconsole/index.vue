@@ -102,6 +102,18 @@
             <div class="ml-auto flex items-center gap-3">
               <span class="text-xs text-[#909399]">允许写操作</span>
               <ElSwitch v-model="confirmed" size="small" />
+              <ElDropdown trigger="click" :disabled="!history.length" @command="applyHistory">
+                <ElButton :disabled="!history.length">
+                  <ElIcon class="mr-1"><Clock /></ElIcon>历史
+                </ElButton>
+                <template #dropdown>
+                  <ElDropdownMenu>
+                    <ElDropdownItem v-for="(item, index) in history" :key="index" :command="item">
+                      {{ item.length > 60 ? `${item.slice(0, 60)}…` : item }}
+                    </ElDropdownItem>
+                  </ElDropdownMenu>
+                </template>
+              </ElDropdown>
               <ElButton
                 v-hasPerm="['module_dbconsole:query:execute']"
                 type="primary"
@@ -129,6 +141,13 @@
           </div>
 
           <div class="flex min-h-0 flex-1 flex-col px-3 pb-3">
+            <ElAlert
+              v-if="queryError"
+              type="error"
+              :closable="false"
+              class="mb-2"
+              :title="queryError"
+            />
             <template v-if="result">
               <div class="mb-2 flex flex-wrap items-center gap-2 text-xs">
                 <ElTag size="small" :type="result.read_only ? 'info' : 'warning'">
@@ -150,7 +169,28 @@
                 class="min-h-0 flex-1"
               />
             </template>
-            <ElEmpty v-else class="mt-10" description="执行 SQL 后在此显示结果" :image-size="72" />
+            <ElEmpty
+              v-else-if="!queryError"
+              class="mt-10"
+              description="执行 SQL 后在此显示结果"
+              :image-size="72"
+            />
+          </div>
+
+          <div
+            class="flex items-center gap-2 border-t border-(--el-border-color-lighter) px-3 py-1.5 text-xs text-[#909399]"
+          >
+            <span>
+              {{
+                currentConnection
+                  ? `${currentConnection.name} · ${currentConnection.db_type}`
+                  : "未选择连接"
+              }}
+            </span>
+            <span v-if="currentDatabase">· {{ currentDatabase }}</span>
+            <span v-if="lastRun" class="ml-auto">
+              上次执行 {{ lastRun.rows }} 行 · {{ lastRun.ms }} ms
+            </span>
           </div>
         </div>
       </ElSplitterPanel>
@@ -187,7 +227,7 @@
 </template>
 
 <script lang="ts" setup>
-import { MoreFilled, Plus } from "@element-plus/icons-vue";
+import { Clock, MoreFilled, Plus } from "@element-plus/icons-vue";
 import DbConsoleAPI, {
   type DbConnection,
   type DbConnectionForm,
@@ -220,6 +260,34 @@ const sql = ref("select 1");
 const confirmed = ref(false);
 const running = ref(false);
 const result = ref<DbQueryResult>();
+const queryError = ref("");
+const lastRun = ref<{ rows: number; ms: number }>();
+const history = ref<string[]>([]);
+const HISTORY_KEY = "dbconsole:history";
+
+function loadHistory() {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    history.value = raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    history.value = [];
+  }
+}
+
+function pushHistory(text: string) {
+  if (!text) return;
+  history.value = [text, ...history.value.filter((item) => item !== text)].slice(0, 10);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.value));
+}
+
+function applyHistory(text: string) {
+  sql.value = text;
+}
+
+function extractErrorMessage(error: unknown): string {
+  const err = error as { response?: { data?: { msg?: string } }; message?: string };
+  return err?.response?.data?.msg || err?.message || "执行失败";
+}
 
 const resultColumns = computed<ColumnOption[]>(() =>
   (result.value?.columns ?? []).map((name, index) => ({
@@ -280,14 +348,20 @@ async function runQuery() {
     return;
   }
   running.value = true;
+  queryError.value = "";
   try {
     const res = await DbConsoleAPI.runQuery(currentId.value, {
       sql: sql.value,
       confirmed: confirmed.value,
     });
     result.value = res.data.data;
-  } catch {
+    if (result.value) {
+      lastRun.value = { rows: result.value.rowcount, ms: result.value.elapsed_ms };
+    }
+    pushHistory(sql.value.trim());
+  } catch (error) {
     result.value = undefined;
+    queryError.value = extractErrorMessage(error);
   } finally {
     running.value = false;
   }
@@ -426,7 +500,10 @@ const { submitLoading, handleCloseDialog, handleOpenDialog, handleSubmit } =
     onCreateSuccess: loadConnections,
   });
 
-onMounted(loadConnections);
+onMounted(() => {
+  loadHistory();
+  void loadConnections();
+});
 </script>
 
 <style lang="scss" scoped>
