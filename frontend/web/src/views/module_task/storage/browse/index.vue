@@ -1,7 +1,7 @@
 <!-- 文件浏览：多节点标签 + 上传/下载/新建目录/复制/移动/重命名/分享/删除（源项目风格，对接 /storage/browse） -->
 <template>
   <div class="flex h-full">
-    <el-card shadow="never" class="browse-card flex min-h-0 flex-1 flex-col">
+    <el-card shadow="hover" class="fa-card browse-card flex min-h-0 flex-1 flex-col">
       <!-- 多节点浏览：el-tabs 左侧标签（状态点+文字靠左、关闭按钮右端对齐，参考 data-transfer/web 已验证实现） -->
       <el-tabs
         v-if="tabs.length"
@@ -245,7 +245,7 @@
                 <el-empty
                   v-if="!activeTab.loading && !objectBuckets.length"
                   description="账号下暂无存储桶"
-                  :image-size="72"
+                  :image-size="60"
                 />
               </el-scrollbar>
 
@@ -385,7 +385,7 @@
                   ? '从左侧打开一个节点开始浏览（可同时打开多个节点）'
                   : '暂无节点，请先在「存储源管理」中创建'
               "
-              :image-size="100"
+              :image-size="60"
             >
               <el-button v-if="nodes.length" type="primary" @click="openAddDialog">
                 <el-icon style="margin-right: 4px"><Plus /></el-icon>打开节点
@@ -401,7 +401,7 @@
               ? '从左侧打开一个节点开始浏览（可同时打开多个节点）'
               : '暂无节点，请先在「存储源管理」中创建'
           "
-          :image-size="120"
+          :image-size="60"
         >
           <el-button v-if="nodes.length" type="primary" @click="openAddDialog">
             <el-icon style="margin-right: 4px"><Plus /></el-icon>打开节点

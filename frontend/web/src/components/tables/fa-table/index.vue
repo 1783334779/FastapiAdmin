@@ -786,7 +786,7 @@ defineExpose({
 
     :deep(.el-empty) {
       .el-empty__image {
-        width: 72px;
+        width: var(--fa-empty-size, 60px);
       }
 
       .el-empty__description {

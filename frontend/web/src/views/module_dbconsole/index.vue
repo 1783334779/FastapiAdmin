@@ -9,12 +9,12 @@
         body-class="flex min-h-0 flex-1 flex-col p-0"
       >
         <div class="flex h-full min-h-0 flex-col">
-          <div class="flex items-center justify-between px-3 py-2">
-            <span class="text-sm font-semibold">数据库连接</span>
+          <div class="fa-panel-header justify-between">
+            <span class="fa-panel-title">数据库连接</span>
             <ElButton
               v-hasPerm="['module_dbconsole:conn:create']"
-              link
               type="primary"
+              size="small"
               :loading="createLoading"
               @click="handleAdd"
             >
@@ -26,20 +26,20 @@
             <div
               v-for="item in connections"
               :key="item.id"
-              class="conn-item"
+              class="fa-list-item"
               :class="{ 'is-active': item.id === currentId }"
               @click="selectConnection(item)"
             >
               <span
-                class="status-dot"
+                class="fa-status-dot"
                 :style="{
                   background:
                     item.status === 0 ? 'var(--el-color-success)' : 'var(--el-color-info)',
                 }"
               />
               <div class="min-w-0 flex-1">
-                <div class="truncate text-[13px]">{{ item.name }}</div>
-                <div class="truncate text-xs text-[#909399]">
+                <div class="fa-list-item__title">{{ item.name }}</div>
+                <div class="fa-list-item__meta">
                   {{ item.db_type }} · {{ item.host }}:{{ item.port }}
                 </div>
               </div>
@@ -48,7 +48,7 @@
                 @command="(cmd) => handleConnCommand(String(cmd), item)"
                 @click.stop
               >
-                <ElIcon class="more-icon"><MoreFilled /></ElIcon>
+                <ElIcon class="fa-list-item__action"><MoreFilled /></ElIcon>
                 <template #dropdown>
                   <ElDropdownMenu>
                     <ElDropdownItem command="test">测试连接</ElDropdownItem>
@@ -61,30 +61,30 @@
             <ElEmpty v-if="!connections.length" description="暂无连接" :image-size="56" />
           </ElScrollbar>
 
-          <div class="section-title">库 / 表</div>
+          <div class="fa-panel-sep fa-hint">库 / 表</div>
           <ElScrollbar class="min-h-0 flex-1 px-2 pb-2">
-            <div v-if="!currentId" class="p-2 text-xs text-[#909399]">先选择一个连接</div>
+            <div v-if="!currentId" class="fa-hint p-2">先选择一个连接</div>
             <template v-else>
-              <div class="tree-group">库 / schema</div>
+              <div class="fa-hint">库 / schema</div>
               <div
                 v-for="db in databases"
                 :key="`db-${db.name}`"
-                class="tree-item"
+                class="fa-list-item fa-list-item--sm"
                 :class="{ 'is-active': db.name === currentDatabase }"
                 @click="pickDatabase(db.name)"
               >
-                {{ db.name }}
+                <span class="fa-list-item__title">{{ db.name }}</span>
               </div>
-              <div class="tree-group mt-2">表</div>
+              <div class="fa-hint mt-2">表</div>
               <div
                 v-for="table in tables"
                 :key="`t-${table.name}`"
-                class="tree-item"
+                class="fa-list-item fa-list-item--sm"
                 @click="insertTable(table.name)"
               >
-                {{ table.name }}
+                <span class="fa-list-item__title">{{ table.name }}</span>
               </div>
-              <div v-if="!tables.length" class="p-2 text-xs text-[#909399]">
+              <div v-if="!tables.length" class="fa-hint p-2">
                 选择库后加载表（点击表名自动填入查询）
               </div>
             </template>
@@ -99,16 +99,14 @@
         body-class="flex min-h-0 flex-1 flex-col p-0"
       >
         <div class="flex h-full min-h-0 flex-col">
-          <div
-            class="flex items-center gap-2 border-b border-(--el-border-color-lighter) px-3 py-2"
-          >
-            <span class="text-sm font-semibold">SQL 控制台</span>
+          <div class="fa-panel-header">
+            <span class="fa-panel-title">SQL 控制台</span>
             <ElTag v-if="currentConnection" size="small" type="info">
               {{ currentConnection.name }}
             </ElTag>
-            <span v-else class="text-xs text-[#909399]">未选择连接</span>
+            <span v-else class="fa-hint">未选择连接</span>
             <div class="ml-auto flex items-center gap-3">
-              <span class="text-xs text-[#909399]">允许写操作</span>
+              <span class="fa-hint">允许写操作</span>
               <ElSwitch v-model="confirmed" size="small" />
               <ElDropdown trigger="click" :disabled="!history.length" @command="applyHistory">
                 <ElButton :disabled="!history.length">
@@ -141,11 +139,11 @@
               type="textarea"
               :rows="8"
               resize="vertical"
-              class="sql-editor"
+              class="fa-mono-textarea"
               placeholder="select * from ...（只读语句自动校验；写语句需先开启「允许写操作」）"
               @keydown.ctrl.enter.prevent="runQuery"
             />
-            <div class="mt-1 text-right text-xs text-[#909399]">Ctrl + Enter 执行</div>
+            <div class="fa-hint mt-1 text-right">Ctrl + Enter 执行</div>
           </div>
 
           <div class="flex min-h-0 flex-1 flex-col px-3 pb-3">
@@ -157,13 +155,11 @@
               :title="queryError"
             />
             <template v-if="result">
-              <div class="mb-2 flex flex-wrap items-center gap-2 text-xs">
+              <div class="fa-hint mb-2 flex flex-wrap items-center gap-2">
                 <ElTag size="small" :type="result.read_only ? 'info' : 'warning'">
                   {{ result.read_only ? "只读查询" : "写操作" }}
                 </ElTag>
-                <span class="text-[#909399]"
-                  >{{ result.rowcount }} 行 · {{ result.elapsed_ms }} ms</span
-                >
+                <span class="fa-hint">{{ result.rowcount }} 行 · {{ result.elapsed_ms }} ms</span>
                 <ElTag v-if="result.masked_columns.length" size="small" type="warning">
                   已脱敏：{{ result.masked_columns.join("、") }}
                 </ElTag>
@@ -186,9 +182,7 @@
             />
           </div>
 
-          <div
-            class="flex items-center gap-2 border-t border-(--el-border-color-lighter) px-3 py-1.5 text-xs text-[#909399]"
-          >
+          <div class="fa-panel-sep fa-hint flex items-center gap-2">
             <span>
               {{
                 currentConnection
@@ -532,81 +526,3 @@ onMounted(() => {
   void loadConnections();
 });
 </script>
-
-<style lang="scss" scoped>
-.conn-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  margin-bottom: 2px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.15s;
-
-  &:hover {
-    background: var(--el-fill-color-light);
-  }
-
-  &.is-active {
-    background: var(--el-color-primary-light-9);
-  }
-
-  .more-icon {
-    opacity: 0;
-    color: var(--el-text-color-secondary);
-    transition: opacity 0.15s;
-    flex-shrink: 0;
-  }
-
-  &:hover .more-icon {
-    opacity: 1;
-  }
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.section-title {
-  padding: 8px 12px;
-  font-size: 12px;
-  color: var(--el-text-color-secondary);
-  border-top: 1px solid var(--el-border-color-lighter);
-}
-
-.tree-group {
-  padding: 6px 8px 2px;
-  font-size: 12px;
-  color: var(--el-text-color-secondary);
-}
-
-.tree-item {
-  padding: 5px 10px;
-  margin-bottom: 1px;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-
-  &:hover {
-    background: var(--el-fill-color-light);
-  }
-
-  &.is-active {
-    color: var(--el-color-primary);
-    background: var(--el-color-primary-light-9);
-  }
-}
-
-.sql-editor :deep(.el-textarea__inner) {
-  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-  font-size: 13px;
-  line-height: 1.6;
-}
-</style>

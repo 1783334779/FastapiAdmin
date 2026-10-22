@@ -9,12 +9,12 @@
         body-class="flex min-h-0 flex-1 flex-col p-0"
       >
         <div class="flex h-full min-h-0 flex-col">
-          <div class="flex items-center justify-between px-3 py-2">
-            <span class="text-sm font-semibold">SSH 主机</span>
+          <div class="fa-panel-header justify-between">
+            <span class="fa-panel-title">SSH 主机</span>
             <ElButton
               v-hasPerm="['module_ops:ssh:create']"
-              link
               type="primary"
+              size="small"
               :loading="createLoading"
               @click="handleAdd"
             >
@@ -34,21 +34,21 @@
             <div
               v-for="host in filteredHosts"
               :key="host.id"
-              class="host-item"
+              class="fa-list-item"
               :class="{ 'is-active': host.id === activeHostId }"
               @click="selectHost(host)"
               @dblclick="openTerminalFor(host)"
             >
               <span
-                class="status-dot"
+                class="fa-status-dot"
                 :style="{
                   background:
                     host.status === 0 ? 'var(--el-color-success)' : 'var(--el-color-info)',
                 }"
               />
               <div class="min-w-0 flex-1">
-                <div class="truncate text-[13px]">{{ host.name }}</div>
-                <div class="truncate text-xs text-[#909399]">
+                <div class="fa-list-item__title">{{ host.name }}</div>
+                <div class="fa-list-item__meta">
                   {{ host.username }}@{{ host.host }}:{{ host.port }}
                 </div>
               </div>
@@ -57,7 +57,7 @@
                 @command="(cmd) => handleHostCommand(String(cmd), host)"
                 @click.stop
               >
-                <ElIcon class="more-icon"><MoreFilled /></ElIcon>
+                <ElIcon class="fa-list-item__action"><MoreFilled /></ElIcon>
                 <template #dropdown>
                   <ElDropdownMenu>
                     <ElDropdownItem command="terminal">打开终端</ElDropdownItem>
@@ -71,7 +71,7 @@
             <ElEmpty v-if="!filteredHosts.length" description="暂无主机" :image-size="56" />
           </ElScrollbar>
 
-          <div class="px-3 py-2 text-xs text-[#909399]">双击主机直接打开终端</div>
+          <div class="fa-hint px-3 py-2">双击主机直接打开终端</div>
         </div>
       </ElCard>
 
@@ -90,7 +90,7 @@
                   <ElTag v-if="terminalSession" size="small" type="success">
                     {{ terminalSession.host_name }}
                   </ElTag>
-                  <span class="text-xs text-[#909399]">
+                  <span class="fa-hint">
                     {{
                       terminalSession
                         ? `会话 ${terminalSession.session_id.slice(0, 8)}`
@@ -136,11 +136,9 @@
                   </div>
                 </div>
 
-                <pre
-                  ref="terminalRef"
-                  class="terminal-output m-0 min-h-0 flex-1 overflow-auto rounded-lg p-3 text-xs whitespace-pre-wrap"
-                  >{{ terminalOutput || "（双击左侧主机，或选择主机后点「打开终端」）" }}</pre
-                >
+                <pre ref="terminalRef" class="fa-terminal min-h-0 flex-1 overflow-auto">{{
+                  terminalOutput || "（双击左侧主机，或选择主机后点「打开终端」）"
+                }}</pre>
 
                 <div class="flex items-center gap-2">
                   <ElInput
@@ -192,24 +190,22 @@
                   >
                     执行
                   </ElButton>
-                  <span class="text-xs text-[#909399]"
-                    >命令原样交给远端 shell；执行会写入审计日志</span
-                  >
+                  <span class="fa-hint">命令原样交给远端 shell；执行会写入审计日志</span>
                 </div>
 
                 <ElInput
                   v-model="batchCommand"
                   type="textarea"
                   :rows="4"
-                  class="batch-command"
+                  class="fa-mono-textarea"
                   placeholder="例如：uptime && df -h（可从「命令片段」填入）"
                 />
 
                 <ElScrollbar class="min-h-0 flex-1">
-                  <div v-for="item in batchResults" :key="item.host_id" class="result-card">
+                  <div v-for="item in batchResults" :key="item.host_id" class="fa-block-card">
                     <div class="flex items-center gap-2">
                       <span
-                        class="status-dot"
+                        class="fa-status-dot"
                         :style="{
                           background: item.ok
                             ? 'var(--el-color-success)'
@@ -220,12 +216,12 @@
                       <ElTag size="small" :type="item.ok ? 'success' : 'danger'">
                         {{ item.exit_status ?? "-" }}
                       </ElTag>
-                      <span class="ml-auto text-xs text-[#909399]">{{ item.elapsed_ms }} ms</span>
+                      <span class="fa-hint ml-auto">{{ item.elapsed_ms }} ms</span>
                       <ElButton link size="small" @click="toggleResult(item.host_id)">
                         {{ expandedResults.has(item.host_id) ? "收起" : "查看输出" }}
                       </ElButton>
                     </div>
-                    <pre v-if="expandedResults.has(item.host_id)" class="result-output">{{
+                    <pre v-if="expandedResults.has(item.host_id)" class="fa-block-card__output">{{
                       item.stdout || item.stderr || item.error
                     }}</pre>
                   </div>
@@ -242,7 +238,7 @@
             <ElTabPane label="命令片段" name="snippet">
               <div class="flex h-full min-h-0 flex-col p-3">
                 <div class="mb-2 flex items-center justify-between">
-                  <span class="text-sm font-semibold">常用命令</span>
+                  <span class="fa-panel-title">常用命令</span>
                   <ElButton
                     v-hasPerm="['module_ops:snippet:create']"
                     type="primary"
@@ -261,7 +257,7 @@
                   />
                 </div>
                 <ElScrollbar class="min-h-0 flex-1">
-                  <div v-for="item in filteredSnippets" :key="item.id" class="snippet-card">
+                  <div v-for="item in filteredSnippets" :key="item.id" class="fa-block-card">
                     <div class="flex items-center gap-2">
                       <span class="font-medium">{{ item.name }}</span>
                       <span class="ml-auto flex items-center gap-1">
@@ -286,7 +282,7 @@
                     <pre class="mt-1 rounded bg-(--el-fill-color-light) p-2 text-xs">{{
                       item.command
                     }}</pre>
-                    <div v-if="item.description" class="mt-1 text-xs text-[#909399]">
+                    <div v-if="item.description" class="fa-hint mt-1">
                       {{ item.description }}
                     </div>
                   </div>
@@ -946,83 +942,3 @@ onBeforeUnmount(() => {
   if (resizeTimer !== undefined) window.clearTimeout(resizeTimer);
 });
 </script>
-
-<style lang="scss" scoped>
-.host-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  margin-bottom: 2px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.15s;
-
-  &:hover {
-    background: var(--el-fill-color-light);
-  }
-
-  &.is-active {
-    background: var(--el-color-primary-light-9);
-  }
-
-  .more-icon {
-    opacity: 0;
-    color: var(--el-text-color-secondary);
-    transition: opacity 0.15s;
-    flex-shrink: 0;
-  }
-
-  &:hover .more-icon {
-    opacity: 1;
-  }
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.terminal-output {
-  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-  font-size: 12px;
-  line-height: 1.55;
-  color: #d4d4d4;
-  background: #1e1e1e;
-}
-
-.batch-command :deep(.el-textarea__inner) {
-  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-  font-size: 13px;
-}
-
-.result-card {
-  padding: 10px 12px;
-  margin-bottom: 8px;
-  border: 1px solid var(--el-border-color-lighter);
-  border-radius: 8px;
-}
-
-.result-output {
-  max-height: 208px;
-  margin: 6px 0 0;
-  padding: 8px;
-  overflow: auto;
-  border-radius: 6px;
-  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-  font-size: 12px;
-  line-height: 1.5;
-  color: #d4d4d4;
-  background: #1e1e1e;
-  white-space: pre-wrap;
-}
-
-.snippet-card {
-  padding: 10px 12px;
-  margin-bottom: 8px;
-  border: 1px solid var(--el-border-color-lighter);
-  border-radius: 8px;
-}
-</style>
