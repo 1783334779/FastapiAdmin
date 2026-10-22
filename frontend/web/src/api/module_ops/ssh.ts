@@ -65,6 +65,9 @@ const SshAPI = {
   listHosts() {
     return request<ApiResponse<SshHost[]>>({ url: `${API_PATH}/host/list`, method: "get" });
   },
+  detailHost(id: number) {
+    return request<ApiResponse<SshHost>>({ url: `${API_PATH}/host/detail/${id}`, method: "get" });
+  },
   createHost(body: SshHostForm) {
     return request<ApiResponse<SshHost>>({
       url: `${API_PATH}/host/create`,

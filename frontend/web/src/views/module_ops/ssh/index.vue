@@ -1,153 +1,199 @@
 <!-- SSH 运维：主机/命令片段/批量执行/终端（POST 轮询）与日志跟踪 -->
 <template>
-  <div class="fa-full-height p-3">
+  <div class="fa-full-height">
     <ElTabs v-model="activeTab" class="fa-tabs-fill">
+      <!-- 主机管理 -->
       <ElTabPane label="主机管理" name="host">
-        <ElCard shadow="hover" class="fa-card">
-          <div class="mb-3 flex items-center justify-between">
-            <span class="text-[15px] font-medium">SSH 主机（凭据加密存储，出参不含凭据）</span>
-            <ElButton type="primary" @click="openHostCreate">新增主机</ElButton>
-          </div>
-          <ElTable :data="hosts" size="small" empty-text="尚未配置主机">
-            <ElTableColumn prop="name" label="名称" min-width="130" />
-            <ElTableColumn label="地址" min-width="170">
-              <template #default="{ row }">{{ row.host }}:{{ row.port }}</template>
-            </ElTableColumn>
-            <ElTableColumn prop="username" label="用户" width="110" />
-            <ElTableColumn label="认证" width="100">
-              <template #default="{ row }">{{
-                row.auth_type === "key" ? "私钥" : "密码"
-              }}</template>
-            </ElTableColumn>
-            <ElTableColumn label="状态" width="80">
-              <template #default="{ row }">
-                <ElTag :type="row.status === 0 ? 'success' : 'info'" size="small">{{
-                  row.status === 0 ? "启用" : "停用"
-                }}</ElTag>
-              </template>
-            </ElTableColumn>
-            <ElTableColumn label="操作" width="230" fixed="right">
-              <template #default="{ row }">
-                <ElButton link @click="handleHostTest(row)">测试</ElButton>
-                <ElButton link type="primary" @click="openHostEdit(row)">编辑</ElButton>
-                <ElButton link type="danger" @click="handleHostDelete(row)">删除</ElButton>
-              </template>
-            </ElTableColumn>
-          </ElTable>
+        <ElCard class="fa-table-card">
+          <FaTableHeader
+            v-model:columns="hostColumnChecks"
+            :loading="hostLoading"
+            @refresh="loadHosts"
+          >
+            <template #left>
+              <div class="flex items-center gap-2.5">
+                <span class="text-base font-semibold">SSH 主机</span>
+                <ElButton
+                  v-hasPerm="['module_ops:ssh:create']"
+                  type="primary"
+                  :loading="createLoading"
+                  @click="handleAdd"
+                >
+                  新增主机
+                </ElButton>
+              </div>
+            </template>
+          </FaTableHeader>
+
+          <FaTable :loading="hostLoading" :data="hosts" :columns="hostColumns" row-key="id" />
         </ElCard>
       </ElTabPane>
 
+      <!-- 命令片段 -->
       <ElTabPane label="命令片段" name="snippet">
-        <ElCard shadow="hover" class="fa-card">
-          <div class="mb-3 flex items-center justify-between">
-            <span class="text-[15px] font-medium">常用命令</span>
-            <ElButton type="primary" @click="openSnippetCreate">新增片段</ElButton>
-          </div>
-          <ElTable :data="snippets" size="small" empty-text="暂无片段">
-            <ElTableColumn prop="name" label="名称" min-width="140" />
-            <ElTableColumn prop="command" label="命令" min-width="320" show-overflow-tooltip />
-            <ElTableColumn prop="description" label="备注" min-width="160" show-overflow-tooltip />
-            <ElTableColumn label="操作" width="170" fixed="right">
-              <template #default="{ row }">
-                <ElButton link type="primary" @click="applySnippet(row)">填入批量执行</ElButton>
-                <ElButton link type="danger" @click="handleSnippetDelete(row)">删除</ElButton>
-              </template>
-            </ElTableColumn>
-          </ElTable>
+        <ElCard class="fa-table-card">
+          <FaTableHeader
+            v-model:columns="snippetColumnChecks"
+            :loading="snippetLoading"
+            @refresh="loadSnippets"
+          >
+            <template #left>
+              <div class="flex items-center gap-2.5">
+                <span class="text-base font-semibold">常用命令</span>
+                <ElButton
+                  v-hasPerm="['module_ops:snippet:create']"
+                  type="primary"
+                  @click="handleSnippetAdd"
+                >
+                  新增片段
+                </ElButton>
+              </div>
+            </template>
+          </FaTableHeader>
+
+          <FaTable
+            :loading="snippetLoading"
+            :data="snippets"
+            :columns="snippetColumns"
+            row-key="id"
+          />
         </ElCard>
       </ElTabPane>
 
+      <!-- 批量执行 -->
       <ElTabPane label="批量执行" name="batch">
         <ElCard shadow="hover" class="fa-card">
-          <div class="mb-2 flex flex-wrap items-center gap-2">
-            <ElSelect
-              v-model="batchHostIds"
-              multiple
-              filterable
-              placeholder="选择目标主机（最多 50）"
-              style="min-width: 320px"
-              collapse-tags
-              collapse-tags-tooltip
-            >
-              <ElOption v-for="h in hosts" :key="h.id" :label="h.name" :value="h.id" />
-            </ElSelect>
-            <ElButton
-              type="primary"
-              :loading="batchRunning"
-              @click="runBatch"
-              :disabled="!batchHostIds.length"
-            >
-              执行
-            </ElButton>
-            <span class="text-xs text-[#909399]"
-              >命令原样交给远端 shell；执行会写入操作审计日志</span
-            >
-          </div>
-          <ElInput
-            v-model="batchCommand"
-            type="textarea"
-            :rows="4"
-            placeholder="例如：uptime && df -h（可先在「命令片段」里维护常用命令）"
-          />
-          <ElTable
-            v-if="batchResults.length"
-            :data="batchResults"
-            class="mt-3"
-            size="small"
-            max-height="360"
-          >
-            <ElTableColumn prop="host_name" label="主机" width="140" />
-            <ElTableColumn label="结果" width="90">
-              <template #default="{ row }">
-                <ElTag :type="row.ok ? 'success' : 'danger'" size="small">{{
-                  row.ok ? "成功" : "失败"
-                }}</ElTag>
+          <template #header>
+            <div class="flex items-center gap-2">
+              <FaSvgIcon icon="ri:play-list-line" class="text-lg" />
+              <span class="font-medium">多主机批量执行</span>
+              <span class="ml-2 text-xs text-[#909399]">
+                命令原样交给远端 shell；执行会写入操作审计日志
+              </span>
+            </div>
+          </template>
+
+          <ElForm label-suffix=":" label-position="top">
+            <ElRow :gutter="12">
+              <ElCol :span="18">
+                <ElFormItem label="目标主机（最多 50）">
+                  <ElSelect
+                    v-model="batchHostIds"
+                    multiple
+                    collapse-tags
+                    collapse-tags-tooltip
+                    filterable
+                    placeholder="选择目标主机"
+                    class="w-full"
+                  >
+                    <ElOption
+                      v-for="item in hosts"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    />
+                  </ElSelect>
+                </ElFormItem>
+              </ElCol>
+              <ElCol :span="6" class="flex items-end justify-end gap-2 pb-4">
+                <ElButton
+                  v-hasPerm="['module_ops:ssh:exec']"
+                  type="primary"
+                  :loading="batchRunning"
+                  :disabled="!batchHostIds.length"
+                  @click="runBatch"
+                >
+                  执行
+                </ElButton>
+              </ElCol>
+            </ElRow>
+            <ElFormItem label="命令">
+              <ElInput
+                v-model="batchCommand"
+                type="textarea"
+                :rows="4"
+                placeholder="例如：uptime && df -h（可先在「命令片段」里维护常用命令）"
+              />
+            </ElFormItem>
+          </ElForm>
+
+          <template v-if="batchResults.length">
+            <FaTable :data="batchResults" :columns="batchColumns" max-height="360" border>
+              <template #ok="{ row }">
+                <ElTag :type="row.ok ? 'success' : 'danger'" size="small">
+                  {{ row.ok ? "成功" : "失败" }}
+                </ElTag>
               </template>
-            </ElTableColumn>
-            <ElTableColumn prop="exit_status" label="退出码" width="90" />
-            <ElTableColumn label="输出" min-width="360">
-              <template #default="{ row }">
+              <template #output="{ row }">
                 <pre class="m-0 max-h-40 overflow-auto text-xs whitespace-pre-wrap">{{
                   row.stdout || row.stderr || row.error
                 }}</pre>
               </template>
-            </ElTableColumn>
-            <ElTableColumn prop="elapsed_ms" label="耗时(ms)" width="100" />
-          </ElTable>
+            </FaTable>
+          </template>
         </ElCard>
       </ElTabPane>
 
+      <!-- 终端（POST 轮询） -->
       <ElTabPane label="终端" name="terminal">
         <ElCard shadow="hover" class="fa-card">
-          <div class="mb-2 flex flex-wrap items-center gap-2">
-            <ElSelect v-model="terminalHostId" placeholder="选择主机" style="width: 180px">
-              <ElOption v-for="h in hosts" :key="h.id" :label="h.name" :value="h.id" />
-            </ElSelect>
-            <ElButton
-              type="primary"
-              :loading="terminalOpening"
-              :disabled="!terminalHostId"
-              @click="openTerminal"
-            >
-              打开终端
-            </ElButton>
-            <ElButton :disabled="!terminalSessionId" @click="closeTerminal">关闭</ElButton>
-            <el-divider direction="vertical" />
-            <ElInput
-              v-model="logPath"
-              placeholder="日志路径，如 /var/log/nginx/error.log"
-              style="width: 300px"
-            />
-            <ElButton
-              :loading="terminalOpening"
-              :disabled="!terminalHostId || !logPath"
-              @click="openLogTail"
-            >
-              日志跟踪
-            </ElButton>
-            <span v-if="terminalSession" class="ml-auto text-xs text-[#909399]">
+          <template #header>
+            <div class="flex items-center gap-2">
+              <FaSvgIcon icon="ri:terminal-window-line" class="text-lg" />
+              <span class="font-medium">终端会话</span>
+              <span class="ml-2 text-xs text-[#909399]">
+                轮询式会话（约 700ms 拉取）；空闲 30 分钟自动回收
+              </span>
+            </div>
+          </template>
+
+          <ElForm label-suffix=":" label-position="top">
+            <ElRow :gutter="12">
+              <ElCol :span="6">
+                <ElFormItem label="主机">
+                  <ElSelect v-model="terminalHostId" placeholder="选择主机" class="w-full">
+                    <ElOption
+                      v-for="item in hosts"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    />
+                  </ElSelect>
+                </ElFormItem>
+              </ElCol>
+              <ElCol :span="10">
+                <ElFormItem label="日志跟踪路径（可选）">
+                  <ElInput v-model="logPath" placeholder="如 /var/log/nginx/error.log" clearable />
+                </ElFormItem>
+              </ElCol>
+              <ElCol :span="8" class="flex items-end justify-end gap-2 pb-4">
+                <ElButton
+                  v-hasPerm="['module_ops:ssh:terminal']"
+                  type="primary"
+                  :loading="terminalOpening"
+                  :disabled="!terminalHostId"
+                  @click="openTerminal"
+                >
+                  打开终端
+                </ElButton>
+                <ElButton
+                  v-hasPerm="['module_ops:ssh:terminal']"
+                  :loading="terminalOpening"
+                  :disabled="!terminalHostId || !logPath"
+                  @click="openLogTail"
+                >
+                  日志跟踪
+                </ElButton>
+                <ElButton :disabled="!terminalSessionId" @click="closeTerminal">关闭</ElButton>
+              </ElCol>
+            </ElRow>
+          </ElForm>
+
+          <div class="mb-2 text-xs text-[#909399]">
+            <template v-if="terminalSession">
               会话 {{ terminalSession.session_id.slice(0, 8) }} · {{ terminalSession.host_name }}
-            </span>
+            </template>
+            <template v-else>尚未打开终端会话</template>
           </div>
           <pre
             ref="terminalRef"
@@ -167,82 +213,67 @@
       </ElTabPane>
     </ElTabs>
 
-    <ElDialog
-      v-model="hostDialogVisible"
-      :title="editingHostId ? '编辑主机' : '新增主机'"
-      width="620px"
+    <!-- 主机新增/修改 -->
+    <FaDialog
+      v-model="dialogVisible.visible"
+      :title="dialogVisible.title"
+      width="680px"
+      dialog-class="crud-embed-dialog"
+      modal-class="crud-embed-dialog"
+      :form-mode="dialogVisible.type"
+      :confirm-loading="submitLoading"
+      @cancel="handleCloseDialog"
+      @confirm="handleSubmit"
     >
-      <ElForm ref="hostFormRef" :model="hostForm" :rules="hostRules" label-width="96px">
-        <ElFormItem label="名称" prop="name"><ElInput v-model="hostForm.name" /></ElFormItem>
-        <ElFormItem label="地址" prop="host"><ElInput v-model="hostForm.host" /></ElFormItem>
-        <ElFormItem label="端口" prop="port">
-          <ElInputNumber v-model="hostForm.port" :min="1" :max="65535" />
-        </ElFormItem>
-        <ElFormItem label="用户名" prop="username"
-          ><ElInput v-model="hostForm.username"
-        /></ElFormItem>
-        <ElFormItem label="认证方式" prop="auth_type">
-          <ElRadioGroup v-model="hostForm.auth_type">
-            <ElRadio value="password">密码</ElRadio>
-            <ElRadio value="key">私钥</ElRadio>
-          </ElRadioGroup>
-        </ElFormItem>
-        <ElFormItem v-if="hostForm.auth_type === 'password'" label="密码">
-          <ElInput
-            v-model="hostForm.password"
-            type="password"
-            show-password
-            :placeholder="editingHostId ? '不修改请留空' : ''"
-          />
-        </ElFormItem>
-        <template v-else>
-          <ElFormItem label="私钥">
-            <ElInput
-              v-model="hostForm.private_key"
-              type="textarea"
-              :rows="6"
-              :placeholder="editingHostId ? '不修改请留空' : '-----BEGIN OPENSSH PRIVATE KEY-----'"
-            />
-          </ElFormItem>
-          <ElFormItem label="私钥口令">
-            <ElInput
-              v-model="hostForm.passphrase"
-              type="password"
-              show-password
-              placeholder="可选"
-            />
-          </ElFormItem>
-        </template>
-        <ElFormItem label="状态">
-          <ElSwitch v-model="hostForm.status" :active-value="0" :inactive-value="1" />
-        </ElFormItem>
-        <ElFormItem label="备注"><ElInput v-model="hostForm.description" /></ElFormItem>
-      </ElForm>
-      <template #footer>
-        <ElButton @click="hostDialogVisible = false">取消</ElButton>
-        <ElButton :loading="hostTesting" @click="handleHostTestConfig">测试连接</ElButton>
-        <ElButton type="primary" :loading="hostSaving" @click="handleHostSave">保存</ElButton>
-      </template>
-    </ElDialog>
+      <FaForm
+        :key="formRenderKey"
+        ref="dataFormRef"
+        v-model="formData"
+        :items="formItems"
+        :rules="rules"
+        label-suffix=":"
+        :label-width="100"
+        label-position="right"
+        :span="24"
+        :gutter="16"
+        :show-reset="false"
+        :show-submit="false"
+        class="crud-dialog-art-form"
+      />
+    </FaDialog>
 
-    <ElDialog v-model="snippetDialogVisible" title="新增命令片段" width="520px">
-      <ElForm label-width="80px">
-        <ElFormItem label="名称"><ElInput v-model="snippetForm.name" /></ElFormItem>
-        <ElFormItem label="命令">
-          <ElInput v-model="snippetForm.command" type="textarea" :rows="4" />
-        </ElFormItem>
-        <ElFormItem label="备注"><ElInput v-model="snippetForm.description" /></ElFormItem>
-      </ElForm>
-      <template #footer>
-        <ElButton @click="snippetDialogVisible = false">取消</ElButton>
-        <ElButton type="primary" :loading="snippetSaving" @click="handleSnippetSave">保存</ElButton>
-      </template>
-    </ElDialog>
+    <!-- 片段新增 -->
+    <FaDialog
+      v-model="snippetDialogVisible.visible"
+      :title="snippetDialogVisible.title"
+      width="560px"
+      dialog-class="crud-embed-dialog"
+      modal-class="crud-embed-dialog"
+      :form-mode="snippetDialogVisible.type"
+      :confirm-loading="snippetSubmitLoading"
+      @cancel="handleSnippetClose"
+      @confirm="handleSnippetSubmit"
+    >
+      <FaForm
+        :key="snippetFormRenderKey"
+        ref="snippetFormRef"
+        v-model="snippetFormData"
+        :items="snippetFormItems"
+        :rules="snippetRules"
+        label-suffix=":"
+        :label-width="90"
+        label-position="right"
+        :span="24"
+        :gutter="16"
+        :show-reset="false"
+        :show-submit="false"
+        class="crud-dialog-art-form"
+      />
+    </FaDialog>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from "element-plus";
 import SshAPI, {
   type BatchExecResult,
   type SshHost,
@@ -250,20 +281,124 @@ import SshAPI, {
   type SshSnippet,
   type TerminalSession,
 } from "@/api/module_ops/ssh";
+import type { FormItem } from "@/components/forms/fa-form/index.vue";
+import FaForm from "@/components/forms/fa-form/index.vue";
+import StatusTag from "@/components/display/fa-status-tag/index.vue";
+import FaTableHeader from "@/components/tables/fa-table-header/index.vue";
+import type { ColumnOption } from "@/types/component";
+import { renderTableOperationCell, type TableOperationAction } from "@utils";
+import { ElMessage } from "element-plus";
 
-defineOptions({ name: "SshOps" });
+defineOptions({
+  name: "SshOps",
+  inheritAttrs: false,
+});
 
 const activeTab = ref("host");
 const hosts = ref<SshHost[]>([]);
 const snippets = ref<SshSnippet[]>([]);
+const hostLoading = ref(false);
+const snippetLoading = ref(false);
 
-// ── 主机 ──────────────────────────────────────────────────────────────
-const hostDialogVisible = ref(false);
-const editingHostId = ref<number>();
-const hostSaving = ref(false);
-const hostTesting = ref(false);
-const hostFormRef = ref<FormInstance>();
-const hostForm = reactive<SshHostForm>({
+// ── 主机列表 ──────────────────────────────────────────────────────────
+const hostColumnChecks = ref<ColumnOption[]>([
+  { prop: "name", label: "名称", minWidth: 140, showOverflowTooltip: true },
+  {
+    prop: "host",
+    label: "地址",
+    minWidth: 180,
+    showOverflowTooltip: true,
+    formatter: (row: SshHost) => `${row.host}:${row.port}`,
+  },
+  { prop: "username", label: "用户", width: 120 },
+  {
+    prop: "auth_type",
+    label: "认证",
+    width: 100,
+    formatter: (row: SshHost) => (row.auth_type === "key" ? "私钥" : "密码"),
+  },
+  {
+    prop: "status",
+    label: "状态",
+    width: 90,
+    align: "center",
+    formatter: (row: SshHost) =>
+      h(StatusTag, {
+        type: row.status === 0 ? "success" : "info",
+        label: row.status === 0 ? "启用" : "停用",
+      }),
+  },
+  { prop: "operation", label: "操作", width: 200, fixed: "right", align: "center" },
+]);
+
+const hostColumns = computed(() =>
+  hostColumnChecks.value.map((item) =>
+    item.prop === "operation"
+      ? { ...item, formatter: (row: SshHost) => formatHostOperationCell(row) }
+      : item
+  )
+);
+
+async function loadHosts() {
+  hostLoading.value = true;
+  try {
+    const res = await SshAPI.listHosts();
+    hosts.value = res.data.data || [];
+  } finally {
+    hostLoading.value = false;
+  }
+}
+
+function buildHostRowActions(row: SshHost): TableOperationAction[] {
+  return [
+    {
+      key: "test",
+      label: "测试",
+      artType: "view",
+      perm: "module_ops:ssh:query",
+      run: () => void testHost(row),
+    },
+    {
+      key: "edit",
+      label: "编辑",
+      artType: "edit",
+      perm: "module_ops:ssh:update",
+      run: () => void handleOpenDialog("update", row.id),
+    },
+    {
+      key: "delete",
+      label: "删除",
+      artType: "delete",
+      perm: "module_ops:ssh:delete",
+      run: () => void deleteHost(row),
+    },
+  ];
+}
+
+function formatHostOperationCell(row: SshHost) {
+  return renderTableOperationCell(buildHostRowActions(row));
+}
+
+async function testHost(row: SshHost) {
+  const res = await SshAPI.testHost(row.id);
+  ElMessage.success(res.data?.msg || "连接成功");
+}
+
+async function deleteHost(row: SshHost) {
+  await confirmDelete(`确认删除主机「${row.name}」？`);
+  await SshAPI.deleteHosts([row.id]);
+  await loadHosts();
+}
+
+// ── 主机表单 ──────────────────────────────────────────────────────────
+type SshHostFormModel = SshHostForm & { id?: number };
+
+const { dialogVisible } = useCrudDialog();
+const dataFormRef = ref<InstanceType<typeof FaForm> | null>(null);
+const formRenderKey = ref(0);
+
+const initialFormData: SshHostFormModel = {
+  id: undefined,
   name: "",
   host: "",
   port: 22,
@@ -274,144 +409,235 @@ const hostForm = reactive<SshHostForm>({
   passphrase: "",
   status: 0,
   description: "",
-});
-const hostRules: FormRules<SshHostForm> = {
-  name: [{ required: true, message: "请输入名称", trigger: "blur" }],
-  host: [{ required: true, message: "请输入地址", trigger: "blur" }],
-  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
 };
+const formData = ref<SshHostFormModel>({ ...initialFormData });
 
-async function loadHosts() {
-  const res = await SshAPI.listHosts();
-  hosts.value = res.data.data || [];
-}
+const formItems = computed<FormItem[]>(() => {
+  const isKey = formData.value.auth_type === "key";
+  return [
+    { label: "名称", key: "name", type: "input", span: 24, props: { placeholder: "唯一名称" } },
+    { label: "地址", key: "host", type: "input", span: 24, props: { placeholder: "如 10.0.0.1" } },
+    {
+      label: "端口",
+      key: "port",
+      type: "number",
+      span: 24,
+      props: { controlsPosition: "right", min: 1, max: 65535, style: { width: "160px" } },
+    },
+    { label: "用户名", key: "username", type: "input", span: 24 },
+    {
+      label: "认证方式",
+      key: "auth_type",
+      type: "radiogroup",
+      span: 24,
+      props: {
+        options: [
+          { label: "密码", value: "password" },
+          { label: "私钥", value: "key" },
+        ],
+      },
+    },
+    {
+      label: "密码",
+      key: "password",
+      type: "input",
+      span: 24,
+      hidden: isKey,
+      props: { type: "password", showPassword: true, placeholder: "修改时不填表示不变" },
+    },
+    {
+      label: "私钥",
+      key: "private_key",
+      type: "input",
+      span: 24,
+      hidden: !isKey,
+      props: { type: "textarea", rows: 6, placeholder: "-----BEGIN OPENSSH PRIVATE KEY-----" },
+    },
+    {
+      label: "私钥口令",
+      key: "passphrase",
+      type: "input",
+      span: 24,
+      hidden: !isKey,
+      props: { type: "password", showPassword: true, placeholder: "可选" },
+    },
+    {
+      label: "状态",
+      key: "status",
+      type: "radiogroup",
+      span: 24,
+      props: {
+        options: [
+          { label: "启用", value: 0 },
+          { label: "停用", value: 1 },
+        ],
+      },
+    },
+    { label: "备注", key: "description", type: "input", span: 24 },
+  ];
+});
 
-function openHostCreate() {
-  editingHostId.value = undefined;
-  Object.assign(hostForm, {
-    name: "",
-    host: "",
-    port: 22,
-    username: "root",
-    auth_type: "password",
-    password: "",
-    private_key: "",
-    passphrase: "",
-    status: 0,
-    description: "",
-  });
-  hostDialogVisible.value = true;
-}
+const rules = computed(() => {
+  const isCreate = dialogVisible.type === "create";
+  const isKey = formData.value.auth_type === "key";
+  return {
+    name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+    host: [{ required: true, message: "请输入地址", trigger: "blur" }],
+    username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+    password:
+      isCreate && !isKey ? [{ required: true, message: "请输入密码", trigger: "blur" }] : [],
+    private_key:
+      isCreate && isKey ? [{ required: true, message: "请输入私钥", trigger: "blur" }] : [],
+  };
+});
 
-function openHostEdit(raw: unknown) {
-  const row = raw as SshHost;
-  editingHostId.value = row.id;
-  Object.assign(hostForm, {
-    name: row.name,
-    host: row.host,
-    port: row.port,
-    username: row.username,
-    auth_type: row.auth_type,
-    password: "",
-    private_key: "",
-    passphrase: "",
-    status: row.status,
-    description: row.description || "",
-  });
-  hostDialogVisible.value = true;
-}
+const createLoading = ref(false);
 
-async function handleHostSave() {
-  if (!hostFormRef.value) return;
-  const valid = await hostFormRef.value.validate().catch(() => false);
-  if (!valid) return;
-  const payload: SshHostForm = { ...hostForm };
-  if (!payload.password) delete payload.password;
-  if (!payload.private_key) delete payload.private_key;
-  if (!payload.passphrase) delete payload.passphrase;
-  hostSaving.value = true;
+async function handleAdd() {
+  createLoading.value = true;
   try {
-    if (editingHostId.value) {
-      await SshAPI.updateHost(editingHostId.value, payload);
-      ElMessage.success("已保存");
-    } else {
-      await SshAPI.createHost(payload);
-      ElMessage.success("已新增");
-    }
-    hostDialogVisible.value = false;
-    await loadHosts();
+    await handleOpenDialog("create");
   } finally {
-    hostSaving.value = false;
+    createLoading.value = false;
   }
 }
 
-async function handleHostTest(raw: unknown) {
-  const row = raw as SshHost;
-  const res = await SshAPI.testHost(row.id);
-  ElMessage.success(res.data?.msg || "连接成功");
-}
+const { submitLoading, handleCloseDialog, handleOpenDialog, handleSubmit } =
+  useCrudForm<SshHostFormModel>({
+    formData,
+    initialFormData,
+    dialogVisible,
+    dataFormRef,
+    formRenderKey,
+    detailApi: SshAPI.detailHost,
+    createApi: SshAPI.createHost,
+    updateApi: SshAPI.updateHost,
+    titles: { create: "新增主机", update: "修改主机" },
+    onUpdateSuccess: loadHosts,
+    onCreateSuccess: loadHosts,
+  });
 
-async function handleHostTestConfig() {
-  hostTesting.value = true;
-  try {
-    const res = await SshAPI.testHostConfig({ ...hostForm });
-    ElMessage.success(res.data?.msg || "连接成功");
-  } finally {
-    hostTesting.value = false;
-  }
-}
+// ── 片段列表 ──────────────────────────────────────────────────────────
+const snippetColumnChecks = ref<ColumnOption[]>([
+  { prop: "name", label: "名称", minWidth: 140, showOverflowTooltip: true },
+  { prop: "command", label: "命令", minWidth: 320, showOverflowTooltip: true },
+  { prop: "description", label: "备注", minWidth: 160, showOverflowTooltip: true },
+  { prop: "operation", label: "操作", width: 200, fixed: "right", align: "center" },
+]);
 
-async function handleHostDelete(raw: unknown) {
-  const row = raw as SshHost;
-  await ElMessageBox.confirm(`确认删除主机「${row.name}」？`, "提示", { type: "warning" });
-  await SshAPI.deleteHosts([row.id]);
-  ElMessage.success("已删除");
-  await loadHosts();
-}
-
-// ── 片段 ──────────────────────────────────────────────────────────────
-const snippetDialogVisible = ref(false);
-const snippetSaving = ref(false);
-const snippetForm = reactive({ name: "", command: "", description: "" });
+const snippetColumns = computed(() =>
+  snippetColumnChecks.value.map((item) =>
+    item.prop === "operation"
+      ? { ...item, formatter: (row: SshSnippet) => formatSnippetOperationCell(row) }
+      : item
+  )
+);
 
 async function loadSnippets() {
-  const res = await SshAPI.listSnippets();
-  snippets.value = res.data.data || [];
-}
-
-function openSnippetCreate() {
-  Object.assign(snippetForm, { name: "", command: "", description: "" });
-  snippetDialogVisible.value = true;
-}
-
-async function handleSnippetSave() {
-  if (!snippetForm.name || !snippetForm.command) {
-    ElMessage.warning("名称与命令不能为空");
-    return;
-  }
-  snippetSaving.value = true;
+  snippetLoading.value = true;
   try {
-    await SshAPI.createSnippet({ ...snippetForm });
-    ElMessage.success("已新增");
-    snippetDialogVisible.value = false;
-    await loadSnippets();
+    const res = await SshAPI.listSnippets();
+    snippets.value = res.data.data || [];
   } finally {
-    snippetSaving.value = false;
+    snippetLoading.value = false;
   }
 }
 
-function applySnippet(raw: unknown) {
-  const row = raw as SshSnippet;
-  batchCommand.value = row.command;
-  activeTab.value = "batch";
+function buildSnippetRowActions(row: SshSnippet): TableOperationAction[] {
+  return [
+    {
+      key: "apply",
+      label: "填入批量执行",
+      artType: "view",
+      perm: "module_ops:ssh:exec",
+      run: () => {
+        batchCommand.value = row.command;
+        activeTab.value = "batch";
+      },
+    },
+    {
+      key: "delete",
+      label: "删除",
+      artType: "delete",
+      perm: "module_ops:snippet:delete",
+      run: () => void deleteSnippet(row),
+    },
+  ];
 }
 
-async function handleSnippetDelete(raw: unknown) {
-  const row = raw as SshSnippet;
-  await ElMessageBox.confirm(`确认删除片段「${row.name}」？`, "提示", { type: "warning" });
+function formatSnippetOperationCell(row: SshSnippet) {
+  return renderTableOperationCell(buildSnippetRowActions(row));
+}
+
+async function deleteSnippet(row: SshSnippet) {
+  await confirmDelete(`确认删除片段「${row.name}」？`);
   await SshAPI.deleteSnippets([row.id]);
-  ElMessage.success("已删除");
   await loadSnippets();
+}
+
+// ── 片段表单 ──────────────────────────────────────────────────────────
+type SshSnippetFormModel = {
+  id?: number;
+  name: string;
+  command: string;
+  description?: string | null;
+};
+
+const { dialogVisible: snippetDialogVisible } = useCrudDialog();
+const snippetFormRef = ref<InstanceType<typeof FaForm> | null>(null);
+const snippetFormRenderKey = ref(0);
+
+const initialSnippetForm: SshSnippetFormModel = {
+  id: undefined,
+  name: "",
+  command: "",
+  description: "",
+};
+const snippetFormData = ref<SshSnippetFormModel>({ ...initialSnippetForm });
+
+const snippetFormItems = computed<FormItem[]>(() => [
+  { label: "名称", key: "name", type: "input", span: 24 },
+  {
+    label: "命令",
+    key: "command",
+    type: "input",
+    span: 24,
+    props: { type: "textarea", rows: 4, placeholder: "如 df -h" },
+  },
+  { label: "备注", key: "description", type: "input", span: 24 },
+]);
+
+const snippetRules = computed(() => ({
+  name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+  command: [{ required: true, message: "请输入命令", trigger: "blur" }],
+}));
+
+const snippetFormSnippet = () => snippets.value;
+
+const {
+  submitLoading: snippetSubmitLoading,
+  handleCloseDialog: handleSnippetClose,
+  handleOpenDialog: handleSnippetOpen,
+  handleSubmit: handleSnippetSubmit,
+} = useCrudForm<SshSnippetFormModel>({
+  formData: snippetFormData,
+  initialFormData: initialSnippetForm,
+  dialogVisible: snippetDialogVisible,
+  dataFormRef: snippetFormRef,
+  formRenderKey: snippetFormRenderKey,
+  detailApi: (snippetId: number) => {
+    const row = snippetFormSnippet().find((item) => item.id === snippetId);
+    return Promise.resolve({ data: { data: row } });
+  },
+  createApi: SshAPI.createSnippet,
+  updateApi: SshAPI.updateSnippet,
+  titles: { create: "新增命令片段", update: "修改命令片段" },
+  onUpdateSuccess: loadSnippets,
+  onCreateSuccess: loadSnippets,
+});
+
+function handleSnippetAdd() {
+  void handleSnippetOpen("create");
 }
 
 // ── 批量执行 ──────────────────────────────────────────────────────────
@@ -419,6 +645,14 @@ const batchHostIds = ref<number[]>([]);
 const batchCommand = ref("");
 const batchRunning = ref(false);
 const batchResults = ref<BatchExecResult[]>([]);
+
+const batchColumns = ref<ColumnOption[]>([
+  { prop: "host_name", label: "主机", width: 140 },
+  { prop: "ok", label: "结果", width: 90, align: "center" },
+  { prop: "exit_status", label: "退出码", width: 90 },
+  { prop: "output", label: "输出", minWidth: 360 },
+  { prop: "elapsed_ms", label: "耗时(ms)", width: 100 },
+]);
 
 async function runBatch() {
   if (!batchHostIds.value.length || !batchCommand.value.trim()) {
@@ -439,7 +673,7 @@ async function runBatch() {
   }
 }
 
-// ── 终端（POST 轮询）─────────────────────────────────────────────────
+// ── 终端（POST 轮询）──────────────────────────────────────────────────
 const terminalHostId = ref<number>();
 const terminalOpening = ref(false);
 const terminalSession = ref<TerminalSession>();
