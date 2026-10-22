@@ -1,9 +1,13 @@
 <!-- SSH 运维：左侧主机导航 + 右侧终端/批量执行/命令片段工作区 -->
 <template>
   <div class="fa-full-height">
-    <ElSplitter style="height: 100%">
+    <div class="flex min-h-0 flex-1 gap-3">
       <!-- 左：主机列表 -->
-      <ElSplitterPanel :size="280" :min="220" :max="420">
+      <ElCard
+        shadow="hover"
+        class="fa-card flex w-[280px] shrink-0 flex-col"
+        body-class="flex min-h-0 flex-1 flex-col p-0"
+      >
         <div class="flex h-full min-h-0 flex-col">
           <div class="flex items-center justify-between px-3 py-2">
             <span class="text-sm font-semibold">SSH 主机</span>
@@ -69,10 +73,14 @@
 
           <div class="px-3 py-2 text-xs text-[#909399]">双击主机直接打开终端</div>
         </div>
-      </ElSplitterPanel>
+      </ElCard>
 
       <!-- 右：工作区 -->
-      <ElSplitterPanel :min="520">
+      <ElCard
+        shadow="hover"
+        class="fa-card flex min-w-0 flex-1 flex-col"
+        body-class="flex min-h-0 flex-1 flex-col p-0"
+      >
         <div class="flex h-full min-h-0 flex-col">
           <ElTabs v-model="activeTab" class="fa-tabs-fill">
             <!-- 终端 -->
@@ -288,8 +296,8 @@
             </ElTabPane>
           </ElTabs>
         </div>
-      </ElSplitterPanel>
-    </ElSplitter>
+      </ElCard>
+    </div>
 
     <!-- 主机新增/修改 -->
     <FaDialog
@@ -940,16 +948,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.el-splitter) {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-}
-
-:deep(.el-splitter-panel) {
-  overflow: hidden;
-}
-
 .host-item {
   display: flex;
   align-items: center;

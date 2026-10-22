@@ -375,6 +375,12 @@ defineExpose({
           background: transparent;
           border: none;
           box-shadow: none;
+          /* 输入框内不显示滚动条（内容超长仍可滚轮/方向键滚动） */
+          scrollbar-width: none;
+
+          &::-webkit-scrollbar {
+            display: none;
+          }
         }
 
         :deep(.el-textarea) {

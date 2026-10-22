@@ -63,7 +63,7 @@
       </div>
 
       <!-- 空状态 -->
-      <ElEmpty v-else :description="emptyText">
+      <ElEmpty v-else :description="emptyText" :image-size="emptyImageSize">
         <template v-if="$slots.empty" #default>
           <slot name="empty" />
         </template>
@@ -116,6 +116,8 @@ interface Props {
   items: T[];
   loading?: boolean;
   emptyText?: string;
+  /** 空状态图片尺寸（与其它页面保持一致，默认 60） */
+  emptyImageSize?: number;
   /** 分页状态（传入后显示分页器） */
   pagination?: FaPaginationConfig;
   /** 分页配置覆盖 */
@@ -139,6 +141,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
   emptyText: "暂无数据",
+  emptyImageSize: 60,
   pagination: undefined,
   paginationOptions: () => ({}),
   gutter: 16,

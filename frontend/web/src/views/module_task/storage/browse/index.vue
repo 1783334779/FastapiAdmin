@@ -1737,6 +1737,12 @@ onMounted(async () => {
   height: 100%;
 }
 
+/* 左侧节点标签固定宽度：避免节点名长短变化时挤动右侧文件区 */
+.browse-card :deep(.el-tabs--left > .el-tabs__header.is-left) {
+  width: 190px;
+  flex-shrink: 0;
+}
+
 .browse-card :deep(.el-tabs--left .el-tabs__content) {
   flex: 1;
   min-width: 0;

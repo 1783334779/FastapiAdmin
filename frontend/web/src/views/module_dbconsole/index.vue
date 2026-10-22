@@ -1,9 +1,13 @@
 <!-- SQL 控制台：左侧连接/库表导航 + 右侧编辑器与结果区（外部 MySQL/PostgreSQL） -->
 <template>
   <div class="fa-full-height">
-    <ElSplitter style="height: 100%">
+    <div class="flex min-h-0 flex-1 gap-3">
       <!-- 左：连接 + 库表 -->
-      <ElSplitterPanel :size="300" :min="240" :max="420">
+      <ElCard
+        shadow="hover"
+        class="fa-card flex w-[300px] shrink-0 flex-col"
+        body-class="flex min-h-0 flex-1 flex-col p-0"
+      >
         <div class="flex h-full min-h-0 flex-col">
           <div class="flex items-center justify-between px-3 py-2">
             <span class="text-sm font-semibold">数据库连接</span>
@@ -86,10 +90,14 @@
             </template>
           </ElScrollbar>
         </div>
-      </ElSplitterPanel>
+      </ElCard>
 
       <!-- 右：编辑器 + 结果 -->
-      <ElSplitterPanel :min="480">
+      <ElCard
+        shadow="hover"
+        class="fa-card flex min-w-0 flex-1 flex-col"
+        body-class="flex min-h-0 flex-1 flex-col p-0"
+      >
         <div class="flex h-full min-h-0 flex-col">
           <div
             class="flex items-center gap-2 border-b border-(--el-border-color-lighter) px-3 py-2"
@@ -194,8 +202,8 @@
             </span>
           </div>
         </div>
-      </ElSplitterPanel>
-    </ElSplitter>
+      </ElCard>
+    </div>
 
     <FaDialog
       v-model="dialogVisible.visible"
@@ -526,16 +534,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.el-splitter) {
-  border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
-}
-
-:deep(.el-splitter-panel) {
-  overflow: hidden;
-}
-
 .conn-item {
   display: flex;
   align-items: center;

@@ -36,12 +36,6 @@
             />
           </div>
           <div class="chat-footer">
-            <div class="mb-2 flex items-center gap-2 pl-1">
-              <ElSwitch v-model="useTools" size="small" />
-              <span class="text-xs text-[#909399]"
-                >启用只读工具（服务器状态 / 存储源 / 定时任务 / Redis 键名）</span
-              >
-            </div>
             <FaChatInput
               :disabled="!isConnected"
               :sending="sending"
@@ -78,7 +72,6 @@ import FaAiModelConfigPanel from "./components/FaAiModelConfigPanel.vue";
 const messages = ref<ChatMessage[]>([]);
 const sending = ref(false);
 // 是否启用 AI 只读工具（默认关闭：不改变原有对话行为）
-const useTools = ref(false);
 const isConnected = ref(false);
 const connectionStatus = ref<"connected" | "connecting" | "disconnected">("disconnected");
 const error = ref("");
@@ -252,7 +245,6 @@ const handleSendMessage = async (message: string, files?: UploadedFile[]) => {
           message,
           session_id: currentSessionId.value,
           files: files?.map((f) => ({ name: f.name, type: f.type, size: f.size })),
-          use_tools: useTools.value,
         })
       );
       // 注意：sending 状态保持为 true，等待 [DONE] / [STOPPED] 标记清除
