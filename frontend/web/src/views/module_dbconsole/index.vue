@@ -1,139 +1,160 @@
-<!-- SQL 控制台：外部 MySQL/PostgreSQL（只读校验 / 确认写 / 敏感列脱敏） -->
+<!-- SQL 控制台：左侧连接/库表导航 + 右侧编辑器与结果区（外部 MySQL/PostgreSQL） -->
 <template>
   <div class="fa-full-height">
-    <ElCard class="fa-table-card">
-      <FaTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="loadConnections">
-        <template #left>
-          <div class="flex items-center gap-2.5">
-            <span class="text-base font-semibold">数据库连接</span>
+    <ElSplitter style="height: 100%">
+      <!-- 左：连接 + 库表 -->
+      <ElSplitterPanel :size="300" :min="240" :max="420">
+        <div class="flex h-full min-h-0 flex-col">
+          <div class="flex items-center justify-between px-3 py-2">
+            <span class="text-sm font-semibold">数据库连接</span>
             <ElButton
               v-hasPerm="['module_dbconsole:conn:create']"
+              link
               type="primary"
               :loading="createLoading"
               @click="handleAdd"
             >
-              新增连接
+              <ElIcon class="mr-1"><Plus /></ElIcon>新增
             </ElButton>
           </div>
-        </template>
-      </FaTableHeader>
 
-      <FaTable :loading="loading" :data="connections" :columns="columns" row-key="id" />
-    </ElCard>
-
-    <ElCard shadow="hover" class="fa-card mt-3">
-      <template #header>
-        <div class="flex items-center gap-2">
-          <FaSvgIcon icon="ri:terminal-box-line" class="text-lg" />
-          <span class="font-medium">执行 SQL</span>
-          <span class="ml-2 text-xs text-[#909399]">
-            只读语句自动校验；写语句需先开启「允许写操作」，结果最多 200 行、敏感列自动打码
-          </span>
-        </div>
-      </template>
-
-      <ElForm label-suffix=":" label-position="top">
-        <ElRow :gutter="12">
-          <ElCol :span="6">
-            <ElFormItem label="连接">
-              <ElSelect
-                v-model="currentId"
-                placeholder="选择连接"
-                class="w-full"
-                @change="onConnectionChange"
-              >
-                <ElOption
-                  v-for="item in connections"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="库 / schema">
-              <ElSelect
-                v-model="currentDatabase"
-                placeholder="可空"
-                class="w-full"
-                clearable
-                @change="loadTables"
-              >
-                <ElOption
-                  v-for="item in databases"
-                  :key="item.name"
-                  :label="item.name"
-                  :value="item.name"
-                />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6">
-            <ElFormItem label="表（选中自动填入查询）">
-              <ElSelect
-                v-model="currentTable"
-                placeholder="可空"
-                class="w-full"
-                clearable
-                filterable
-                @change="fillTableQuery"
-              >
-                <ElOption
-                  v-for="item in tables"
-                  :key="item.name"
-                  :label="item.name"
-                  :value="item.name"
-                />
-              </ElSelect>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :span="6" class="flex items-end justify-end gap-2 pb-4">
-            <span class="text-xs text-[#909399]">允许写操作</span>
-            <ElSwitch v-model="confirmed" size="small" />
-            <ElButton
-              v-hasPerm="['module_dbconsole:query:execute']"
-              type="primary"
-              :loading="running"
-              :disabled="!currentId"
-              @click="runQuery"
+          <ElScrollbar class="min-h-0 flex-1 px-2">
+            <div
+              v-for="item in connections"
+              :key="item.id"
+              class="conn-item"
+              :class="{ 'is-active': item.id === currentId }"
+              @click="selectConnection(item)"
             >
-              执行
-            </ElButton>
-          </ElCol>
-        </ElRow>
-        <ElFormItem label="SQL">
-          <ElInput
-            v-model="sql"
-            type="textarea"
-            :rows="6"
-            placeholder="select * from ...（只读语句自动校验；写语句需先开启「允许写操作」）"
-          />
-        </ElFormItem>
-      </ElForm>
+              <span
+                class="status-dot"
+                :style="{
+                  background:
+                    item.status === 0 ? 'var(--el-color-success)' : 'var(--el-color-info)',
+                }"
+              />
+              <div class="min-w-0 flex-1">
+                <div class="truncate text-[13px]">{{ item.name }}</div>
+                <div class="truncate text-xs text-[#909399]">
+                  {{ item.db_type }} · {{ item.host }}:{{ item.port }}
+                </div>
+              </div>
+              <ElDropdown
+                trigger="click"
+                @command="(cmd) => handleConnCommand(String(cmd), item)"
+                @click.stop
+              >
+                <ElIcon class="more-icon"><MoreFilled /></ElIcon>
+                <template #dropdown>
+                  <ElDropdownMenu>
+                    <ElDropdownItem command="test">测试连接</ElDropdownItem>
+                    <ElDropdownItem command="edit">编辑</ElDropdownItem>
+                    <ElDropdownItem command="delete" divided>删除</ElDropdownItem>
+                  </ElDropdownMenu>
+                </template>
+              </ElDropdown>
+            </div>
+            <ElEmpty v-if="!connections.length" description="暂无连接" :image-size="56" />
+          </ElScrollbar>
 
-      <template v-if="result">
-        <ElAlert
-          v-if="result.masked_columns.length"
-          type="warning"
-          :closable="false"
-          class="mb-2"
-          :title="`敏感列已打码：${result.masked_columns.join('、')}`"
-        />
-        <ElAlert
-          v-if="result.truncated"
-          type="info"
-          :closable="false"
-          class="mb-2"
-          title="结果超过 200 行，已截断"
-        />
-        <div class="mb-2 text-xs text-[#909399]">
-          {{ result.read_only ? "只读查询" : "写操作" }} · {{ result.rowcount }} 行 ·
-          {{ result.elapsed_ms }} ms
+          <div class="section-title">库 / 表</div>
+          <ElScrollbar class="min-h-0 flex-1 px-2 pb-2">
+            <div v-if="!currentId" class="p-2 text-xs text-[#909399]">先选择一个连接</div>
+            <template v-else>
+              <div class="tree-group">库 / schema</div>
+              <div
+                v-for="db in databases"
+                :key="`db-${db.name}`"
+                class="tree-item"
+                :class="{ 'is-active': db.name === currentDatabase }"
+                @click="pickDatabase(db.name)"
+              >
+                {{ db.name }}
+              </div>
+              <div class="tree-group mt-2">表</div>
+              <div
+                v-for="table in tables"
+                :key="`t-${table.name}`"
+                class="tree-item"
+                @click="insertTable(table.name)"
+              >
+                {{ table.name }}
+              </div>
+              <div v-if="!tables.length" class="p-2 text-xs text-[#909399]">
+                选择库后加载表（点击表名自动填入查询）
+              </div>
+            </template>
+          </ElScrollbar>
         </div>
-        <FaTable :data="resultRows" :columns="resultColumns" max-height="360" border />
-      </template>
-    </ElCard>
+      </ElSplitterPanel>
+
+      <!-- 右：编辑器 + 结果 -->
+      <ElSplitterPanel :min="480">
+        <div class="flex h-full min-h-0 flex-col">
+          <div
+            class="flex items-center gap-2 border-b border-(--el-border-color-lighter) px-3 py-2"
+          >
+            <span class="text-sm font-semibold">SQL 控制台</span>
+            <ElTag v-if="currentConnection" size="small" type="info">
+              {{ currentConnection.name }}
+            </ElTag>
+            <span v-else class="text-xs text-[#909399]">未选择连接</span>
+            <div class="ml-auto flex items-center gap-3">
+              <span class="text-xs text-[#909399]">允许写操作</span>
+              <ElSwitch v-model="confirmed" size="small" />
+              <ElButton
+                v-hasPerm="['module_dbconsole:query:execute']"
+                type="primary"
+                :loading="running"
+                :disabled="!currentId"
+                @click="runQuery"
+              >
+                执行
+              </ElButton>
+              <ElButton :disabled="!sql" @click="clearEditor">清空</ElButton>
+            </div>
+          </div>
+
+          <div class="px-3 pt-3">
+            <ElInput
+              v-model="sql"
+              type="textarea"
+              :rows="8"
+              resize="vertical"
+              class="sql-editor"
+              placeholder="select * from ...（只读语句自动校验；写语句需先开启「允许写操作」）"
+              @keydown.ctrl.enter.prevent="runQuery"
+            />
+            <div class="mt-1 text-right text-xs text-[#909399]">Ctrl + Enter 执行</div>
+          </div>
+
+          <div class="flex min-h-0 flex-1 flex-col px-3 pb-3">
+            <template v-if="result">
+              <div class="mb-2 flex flex-wrap items-center gap-2 text-xs">
+                <ElTag size="small" :type="result.read_only ? 'info' : 'warning'">
+                  {{ result.read_only ? "只读查询" : "写操作" }}
+                </ElTag>
+                <span class="text-[#909399]"
+                  >{{ result.rowcount }} 行 · {{ result.elapsed_ms }} ms</span
+                >
+                <ElTag v-if="result.masked_columns.length" size="small" type="warning">
+                  已脱敏：{{ result.masked_columns.join("、") }}
+                </ElTag>
+                <ElTag v-if="result.truncated" size="small" type="info">已截断 200 行</ElTag>
+              </div>
+              <FaTable
+                :data="resultRows"
+                :columns="resultColumns"
+                height="100%"
+                border
+                class="min-h-0 flex-1"
+              />
+            </template>
+            <ElEmpty v-else class="mt-10" description="执行 SQL 后在此显示结果" :image-size="72" />
+          </div>
+        </div>
+      </ElSplitterPanel>
+    </ElSplitter>
 
     <FaDialog
       v-model="dialogVisible.visible"
@@ -166,6 +187,7 @@
 </template>
 
 <script lang="ts" setup>
+import { MoreFilled, Plus } from "@element-plus/icons-vue";
 import DbConsoleAPI, {
   type DbConnection,
   type DbConnectionForm,
@@ -174,10 +196,7 @@ import DbConsoleAPI, {
 } from "@/api/module_dbconsole/connection";
 import type { FormItem } from "@/components/forms/fa-form/index.vue";
 import FaForm from "@/components/forms/fa-form/index.vue";
-import StatusTag from "@/components/display/fa-status-tag/index.vue";
-import FaTableHeader from "@/components/tables/fa-table-header/index.vue";
 import type { ColumnOption } from "@/types/component";
-import { renderTableOperationCell, type TableOperationAction } from "@utils";
 import { ElMessage } from "element-plus";
 
 defineOptions({
@@ -187,48 +206,16 @@ defineOptions({
 
 type DbConnectionFormModel = DbConnectionForm & { id?: number };
 
-// ── 连接列表 ──────────────────────────────────────────────────────────
-const loading = ref(false);
+// ── 连接与库表 ────────────────────────────────────────────────────────
 const connections = ref<DbConnection[]>([]);
-
-const columnChecks = ref<ColumnOption[]>([
-  { prop: "name", label: "名称", minWidth: 140, showOverflowTooltip: true },
-  { prop: "db_type", label: "类型", width: 110 },
-  {
-    prop: "host",
-    label: "地址",
-    minWidth: 180,
-    showOverflowTooltip: true,
-    formatter: (row: DbConnection) => `${row.host}:${row.port}`,
-  },
-  { prop: "database", label: "默认库", width: 140, showOverflowTooltip: true },
-  {
-    prop: "status",
-    label: "状态",
-    width: 90,
-    align: "center",
-    formatter: (row: DbConnection) =>
-      h(StatusTag, {
-        type: row.status === 0 ? "success" : "info",
-        label: row.status === 0 ? "启用" : "停用",
-      }),
-  },
-  { prop: "operation", label: "操作", width: 200, fixed: "right", align: "center" },
-]);
-
-const columns = computed(() =>
-  columnChecks.value.map((item) =>
-    item.prop === "operation"
-      ? { ...item, formatter: (row: DbConnection) => formatOperationCell(row) }
-      : item
-  )
-);
-
 const currentId = ref<number>();
+const currentConnection = computed(() =>
+  connections.value.find((item) => item.id === currentId.value)
+);
 const databases = ref<DbObject[]>([]);
 const tables = ref<DbObject[]>([]);
 const currentDatabase = ref<string>();
-const currentTable = ref<string>();
+
 const sql = ref("select 1");
 const confirmed = ref(false);
 const running = ref(false);
@@ -250,36 +237,48 @@ const resultRows = computed<Record<string, unknown>[]>(() =>
 );
 
 async function loadConnections() {
-  loading.value = true;
-  try {
-    const res = await DbConsoleAPI.listConnections();
-    connections.value = res.data.data || [];
-  } finally {
-    loading.value = false;
+  const res = await DbConsoleAPI.listConnections();
+  connections.value = res.data.data || [];
+  if (currentId.value && !connections.value.some((item) => item.id === currentId.value)) {
+    currentId.value = undefined;
+    databases.value = [];
+    tables.value = [];
   }
 }
 
-async function onConnectionChange(id: number) {
+async function selectConnection(row: DbConnection) {
+  currentId.value = row.id;
   currentDatabase.value = undefined;
-  currentTable.value = undefined;
+  tables.value = [];
   result.value = undefined;
-  const res = await DbConsoleAPI.listDatabases(id);
+  const res = await DbConsoleAPI.listDatabases(row.id);
   databases.value = res.data.data || [];
 }
 
-async function loadTables() {
+async function pickDatabase(name: string) {
+  currentDatabase.value = name;
   if (!currentId.value) return;
-  const res = await DbConsoleAPI.listTables(currentId.value, currentDatabase.value);
+  const res = await DbConsoleAPI.listTables(currentId.value, name);
   tables.value = res.data.data || [];
 }
 
-async function fillTableQuery(table?: string) {
-  if (!table) return;
-  sql.value = `select * from ${table} limit 100`;
+function insertTable(name: string) {
+  sql.value = `select * from ${name} limit 100`;
+}
+
+function clearEditor() {
+  sql.value = "";
 }
 
 async function runQuery() {
-  if (!currentId.value) return;
+  if (!currentId.value) {
+    ElMessage.warning("请先选择一个连接");
+    return;
+  }
+  if (!sql.value.trim()) {
+    ElMessage.warning("请先输入 SQL");
+    return;
+  }
   running.value = true;
   try {
     const res = await DbConsoleAPI.runQuery(currentId.value, {
@@ -287,51 +286,34 @@ async function runQuery() {
       confirmed: confirmed.value,
     });
     result.value = res.data.data;
-    ElMessage.success(res.data?.msg || "执行成功");
+  } catch {
+    result.value = undefined;
   } finally {
     running.value = false;
   }
 }
 
-function buildRowActions(row: DbConnection): TableOperationAction[] {
-  return [
-    {
-      key: "use",
-      label: "使用",
-      artType: "view",
-      perm: "module_dbconsole:query:execute",
-      run: () => void selectConnection(row),
-    },
-    {
-      key: "edit",
-      label: "编辑",
-      artType: "edit",
-      perm: "module_dbconsole:conn:update",
-      run: () => void handleOpenDialog("update", row.id),
-    },
-    {
-      key: "delete",
-      label: "删除",
-      artType: "delete",
-      perm: "module_dbconsole:conn:delete",
-      run: () => void deleteRow(row),
-    },
-  ];
-}
-
-function formatOperationCell(row: DbConnection) {
-  return renderTableOperationCell(buildRowActions(row));
-}
-
-async function selectConnection(row: DbConnection) {
-  currentId.value = row.id;
-  await onConnectionChange(row.id);
+function handleConnCommand(command: string, row: DbConnection) {
+  if (command === "test") {
+    void DbConsoleAPI.testConnection(row.id).then((res) =>
+      ElMessage.success(res.data?.msg || "连接成功")
+    );
+  } else if (command === "edit") {
+    void handleOpenDialog("update", row.id);
+  } else if (command === "delete") {
+    void deleteRow(row);
+  }
 }
 
 async function deleteRow(row: DbConnection) {
   await confirmDelete(`确认删除连接「${row.name}」？`);
   await DbConsoleAPI.deleteConnections([row.id]);
-  if (currentId.value === row.id) currentId.value = undefined;
+  if (currentId.value === row.id) {
+    currentId.value = undefined;
+    databases.value = [];
+    tables.value = [];
+    result.value = undefined;
+  }
   await loadConnections();
 }
 
@@ -374,13 +356,7 @@ const formItems = computed<FormItem[]>(() => [
       ],
     },
   },
-  {
-    label: "主机",
-    key: "host",
-    type: "input",
-    span: 24,
-    props: { placeholder: "如 127.0.0.1" },
-  },
+  { label: "主机", key: "host", type: "input", span: 24, props: { placeholder: "如 127.0.0.1" } },
   {
     label: "端口",
     key: "port",
@@ -452,3 +428,91 @@ const { submitLoading, handleCloseDialog, handleOpenDialog, handleSubmit } =
 
 onMounted(loadConnections);
 </script>
+
+<style lang="scss" scoped>
+:deep(.el-splitter) {
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
+  box-shadow: var(--el-box-shadow-light);
+}
+
+:deep(.el-splitter-panel) {
+  overflow: hidden;
+}
+
+.conn-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  margin-bottom: 2px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background: var(--el-fill-color-light);
+  }
+
+  &.is-active {
+    background: var(--el-color-primary-light-9);
+  }
+
+  .more-icon {
+    opacity: 0;
+    color: var(--el-text-color-secondary);
+    transition: opacity 0.15s;
+    flex-shrink: 0;
+  }
+
+  &:hover .more-icon {
+    opacity: 1;
+  }
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.section-title {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  border-top: 1px solid var(--el-border-color-lighter);
+}
+
+.tree-group {
+  padding: 6px 8px 2px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.tree-item {
+  padding: 5px 10px;
+  margin-bottom: 1px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--el-fill-color-light);
+  }
+
+  &.is-active {
+    color: var(--el-color-primary);
+    background: var(--el-color-primary-light-9);
+  }
+}
+
+.sql-editor :deep(.el-textarea__inner) {
+  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+</style>
