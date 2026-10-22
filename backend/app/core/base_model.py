@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, MetaData, String
+from sqlalchemy import Boolean, DateTime, Index, Integer, MetaData, String
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column, relationship
 
@@ -132,7 +132,6 @@ class UserMixin(MappedBase):
 
     created_id: Mapped[int | None] = mapped_column(
         Integer,
-        ForeignKey("sys_user.id", ondelete="SET NULL", onupdate="CASCADE"),
         default=None,
         nullable=True,
         index=True,
@@ -140,7 +139,6 @@ class UserMixin(MappedBase):
     )
     updated_id: Mapped[int | None] = mapped_column(
         Integer,
-        ForeignKey("sys_user.id", ondelete="SET NULL", onupdate="CASCADE"),
         default=None,
         nullable=True,
         index=True,
@@ -149,7 +147,6 @@ class UserMixin(MappedBase):
 
     deleted_id: Mapped[int | None] = mapped_column(
         Integer,
-        ForeignKey("sys_user.id", ondelete="SET NULL", onupdate="CASCADE"),
         default=None,
         nullable=True,
         index=True,
@@ -161,7 +158,7 @@ class UserMixin(MappedBase):
         """创建人关联关系"""
         return relationship(
             "UserModel",
-            foreign_keys=lambda: self.created_id,  # pyright: ignore[reportArgumentType]
+            primaryjoin=f"foreign({self.__name__}.created_id) == remote(UserModel.id)",
             uselist=False,
         )
 
@@ -170,7 +167,7 @@ class UserMixin(MappedBase):
         """更新人关联关系"""
         return relationship(
             "UserModel",
-            foreign_keys=lambda: self.updated_id,  # pyright: ignore[reportArgumentType]
+            primaryjoin=f"foreign({self.__name__}.updated_id) == remote(UserModel.id)",
             uselist=False,
         )
 
@@ -179,6 +176,6 @@ class UserMixin(MappedBase):
         """删除人关联关系"""
         return relationship(
             "UserModel",
-            foreign_keys=lambda: self.deleted_id,  # pyright: ignore[reportArgumentType]
+            primaryjoin=f"foreign({self.__name__}.deleted_id) == remote(UserModel.id)",
             uselist=False,
         )
