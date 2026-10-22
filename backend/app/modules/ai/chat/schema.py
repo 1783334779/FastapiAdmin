@@ -12,6 +12,7 @@ class ChatQuerySchema(BaseModel):
     session_id: str | None = Field(None, description="会话ID")
     files: list[dict[str, Any]] | None = Field(None, description="文件信息")
     action: str | None = Field(None, description="动作类型：stop=停止生成 | None=对话")
+    use_tools: bool = Field(False, description="是否启用只读工具（服务器状态/存储源/任务/Redis 键名）")
 
 
 class ChatSessionCreateSchema(BaseModel):
@@ -70,6 +71,7 @@ class AiChatRequestSchema(BaseModel):
 
     message: str = Field(..., min_length=1, description="用户消息内容")
     session_id: str | None = Field(None, description="会话ID，不传则创建新会话")
+    use_tools: bool = Field(False, description="是否启用只读工具（服务器状态/存储源/任务/Redis 键名）")
 
     @field_validator("message")
     @classmethod
@@ -165,3 +167,10 @@ class AiModelConfigListResponse(BaseModel):
 
     items: list[AiModelConfigItemSchema] = Field(default_factory=list, description="配置项列表")
     active_id: str | None = Field(None, description="当前激活的配置项 ID；为空表示使用系统默认")
+
+
+class AiToolSchema(BaseModel):
+    """AI 只读工具清单项"""
+
+    name: str = Field(..., description="工具名")
+    description: str = Field(..., description="工具用途（给模型与用户看）")
