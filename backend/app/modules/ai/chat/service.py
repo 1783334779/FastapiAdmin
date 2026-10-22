@@ -153,8 +153,9 @@ async def _ensure_session(crud: ChatSessionCRUD, session_id: str | None) -> str:
 class ChatService:
     """聊天会话管理模块服务层"""
 
-    def __init__(self, auth: AuthSchema) -> None:
+    def __init__(self, auth: AuthSchema, redis: Any | None = None) -> None:
         self.auth = auth
+        self.redis = redis
 
     async def chat_query(
         self,
@@ -168,12 +169,14 @@ class ChatService:
         session_id = await _ensure_session(crud, query.session_id)
 
         agno_factory = AgnoFactory()
+        tools = self._chat_tools(bool(query.use_tools))
         agent = agno_factory.create_agent(
             user_id=self.auth.user.username or "user",
             team_id=TEAM_ID,
             session_id=session_id,
             db=crud.db,
             model_config=model_config,
+            tools=tools,
         )
 
         message = (query.message or "").strip()
@@ -208,11 +211,20 @@ class ChatService:
 
         logger.info("流式生成结束: session_id={} chunk_count={}", session_id, chunk_count)
 
+    def _chat_tools(self, enabled: bool) -> list[Any]:
+        """按开关构造只读工具（关闭时返回空列表，零行为变化）。"""
+        if not enabled:
+            return []
+        from app.modules.ai.tools.registry import build_readonly_tools
+
+        return [spec.func for spec in build_readonly_tools(self.auth, self.redis)]
+
     async def chat_non_stream(
         self,
         message: str,
         session_id: str | None,
         model_config: dict[str, Any] | None = None,
+        use_tools: bool = False,
     ) -> dict[str, Any]:
         """非流式 AI 对话"""
         crud = ChatSessionCRUD(self.auth)
@@ -225,6 +237,7 @@ class ChatService:
             session_id=sid,
             db=crud.db,
             model_config=model_config,
+            tools=self._chat_tools(use_tools),
         )
 
         try:
