@@ -160,6 +160,7 @@
                   已脱敏：{{ result.masked_columns.join("、") }}
                 </ElTag>
                 <ElTag v-if="result.truncated" size="small" type="info">已截断 200 行</ElTag>
+                <ElButton class="ml-auto" size="small" @click="exportCsv">导出 CSV</ElButton>
               </div>
               <FaTable
                 :data="resultRows"
@@ -336,6 +337,24 @@ function insertTable(name: string) {
 
 function clearEditor() {
   sql.value = "";
+}
+
+function exportCsv() {
+  const current = result.value;
+  if (!current || !current.columns.length) return;
+  const escapeCell = (value: unknown) => {
+    const text = value == null ? "" : String(value);
+    return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  };
+  const header = current.columns.map(escapeCell).join(",");
+  const body = current.rows.map((row) => row.map(escapeCell).join(",")).join("\n");
+  const blob = new Blob([`\uFEFF${header}\n${body}`], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `query-result-${Date.now()}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 async function runQuery() {

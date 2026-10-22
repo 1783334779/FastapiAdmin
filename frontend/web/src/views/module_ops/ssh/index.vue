@@ -119,6 +119,9 @@
                     </ElButton>
                     <template v-else>
                       <ElButton size="small" @click="clearTerminalOutput">清屏</ElButton>
+                      <ElButton size="small" :loading="terminalOpening" @click="reconnectTerminal"
+                        >重连</ElButton
+                      >
                       <ElButton size="small" @click="sendCtrlC">Ctrl+C</ElButton>
                       <ElButton size="small" @click="closeTerminal">关闭</ElButton>
                     </template>
@@ -797,11 +800,45 @@ async function openTerminalFor(host: SshHost) {
   await openTerminal();
 }
 
+function measureTerminal(): { cols: number; rows: number } {
+  const element = terminalRef.value;
+  const width = element?.clientWidth ?? 800;
+  const height = element?.clientHeight ?? 420;
+  // 12px 等宽字体约 7.2px/字符、约 18.6px/行，预留滚动条与内边距
+  return {
+    cols: Math.max(40, Math.floor((width - 24) / 7.2)),
+    rows: Math.max(10, Math.floor((height - 24) / 18.6)),
+  };
+}
+
+let resizeTimer: number | undefined;
+function onWindowResize() {
+  if (!terminalSessionId.value) return;
+  if (resizeTimer !== undefined) window.clearTimeout(resizeTimer);
+  resizeTimer = window.setTimeout(() => {
+    if (!terminalSessionId.value) return;
+    const size = measureTerminal();
+    void SshAPI.resizeTerminal(terminalSessionId.value, size.cols, size.rows).catch(
+      () => undefined
+    );
+  }, 300);
+}
+
+async function reconnectTerminal() {
+  await closeTerminal();
+  await openTerminal();
+}
+
 async function openTerminal() {
   if (!terminalHostId.value) return;
   terminalOpening.value = true;
   try {
-    const res = await SshAPI.openTerminal({ host_id: terminalHostId.value, cols: 120, rows: 30 });
+    const size = measureTerminal();
+    const res = await SshAPI.openTerminal({
+      host_id: terminalHostId.value,
+      cols: size.cols,
+      rows: size.rows,
+    });
     terminalSession.value = res.data.data;
     resetTerminal();
     appendSystemLine(`[已连接 ${terminalSession.value?.host_name}]`);
@@ -892,9 +929,14 @@ async function closeTerminal() {
 onMounted(async () => {
   await loadHosts();
   await loadSnippets();
+  window.addEventListener("resize", onWindowResize);
 });
 
-onBeforeUnmount(() => stopPolling());
+onBeforeUnmount(() => {
+  stopPolling();
+  window.removeEventListener("resize", onWindowResize);
+  if (resizeTimer !== undefined) window.clearTimeout(resizeTimer);
+});
 </script>
 
 <style lang="scss" scoped>
