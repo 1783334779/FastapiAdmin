@@ -252,7 +252,7 @@
               <!-- 文件/文件夹列表（支持拖拽上传） -->
               <div
                 v-if="!activeTab?.browseBuckets"
-                class="min-h-0 flex-1"
+                class="flex min-h-0 flex-1 flex-col"
                 @dragover.prevent
                 @drop.prevent="onDrop"
               >
@@ -260,7 +260,6 @@
                   :loading="activeTab.loading"
                   :data="entries"
                   :columns="browseColumns"
-                  height="100%"
                   :empty-text="activeTab.error ? '加载失败' : '该目录下没有内容'"
                   @selection-change="onSelectionChange"
                   @sort-change="onSortChange"
