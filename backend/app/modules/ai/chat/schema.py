@@ -89,14 +89,11 @@ class AiChatResponseSchema(BaseModel):
     action: dict[str, Any] | None = Field(None, description="建议执行的操作")
 
 
-class AiModelConfigSchema(BaseModel):
-    """AI 模型配置项（创建/更新共用）"""
+class AiModelEndpointSchema(BaseModel):
+    """OpenAI 兼容接口的接入信息（探测类请求共用：不落库）"""
 
-    name: str = Field(..., min_length=1, max_length=50, description="配置名称（用户可读）")
     base_url: str = Field(..., min_length=1, max_length=500, description="API Base URL，如 https://api.openai.com/v1")
     api_key: str = Field(..., min_length=1, max_length=500, description="API 密钥")
-    model_id: str = Field(..., min_length=1, max_length=100, description="模型 ID")
-    temperature: float = Field(0.7, ge=0.0, le=2.0, description="温度参数")
 
     @field_validator("base_url")
     @classmethod
@@ -105,6 +102,47 @@ class AiModelConfigSchema(BaseModel):
         if not v.startswith(("http://", "https://")):
             raise ValueError("Base URL 必须以 http:// 或 https:// 开头")
         return v
+
+
+class AiModelProbeSchema(AiModelEndpointSchema):
+    """拉取模型列表的入参（按填写中的接口与密钥探测，不落库）"""
+
+
+class AiModelTestSchema(AiModelEndpointSchema):
+    """连通性测试入参（按填写中的接口/密钥/模型探测，不落库）"""
+
+    model_id: str = Field(..., min_length=1, max_length=100, description="模型 ID")
+
+    @field_validator("model_id")
+    @classmethod
+    def validate_model_id(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("模型 ID 不能为空")
+        return v
+
+
+class AiModelOptionSchema(BaseModel):
+    """接口返回的可用模型"""
+
+    id: str = Field(..., description="模型 ID")
+    owned_by: str | None = Field(default=None, description="提供方（接口返回时才有）")
+
+
+class AiModelTestResultSchema(BaseModel):
+    """连通性测试结果"""
+
+    ok: bool = Field(..., description="是否连通")
+    model_id: str = Field(..., description="被测模型 ID")
+    latency_ms: int = Field(..., description="往返耗时（毫秒）")
+
+
+class AiModelConfigSchema(AiModelEndpointSchema):
+    """AI 模型配置项（创建/更新共用）"""
+
+    name: str = Field(..., min_length=1, max_length=50, description="配置名称（用户可读）")
+    model_id: str = Field(..., min_length=1, max_length=100, description="模型 ID")
+    temperature: float = Field(0.7, ge=0.0, le=2.0, description="温度参数")
 
     @field_validator("model_id")
     @classmethod

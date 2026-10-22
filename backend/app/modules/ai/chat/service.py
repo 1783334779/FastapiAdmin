@@ -1,11 +1,13 @@
 import asyncio
 import json
+import time
 import uuid
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any
 
+import httpx
 from agno.run.team import TeamRunOutput
 from agno.session.team import TeamSession
 from redis.asyncio import Redis
@@ -530,3 +532,64 @@ class AiModelConfigService:
         ok = await set_active_model_config(self.redis, self._user_id, config_id)
         if not ok:
             raise CustomException(msg="模型配置不存在", code=RET.NOT_FOUND.code)
+
+
+# ── OpenAI 兼容接口探测：拉取模型列表 / 连通性测试（不落库）───────────────
+# 只用于「按填写中的接口与密钥」做即时探测，配置落库仍走上面的 AiModelConfigService。
+# 安全：base_url 已由 schema 校验为 http(s)；仅取结果的模型 id / owned_by，不回显密钥。
+
+_AI_PROBE_TIMEOUT = 20.0
+
+
+def _ai_auth_headers(api_key: str) -> dict[str, str]:
+    """构造 Bearer 鉴权头（密钥只放进请求头，不落日志）。"""
+    return {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+
+
+async def probe_available_models(base_url: str, api_key: str) -> list[dict[str, Any]]:
+    """拉取接口可用的模型列表（GET {base_url}/models）。
+
+    返回:
+    - list[dict[str, Any]]: [{id, owned_by}]
+
+    异常:
+    - CustomException: 接口不可达或返回非 2xx
+    """
+    url = f"{base_url.rstrip('/')}/models"
+    try:
+        async with httpx.AsyncClient(timeout=_AI_PROBE_TIMEOUT) as client:
+            response = await client.get(url, headers=_ai_auth_headers(api_key))
+    except httpx.HTTPError as e:
+        raise CustomException(msg=f"请求模型列表失败: {type(e).__name__}") from e
+    if response.status_code >= 400:
+        raise CustomException(msg=f"请求模型列表失败: HTTP {response.status_code}")
+    payload: dict[str, Any] = response.json() or {}
+    items = payload.get("data") or []
+    return [
+        {"id": str(item.get("id")), "owned_by": item.get("owned_by")}
+        for item in items
+        if isinstance(item, dict) and item.get("id")
+    ]
+
+
+async def probe_model_connection(base_url: str, api_key: str, model_id: str) -> dict[str, Any]:
+    """连通性测试：发一次最小 chat/completions 请求（max_tokens=1）。
+
+    返回:
+    - dict[str, Any]: {ok, model_id, latency_ms}
+
+    异常:
+    - CustomException: 接口不可达或返回非 2xx
+    """
+    url = f"{base_url.rstrip('/')}/chat/completions"
+    body = {"model": model_id, "messages": [{"role": "user", "content": "ping"}], "max_tokens": 1}
+    started = time.perf_counter()
+    try:
+        async with httpx.AsyncClient(timeout=_AI_PROBE_TIMEOUT) as client:
+            response = await client.post(url, headers=_ai_auth_headers(api_key), json=body)
+    except httpx.HTTPError as e:
+        raise CustomException(msg=f"连通性测试失败: {type(e).__name__}") from e
+    latency_ms = int((time.perf_counter() - started) * 1000)
+    if response.status_code >= 400:
+        raise CustomException(msg=f"连通性测试失败: HTTP {response.status_code}")
+    return {"ok": True, "model_id": model_id, "latency_ms": latency_ms}

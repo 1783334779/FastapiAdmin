@@ -18,13 +18,23 @@ from .schema import (
     AiChatResponseSchema,
     AiModelConfigListResponse,
     AiModelConfigSchema,
+    AiModelOptionSchema,
+    AiModelProbeSchema,
+    AiModelTestResultSchema,
+    AiModelTestSchema,
     ChatQuerySchema,
     ChatSessionCreateSchema,
     ChatSessionOutSchema,
     ChatSessionQueryParam,
     ChatSessionUpdateSchema,
 )
-from .service import AiModelConfigService, ChatService, get_user_model_config
+from .service import (
+    AiModelConfigService,
+    ChatService,
+    get_user_model_config,
+    probe_available_models,
+    probe_model_connection,
+)
 
 ChatRouter = APIRouter(route_class=OperationLogRoute, prefix="/chat", tags=["AI管理"])
 
@@ -176,6 +186,32 @@ async def activate_model_config_controller(
     service = AiModelConfigService(auth, redis)
     await service.set_active(config_id)
     return SuccessResponse(data=None, msg="已切换模型")
+
+
+@ChatRouter.post(
+    "/model/available",
+    summary="拉取接口可用模型列表（按填写中的接口与密钥，不落库）",
+    response_model=ResponseSchema[list[AiModelOptionSchema]],
+)
+async def list_available_models_controller(
+    auth: Annotated[AuthSchema, Security(AuthPermission(["module_ai:chat:update"]))],
+    data: Annotated[AiModelProbeSchema, Body(description="接口地址与密钥")],
+) -> JSONResponse:
+    result = await probe_available_models(data.base_url, data.api_key)
+    return SuccessResponse(data=result, msg="拉取模型列表成功")
+
+
+@ChatRouter.post(
+    "/model/test",
+    summary="测试 AI 接口连通性（按填写中的参数探测，不落库）",
+    response_model=ResponseSchema[AiModelTestResultSchema],
+)
+async def test_model_connection_controller(
+    auth: Annotated[AuthSchema, Security(AuthPermission(["module_ai:chat:update"]))],
+    data: Annotated[AiModelTestSchema, Body(description="接口地址、密钥与模型 ID")],
+) -> JSONResponse:
+    result = await probe_model_connection(data.base_url, data.api_key, data.model_id)
+    return SuccessResponse(data=result, msg="连通性测试通过")
 
 
 async def _send_error_and_close(websocket: WebSocket, message: str) -> None:
