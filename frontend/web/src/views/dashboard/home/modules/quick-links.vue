@@ -1,5 +1,8 @@
 <template>
-  <div class="fa-card p-5 pb-3 h-55 max-sm:h-55 flex flex-col relative overflow-hidden">
+  <div
+    v-if="quickLinks.length > 0"
+    class="fa-card p-5 pb-3 h-55 max-sm:h-55 flex flex-col relative overflow-hidden"
+  >
     <div class="fa-card-header">
       <div class="title">
         <h4>
