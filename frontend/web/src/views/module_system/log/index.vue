@@ -55,12 +55,11 @@
         <FaDialog
           v-model="opDialogVisible.visible"
           :title="opDialogVisible.title"
-          width="960px"
           dialog-class="crud-embed-dialog"
           modal-class="crud-embed-dialog"
           form-mode="detail"
           @close="handleOpCloseDialog"
-        >
+         size="xl">
           <FaDescriptions
             :column="8"
             :data="opFormData"
@@ -153,12 +152,11 @@
         <FaDialog
           v-model="loginDialogVisible.visible"
           :title="loginDialogVisible.title"
-          width="640px"
           dialog-class="crud-embed-dialog"
           modal-class="crud-embed-dialog"
           form-mode="detail"
           @close="handleLoginCloseDialog"
-        >
+         size="md">
           <FaDescriptions
             :column="4"
             :data="loginFormData"

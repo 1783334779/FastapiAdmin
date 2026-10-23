@@ -252,7 +252,7 @@
       </ElScrollbar>
     </ElCard>
 
-    <FaDialog v-model="consoleVisible" title="调度器控制台" width="900px">
+    <FaDialog v-model="consoleVisible" title="调度器控制台" size="xl">
       <div class="terminal-wrapper">
         <Terminal name="scheduler-console" :show-header="false" theme="dark" />
       </div>
@@ -311,7 +311,7 @@
       </div>
     </FaDrawer>
 
-    <FaDialog v-model="jobStateVisible" title="执行元数据" width="800px">
+    <FaDialog v-model="jobStateVisible" title="执行元数据" size="xl">
       <FaJsonPretty :value="jobStateData" height="400px" />
       <template #footer>
         <ElButton type="primary" @click="jobStateVisible = false">关闭</ElButton>
@@ -322,12 +322,11 @@
     <FaDialog
       v-model="modifyDialog.visible"
       :title="`修改任务 - ${modifyDialog.jobName}`"
-      width="480px"
       :confirm-loading="modifyDialog.loading"
       @confirm="handleModifyJob"
       @close="modifyDialog.visible = false"
-    >
-      <ElForm :model="modifyForm" label-width="100px" label-suffix=":">
+     size="sm">
+      <ElForm :model="modifyForm" label-width="96px" label-suffix=":">
         <ElFormItem label="任务名称">
           <ElInput v-model="modifyForm.name" placeholder="请输入任务名称" />
         </ElFormItem>
@@ -353,10 +352,9 @@
     <FaDialog
       v-model="logDetailDialog.visible"
       title="执行记录详情"
-      width="720px"
       form-mode="detail"
       @close="logDetailDialog.visible = false"
-    >
+     size="lg">
       <FaDescriptions
         :column="4"
         :data="logDetailFormData"

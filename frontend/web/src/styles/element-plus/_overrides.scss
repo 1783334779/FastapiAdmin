@@ -300,7 +300,12 @@ html.dark .el-card {
   border-radius: var(--fa-radius-sm, 8px) !important;
 
   // 按钮全局过渡
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition:
+    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 
   &.el-button--default {
     &:not(.is-circle) {
@@ -349,7 +354,12 @@ html.dark .el-card {
 .el-tag {
   font-weight: 500;
   border-radius: var(--fa-radius-xs, 6px) !important;
-  transition: all 0s !important;
+  transition:
+    background-color 0s,
+    border-color 0s,
+    color 0s,
+    box-shadow 0s,
+    transform 0s !important;
 
   &.el-tag--default {
     height: 26px !important;
@@ -445,7 +455,12 @@ html.dark .el-card {
   width: 30px;
   height: 30px;
   border-radius: 6px;
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
     color: var(--fa-gray-900) !important;
@@ -709,7 +724,12 @@ html.dark .el-card {
   }
 
   .el-switch__core {
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
@@ -870,7 +890,12 @@ html.dark .el-card {
   padding-top: 4px;
 
   .el-button {
-    transition: all 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
 
     &:hover {
       box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
@@ -1016,4 +1041,11 @@ html.dark .el-card {
 
 .el-popover.el-popper {
   border-color: var(--fa-border, #e6e8ec) !important;
+}
+
+@media (width <= 640px) {
+  .el-pagination__sizes,
+  .el-pagination__jump {
+    display: none !important;
+  }
 }

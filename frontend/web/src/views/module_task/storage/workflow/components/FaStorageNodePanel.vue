@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <ElDescriptions :column="1" size="small" border label-width="88px" class="node-info-desc">
+      <ElDescriptions :column="1" size="small" border label-width="96px" class="node-info-desc">
         <ElDescriptionsItem label="存储源ID">{{ node?.data?.source_id ?? "—" }}</ElDescriptionsItem>
         <ElDescriptionsItem label="协议">{{ protocolLabel }}</ElDescriptionsItem>
         <ElDescriptionsItem label="地址">

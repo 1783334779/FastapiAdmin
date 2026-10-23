@@ -314,14 +314,13 @@
     <FaDialog
       v-model="dialogVisible.visible"
       :title="dialogVisible.title"
-      width="680px"
       dialog-class="crud-embed-dialog"
       modal-class="crud-embed-dialog"
       :form-mode="dialogVisible.type"
       :confirm-loading="submitLoading"
       @cancel="handleCloseDialog"
       @confirm="handleSubmit"
-    >
+     size="md">
       <FaForm
         :key="formRenderKey"
         ref="dataFormRef"
@@ -329,7 +328,7 @@
         :items="formItems"
         :rules="rules"
         label-suffix=":"
-        :label-width="100"
+        :label-width="96"
         label-position="right"
         :span="24"
         :gutter="16"
@@ -343,14 +342,13 @@
     <FaDialog
       v-model="snippetDialogVisible.visible"
       :title="snippetDialogVisible.title"
-      width="560px"
       dialog-class="crud-embed-dialog"
       modal-class="crud-embed-dialog"
       :form-mode="snippetDialogVisible.type"
       :confirm-loading="snippetSubmitLoading"
       @cancel="handleSnippetClose"
       @confirm="handleSnippetSubmit"
-    >
+     size="sm">
       <FaForm
         :key="snippetFormRenderKey"
         ref="snippetFormRef"
@@ -358,7 +356,7 @@
         :items="snippetFormItems"
         :rules="snippetRules"
         label-suffix=":"
-        :label-width="90"
+        :label-width="96"
         label-position="right"
         :span="24"
         :gutter="16"

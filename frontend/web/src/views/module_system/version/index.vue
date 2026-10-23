@@ -44,7 +44,6 @@
     <FaDialog
       v-model="dialogVisible.visible"
       :title="dialogVisible.title"
-      width="1100px"
       dialog-class="crud-embed-dialog"
       modal-class="crud-embed-dialog"
       :form-mode="dialogVisible.type"
@@ -52,7 +51,7 @@
       @cancel="handleCloseDialog"
       @close="handleCloseDialog"
       @confirm="handleSubmit()"
-    >
+     size="xl">
       <template v-if="dialogVisible.type === 'detail'">
         <FaDescriptions
           :column="4"
@@ -87,7 +86,7 @@
           :items="versionDialogFormItems"
           :rules="rules"
           label-suffix=":"
-          :label-width="100"
+          :label-width="96"
           label-position="right"
           :span="24"
           :gutter="16"

@@ -328,7 +328,7 @@ const props = withDefaults(defineProps<Props>(), {
   span: 6,
   gutter: 12,
   labelPosition: "right",
-  labelWidth: "70px",
+  labelWidth: "96px",
   buttonLeftLimit: 2,
   showReset: false,
   showSubmit: false,

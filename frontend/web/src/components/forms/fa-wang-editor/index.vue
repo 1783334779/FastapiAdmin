@@ -61,7 +61,15 @@ const props = withDefaults(defineProps<Props>(), {
   height: "500px",
   mode: "default",
   placeholder: "请输入内容...",
-  excludeKeys: () => ["fontFamily"],
+  excludeKeys: () => [
+    "fontFamily",
+    "fullScreen",
+    "insertVideo",
+    "insertTable",
+    "codeBlock",
+    "todo",
+    "emotion",
+  ],
   isCustomUpload: false,
 });
 
@@ -92,10 +100,29 @@ const mergedUploadConfig = computed(() => ({
 const toolbarConfig = computed((): Partial<IToolbarConfig> => {
   const config: Partial<IToolbarConfig> = {};
 
-  // 完全自定义工具栏
-  if (props.toolbarKeys && props.toolbarKeys.length > 0) {
-    config.toolbarKeys = props.toolbarKeys;
-  }
+  // 工具栏白名单：只保留常用排版能力，避免一屏三行按钮
+  const DEFAULT_TOOLBAR_KEYS = [
+    "headerSelect",
+    "bold",
+    "italic",
+    "underline",
+    "through",
+    "color",
+    "bgColor",
+    "|",
+    "bulletedList",
+    "numberedList",
+    "blockquote",
+    "|",
+    "insertLink",
+    "group-image",
+    "|",
+    "undo",
+    "redo",
+    "clearStyle",
+  ];
+  config.toolbarKeys =
+    props.toolbarKeys && props.toolbarKeys.length > 0 ? props.toolbarKeys : DEFAULT_TOOLBAR_KEYS;
 
   // 插入新工具
   if (props.insertKeys) {

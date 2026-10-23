@@ -354,7 +354,7 @@
     "mobileLoginPending": "手机号登录接口暂未接入，仅供界面演示",
     "backToAccountLogin": "返回",
     "qrLogin": "扫码登录",
-    "qrLoginTitle": "欢迎回来 📱",
+    "qrLoginTitle": "扫码登录",
     "qrLoginSubTitle": "请用手机扫描二维码登录",
     "qrLoginHint": "扫码后点击「确认」，即可完成登录",
     "oauthNoticeTitle": "通知",

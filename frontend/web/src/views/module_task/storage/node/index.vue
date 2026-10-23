@@ -63,14 +63,13 @@
     <FaDialog
       v-model="dialogVisible.visible"
       :title="dialogVisible.title"
-      width="720px"
       dialog-class="crud-embed-dialog"
       modal-class="crud-embed-dialog"
       :form-mode="dialogVisible.type"
       :confirm-loading="submitLoading"
       @cancel="handleCloseDialog"
       @confirm="dialogVisible.type === 'detail' ? handleCloseDialog() : handleSubmit()"
-    >
+     size="lg">
       <template v-if="dialogVisible.type === 'detail'">
         <FaDescriptions
           :column="2"

@@ -4,10 +4,9 @@
     <FaDialog
       v-model="cropVisible"
       :title="cropDialogTitle"
-      width="960px"
       :draggable="false"
       @closed="onCropDialogClosed"
-    >
+     size="xl">
       <FaCutterImg
         v-if="cropVisible && cropSourceUrl"
         :key="cropSourceUrl"

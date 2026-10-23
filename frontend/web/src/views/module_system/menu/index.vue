@@ -114,7 +114,7 @@
           :items="menuDialogFormItems"
           :rules="rules"
           label-suffix=":"
-          :label-width="100"
+          :label-width="96"
           label-position="right"
           :span="12"
           :gutter="16"

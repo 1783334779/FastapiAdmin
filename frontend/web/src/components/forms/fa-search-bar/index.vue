@@ -160,6 +160,7 @@
 import { ArrowUpBold, ArrowDownBold, Refresh, Search } from "@element-plus/icons-vue";
 import { useWindowSize, onKeyStroke } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 import { type Component } from "vue";
 import FaDatePicker from "@/components/forms/fa-search-bar/FaDatePicker.vue";
 import FaUserTableSelect from "./FaUserTableSelect.vue";
@@ -346,9 +347,32 @@ const getProps = getPropsShared;
 const getSlots = getSlotsShared;
 
 /**
- * 是否展开状态
+ * 是否展开状态：按路由记忆用户选择，刷新/切回后保持
  */
-const isExpanded = ref(props.defaultExpanded);
+const route = useRoute();
+const expandedStorageKey = computed(() => `fa:search-expanded:${route.path}`);
+const readStoredExpanded = (): boolean | null => {
+  if (!props.showExpand || props.isExpand) return null;
+  try {
+    const v = localStorage.getItem(expandedStorageKey.value);
+    return v === "1" ? true : v === "0" ? false : null;
+  } catch {
+    return null;
+  }
+};
+const isExpanded = ref(readStoredExpanded() ?? props.defaultExpanded);
+watch(isExpanded, (v) => {
+  if (!props.showExpand || props.isExpand) return;
+  try {
+    localStorage.setItem(expandedStorageKey.value, v ? "1" : "0");
+  } catch {
+    // 隐私模式忽略
+  }
+});
+watch(expandedStorageKey, () => {
+  const stored = readStoredExpanded();
+  if (stored !== null) isExpanded.value = stored;
+});
 
 // 当外部控制 isExpand 为 true 时，同步内部展开状态
 watch(

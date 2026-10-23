@@ -20,7 +20,7 @@
       <FaForm
         v-model="formData"
         :items="edgeFormItems"
-        label-width="80px"
+        label-width="96px"
         size="small"
         label-position="right"
         :span="24"

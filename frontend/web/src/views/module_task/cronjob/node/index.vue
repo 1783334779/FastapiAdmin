@@ -57,10 +57,9 @@
     <FaDialog
       v-model="dialogVisible.visible"
       :title="dialogVisible.title"
-      width="1000px"
       @close="handleCloseDialog"
       @opened="handleDialogOpened"
-    >
+     size="xl">
       <ElSplitter direction="horizontal" :style="'height: 500px'">
         <ElSplitterPanel size="300px" :min="200" :max="400">
           <ElScrollbar :style="'height: 100%'">
@@ -71,7 +70,7 @@
               :items="nodeDialogFormItems"
               :rules="rules"
               label-suffix=":"
-              label-width="85px"
+              label-width="96px"
               :span="24"
               :gutter="16"
               :show-reset="false"

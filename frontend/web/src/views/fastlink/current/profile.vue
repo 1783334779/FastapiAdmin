@@ -136,10 +136,9 @@
       <FaDialog
         v-model="avatarCropVisible"
         title="裁剪头像"
-        width="960px"
         :draggable="false"
         @closed="onAvatarCropDialogClosed"
-      >
+       size="xl">
         <FaCutterImg
           v-if="avatarCropVisible && avatarCropSrc"
           :key="avatarCropSrc"
@@ -169,7 +168,7 @@
             :model="infoFormState"
             class="box-border p-5 [&>.el-row_.el-form-item]:w-[calc(50%-10px)] [&>.el-row_.el-input]:w-full [&>.el-row_.el-select]:w-full"
             :rules="rules"
-            label-width="86px"
+            label-width="96px"
             label-position="top"
           >
             <ElRow>
@@ -285,7 +284,7 @@
             :model="passwordFormState"
             class="box-border p-5"
             :rules="resetPasswordRules"
-            label-width="86px"
+            label-width="96px"
             label-position="top"
           >
             <ElFormItem label="当前密码" prop="old_password">

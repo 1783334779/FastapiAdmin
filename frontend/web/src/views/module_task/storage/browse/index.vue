@@ -414,12 +414,11 @@
       <FaDialog
         v-model="addDialogVisible"
         title="打开节点"
-        width="420px"
         form-mode="create"
         confirm-text="打开"
         @cancel="addDialogVisible = false"
         @confirm="confirmAdd"
-      >
+       size="sm">
         <el-select v-model="newNodeId" placeholder="选择要打开的节点" filterable class="w-full">
           <el-option
             v-for="n in nodes"
@@ -435,10 +434,9 @@
       <FaDialog
         v-model="shareDialog.visible"
         title="分享文件"
-        width="480px"
         :close-on-click-modal="false"
         @close="shareDialog.visible = false"
-      >
+       size="sm">
         <div class="inline-flex items-center gap-2">
           <span class="text-[13px] text-[#909399]">有效期</span>
           <el-radio-group v-model="shareDialog.expireSeconds">
@@ -470,13 +468,12 @@
       <FaDialog
         v-model="dirPicker.visible"
         :title="dirPicker.mode === 'copy' ? '复制到' : '移动到'"
-        width="480px"
         :close-on-click-modal="false"
         form-mode="create"
         :confirm-text="dirPicker.mode === 'copy' ? '复制' : '移动'"
         @cancel="dirPicker.visible = false"
         @confirm="confirmPickDir"
-      >
+       size="sm">
         <div class="mb-2 inline-flex w-full items-center gap-2">
           <span class="text-[13px] text-[#909399]">目标目录</span>
           <div
@@ -527,8 +524,8 @@
       </FaDialog>
 
       <!-- 传输到：选中文件/目录 → 其他存储源 -->
-      <FaDialog v-model="transferVisible" title="传输到其他存储" width="480px" top="12vh">
-        <FaForm v-model="transferForm" :items="transferFormItems" label-width="88px" :span="24" />
+      <FaDialog v-model="transferVisible" title="传输到其他存储" top="12vh" size="sm">
+        <FaForm v-model="transferForm" :items="transferFormItems" label-width="96px" :span="24" />
         <p class="mt-2 text-xs leading-relaxed text-(--el-text-color-secondary)">
           将创建 {{ selectedRows.length }} 个传输任务：选中的文件 /
           目录依次传输到目标存储源的指定目录。

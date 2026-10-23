@@ -157,14 +157,13 @@
       <FaDialog
         v-model="dialogVisible"
         :title="form.id ? '编辑模型' : '新增模型'"
-        width="520px"
         :close-on-click-modal="false"
-      >
+       size="sm">
         <ElForm
           ref="formRef"
           :model="form"
           :rules="rules"
-          label-width="100px"
+          label-width="96px"
           label-position="right"
           @submit.prevent="handleSave"
         >

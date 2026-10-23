@@ -40,6 +40,11 @@
                 </ElDescriptionsItem>
               </ElDescriptions>
             </div>
+            <div class="server-legend">
+              <span class="server-legend__item"><i class="ok"></i>正常 &lt;60%</span>
+              <span class="server-legend__item"><i class="warn"></i>警告 60–80%</span>
+              <span class="server-legend__item"><i class="danger"></i>危险 &gt;80%</span>
+            </div>
           </div>
         </ElCard>
       </ElCol>
@@ -82,6 +87,11 @@
                   {{ server.py?.memory_usage ? server.py.memory_usage.toFixed(1) + "%" : "-" }}
                 </ElDescriptionsItem>
               </ElDescriptions>
+            </div>
+            <div class="server-legend">
+              <span class="server-legend__item"><i class="ok"></i>正常 &lt;60%</span>
+              <span class="server-legend__item"><i class="warn"></i>警告 60–80%</span>
+              <span class="server-legend__item"><i class="danger"></i>危险 &gt;80%</span>
             </div>
           </div>
         </ElCard>
@@ -222,3 +232,33 @@ async function fetchServerInfo() {
 
 onMounted(fetchServerInfo);
 </script>
+
+<style scoped>
+.server-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+.server-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.server-legend__item i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.server-legend__item .ok {
+  background: var(--el-color-success);
+}
+.server-legend__item .warn {
+  background: var(--el-color-warning);
+}
+.server-legend__item .danger {
+  background: var(--el-color-danger);
+}
+</style>

@@ -86,8 +86,8 @@
 
 /* 悬浮卡片：玻璃拟态，圆角透明 */
 .login-auth-split--center .auth-right-wrap {
-  width: min(480px, calc(100vw - 2rem)) !important;
-  max-width: min(480px, calc(100vw - 2rem));
+  width: min(440px, calc(100vw - 2rem)) !important;
+  max-width: min(440px, calc(100vw - 2rem));
   height: auto;
   max-height: calc(100dvh - 8rem);
   padding: 1.25rem 1.75rem;
@@ -163,8 +163,8 @@ html.dark .login-page-footer--floating-layout {
 
   /* 窄屏横排切竖排：恢复插画；居中模式本身无插画，不受影响 */
   .login-auth-split--center .auth-right-wrap {
-    width: min(420px, calc(100vw - 1.5rem)) !important;
-    max-width: min(420px, calc(100vw - 1.5rem));
+    width: min(440px, calc(100vw - 1.5rem)) !important;
+    max-width: min(440px, calc(100vw - 1.5rem));
     max-height: calc(100dvh - 6rem);
   }
 }

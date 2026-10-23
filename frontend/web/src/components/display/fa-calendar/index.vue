@@ -29,7 +29,7 @@
     </ElCalendar>
 
     <ElDialog v-model="dialogVisible" :title="dialogTitle" width="600px" @closed="resetForm">
-      <ElForm :model="eventForm" label-width="80px">
+      <ElForm :model="eventForm" label-width="96px">
         <ElFormItem label="活动标题" required>
           <ElInput v-model="eventForm.content" placeholder="请输入活动标题" />
         </ElFormItem>

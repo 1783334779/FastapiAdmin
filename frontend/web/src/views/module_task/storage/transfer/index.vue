@@ -156,19 +156,18 @@
     <FaDialog
       v-model="createVisible"
       title="新建传输任务"
-      width="640px"
       form-mode="create"
       confirm-text="开始传输"
       :confirm-loading="submitting"
       @cancel="createVisible = false"
       @confirm="submit"
-    >
+     size="md">
       <FaForm
         ref="formRef"
         v-model="form"
         :items="createFormItems"
         :rules="formRules"
-        label-width="86px"
+        label-width="96px"
         :span="24"
         scrollbar
         max-height="70vh"
@@ -261,10 +260,9 @@
     <FaDialog
       v-model="detailVisible"
       title="传输任务详情"
-      width="920px"
       form-mode="detail"
       @close="detailVisible = false"
-    >
+     size="xl">
       <template v-if="detailRow">
         <FaDescriptions
           :column="2"

@@ -2,11 +2,10 @@
   <FaDialog
     :model-value="visible"
     :title="title || `文件浏览 · ${sourceName || '存储源'}`"
-    width="720px"
     top="8vh"
     append-to-body
     @close="handleClose"
-  >
+   size="lg">
     <div class="mb-3 flex items-center gap-2">
       <ElBreadcrumb separator="/" class="flex-1 min-w-0">
         <ElBreadcrumbItem>

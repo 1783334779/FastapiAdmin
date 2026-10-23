@@ -165,7 +165,6 @@
     <FaDialog
       v-model="dialogVisible.visible"
       :title="dialogVisible.title"
-      width="900px"
       dialog-class="crud-embed-dialog"
       modal-class="crud-embed-dialog"
       :form-mode="dialogVisible.type"
@@ -173,7 +172,7 @@
       @cancel="handleCloseDialog"
       @close="handleCloseDialog"
       @confirm="handleDialogConfirm"
-    >
+     size="xl">
       <template v-if="dialogVisible.type === 'detail'">
         <ElScrollbar max-height="65vh">
           <FaDescriptions
@@ -296,7 +295,7 @@
           :items="ticketDialogFormItems"
           :rules="rules"
           label-suffix=":"
-          :label-width="100"
+          :label-width="96"
           label-position="right"
           :span="24"
           :gutter="16"

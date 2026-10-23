@@ -493,7 +493,7 @@ watch(menuOpen, (isMenuOpen: boolean) => {
         bottom: 0;
         left: -4px;
         margin: auto;
-        transition: all 0.3s;
+        transition: background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
       }
     }
   }
