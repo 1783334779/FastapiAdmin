@@ -1,5 +1,5 @@
 <template>
-  <div class="page-content border-0! bg-transparent! min-h-screen flex items-center justify-center">
+  <div class="page-content exception-page border-0! min-h-screen flex items-center justify-center">
     <div class="flex items-center justify-center max-md:block! max-md:text-center">
       <FaThemeSvg :src="data.imgUrl" size="100%" class="w-100!" />
       <div class="ml-15 w-75 max-md:mx-auto max-md:mt-10 max-md:w-full max-md:text-center">
@@ -11,6 +11,13 @@
     </div>
   </div>
 </template>
+
+<style scoped lang="scss">
+.exception-page {
+  background: var(--default-bg-color);
+  color: var(--el-text-color-primary);
+}
+</style>
 
 <script setup lang="ts">
 import { useCommon } from "@/hooks/core/useCommon";

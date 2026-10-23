@@ -31,10 +31,12 @@
   --el-component-size: var(--el-component-custom-height) !important;
 
   // ── 圆角 ──
-  --el-border-radius-base: calc(var(--custom-radius) / 3 + 2px) !important;
-  --el-border-radius-small: calc(var(--custom-radius) / 3 + 4px) !important;
-  --el-messagebox-border-radius: calc(var(--custom-radius) / 3 + 4px) !important;
-  --el-popover-border-radius: calc(var(--custom-radius) / 3 + 4px) !important;
+  --el-border-radius-base: var(--fa-radius-sm, 8px) !important;
+  --el-border-radius-small: var(--fa-radius-xs, 6px) !important;
+  --el-border-radius-round: 20px !important;
+  --el-messagebox-border-radius: var(--fa-radius-lg, 16px) !important;
+  --el-popover-border-radius: var(--fa-radius-md, 12px) !important;
+  --el-dialog-border-radius: var(--fa-radius-lg, 16px) !important;
 
   .region .el-radio-button__original-radio:checked + .el-radio-button__inner {
     color: var(--theme-color);
@@ -115,22 +117,20 @@ html.dark .el-card {
 .el-pagination.is-background .btn-next,
 .el-pagination.is-background .btn-prev,
 .el-pagination.is-background .el-pager li {
-  border-radius: 6px;
+  border-radius: var(--fa-radius-sm, 8px);
 }
 
 .el-popover {
   min-width: 80px;
-  border-radius: var(--el-border-radius-small) !important;
+  border-radius: var(--fa-radius-md, 12px) !important;
 }
 
 // ── Dialog 优化 ──
 .el-dialog {
   overflow: hidden;
-  border-radius: calc(var(--custom-radius) / 1.2 + 2px) !important;
+  border-radius: var(--fa-radius-lg, 16px) !important;
   // 添加柔和的阴影层次感
-  box-shadow:
-    0 6px 30px rgb(0 0 0 / 8%),
-    0 2px 8px rgb(0 0 0 / 4%) !important;
+  box-shadow: var(--fa-shadow-modal, 0 24px 64px rgb(16 24 40 / 18%)) !important;
 
   .el-dialog__header {
     padding: 16px 20px 8px !important;
@@ -239,14 +239,12 @@ html.dark .el-card {
 .el-dropdown-menu {
   padding: 6px !important;
   border: none !important;
-  border-radius: 10px !important;
-  box-shadow:
-    0 4px 16px rgb(0 0 0 / 8%),
-    0 2px 8px rgb(0 0 0 / 4%) !important;
+  border-radius: var(--fa-radius-md, 12px) !important;
+  box-shadow: var(--fa-shadow-pop, 0 4px 16px rgb(16 24 40 / 8%)) !important;
 
   .el-dropdown-menu__item {
     padding: 6px 16px !important;
-    border-radius: 6px !important;
+    border-radius: var(--fa-radius-sm, 8px) !important;
 
     &:hover:not(.is-disabled) {
       color: var(--fa-gray-900) !important;
@@ -299,6 +297,8 @@ html.dark .el-card {
 
 // 修改el-button样式
 .el-button {
+  border-radius: var(--fa-radius-sm, 8px) !important;
+
   // 按钮全局过渡
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
 
@@ -348,7 +348,7 @@ html.dark .el-card {
 // 修改el-tag样式
 .el-tag {
   font-weight: 500;
-  border-radius: 4px !important;
+  border-radius: var(--fa-radius-xs, 6px) !important;
   transition: all 0s !important;
 
   &.el-tag--default {
@@ -358,7 +358,7 @@ html.dark .el-card {
   &.el-tag--small {
     height: 22px !important;
     padding: 0 6px !important;
-    font-size: 11px !important;
+    font-size: 12px !important;
     line-height: 22px !important;
   }
 
@@ -737,7 +737,7 @@ html.dark .el-card {
 
 // ── ElCard 卡片优化 ──
 .el-card {
-  --el-card-border-radius: calc(var(--custom-radius) + 2px);
+  --el-card-border-radius: var(--fa-radius-md, 12px) !important;
 
   border: 1px solid var(--fa-card-border);
   transition:
@@ -877,4 +877,143 @@ html.dark .el-card {
       transform: translateY(-2px);
     }
   }
+}
+
+// ============================================================
+// 阶段 0 基线：舒适密度（44px 行高）+ 键盘焦点可见
+// ============================================================
+.el-table {
+  th.el-table__cell {
+    height: 40px;
+  }
+
+  td.el-table__cell {
+    height: 44px;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--el-color-primary);
+  outline-offset: 2px;
+}
+
+// ============================================================
+// 原生 EP 组件圆角加固
+// EP 组件样式按需加载，可能晚于本文件注入；用 !important 保证 token 生效
+// ============================================================
+:root {
+  --el-card-border-radius: var(--fa-radius-md, 12px) !important;
+  --el-dialog-border-radius: var(--fa-radius-lg, 16px) !important;
+  --el-messagebox-border-radius: var(--fa-radius-lg, 16px) !important;
+  --el-popover-border-radius: var(--fa-radius-md, 12px) !important;
+  --el-notification-border-radius: var(--fa-radius-lg, 16px) !important;
+  --el-message-border-radius: var(--fa-radius-sm, 8px) !important;
+}
+
+// 输入类控件
+.el-input__wrapper,
+.el-textarea__inner,
+.el-select__wrapper,
+.el-input-number,
+.el-segmented,
+.el-upload-dragger,
+.el-alert {
+  border-radius: var(--fa-radius-sm, 8px) !important;
+}
+
+// 浮层 / 面板类
+.el-table-filter,
+.el-picker-panel,
+.el-date-picker,
+.el-select-dropdown,
+.el-cascader__dropdown,
+.el-time-panel,
+.el-dropdown__popper,
+.el-popconfirm {
+  border-radius: var(--fa-radius-md, 12px) !important;
+}
+
+.el-message-box {
+  border-radius: var(--fa-radius-lg, 16px) !important;
+}
+
+.el-message {
+  border-radius: var(--fa-radius-sm, 8px) !important;
+}
+
+// ============================================================
+// 圆角容器裁切：Splitter 的子面板是方角，父级圆角时需要裁切，
+// 否则四角会露出方角底色，看起来发糊。
+// 只做裁切，不改圆角值，避免影响无圆角的整页 Splitter。
+// ============================================================
+.el-splitter {
+  overflow: hidden;
+}
+
+// ============================================================
+// 边框 token：EP 默认 #dcdfe6 / #e6eaeb / #ebf0f5 / #e4e7ed 四种灰，
+// 统一到 --fa-border（浅 #e6e8ec / 深 #262b34），随主题切换
+// ============================================================
+:root {
+  --el-border-color: var(--fa-border, #e6e8ec) !important;
+  --el-border-color-light: var(--fa-border, #e6e8ec) !important;
+  --el-border-color-lighter: var(--fa-border-subtle, #eef0f3) !important;
+  --el-border-color-extra-light: var(--fa-border-subtle, #eef0f3) !important;
+  --el-border-color-dark: var(--fa-border, #e6e8ec) !important;
+  --el-border-color-darker: var(--fa-border, #e6e8ec) !important;
+  --el-border-color-hover: var(--fa-text-3, #6b7280) !important;
+  --el-input-border-color: var(--fa-border, #e6e8ec) !important;
+  --el-table-border-color: var(--fa-border-subtle, #eef0f3) !important;
+  --el-table-border: 1px solid var(--fa-border-subtle, #eef0f3) !important;
+}
+
+// 输入类组件在组件级定义 --el-input-border-color，需在 wrapper 上覆盖
+.el-input__wrapper,
+.el-select__wrapper,
+.el-textarea__inner {
+  --el-input-border-color: var(--fa-border, #e6e8ec) !important;
+}
+
+// ============================================================
+// 字号层级：micro(图表/日历 10–11) / 12 / 13 / 14 / 16 / 20
+// EP 组件统一走 base=14、small=12
+// ============================================================
+:root {
+  --el-font-size-extra-large: 20px !important;
+  --el-font-size-large: 16px !important;
+  --el-font-size-medium: 14px !important;
+  --el-font-size-base: 14px !important;
+  --el-font-size-small: 12px !important;
+  --el-font-size-extra-small: 12px !important;
+}
+
+// 分页按钮边框 / 开关圆角跟随 token
+.el-pagination .btn-prev,
+.el-pagination .btn-next,
+.el-pagination .el-pager li {
+  border-color: var(--fa-border, #e6e8ec) !important;
+}
+
+.el-switch__core {
+  border-radius: var(--fa-radius-pill, 999px) !important;
+}
+
+// 标签页「+」按钮 / EP 全局阴影 token
+.el-tabs__new-tab {
+  border-radius: var(--fa-radius-xs, 6px) !important;
+}
+
+:root {
+  --el-box-shadow-light: var(--fa-shadow-pop, 0 4px 16px rgb(16 24 40 / 8%)) !important;
+  --el-box-shadow: var(--fa-shadow-pop, 0 4px 16px rgb(16 24 40 / 8%)) !important;
+  --el-box-shadow-dark: var(--fa-shadow-modal, 0 24px 64px rgb(16 24 40 / 18%)) !important;
+}
+
+// 气泡/提示边框跟随 token
+:root {
+  --el-popover-border-color: var(--fa-border, #e6e8ec) !important;
+}
+
+.el-popover.el-popper {
+  border-color: var(--fa-border, #e6e8ec) !important;
 }

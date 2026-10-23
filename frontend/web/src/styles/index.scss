@@ -11,6 +11,7 @@
 
 // ---------- core/ ----------
 @use "./core/reset";
+@use "./core/tokens";
 @use "./core/nprogress";
 @use "./core/box-mode";
 @use "./core/app";

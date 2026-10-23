@@ -214,7 +214,7 @@ function generateMeteors(count: number): Meteor[] {
   padding: 0 2rem;
   overflow: hidden;
   color: white;
-  border-radius: calc(var(--custom-radius) + 2px) !important;
+  border-radius: var(--fa-radius-lg, 16px) !important;
 
   &__content {
     position: relative;
@@ -231,7 +231,7 @@ function generateMeteors(count: number): Meteor[] {
     position: relative;
     z-index: 10;
     margin: 0 0 1.5rem;
-    font-size: 0.9rem;
+    font-size: 14px;
     opacity: 0.9;
   }
 

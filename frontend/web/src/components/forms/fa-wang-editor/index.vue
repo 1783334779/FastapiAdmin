@@ -281,7 +281,7 @@ $box-radius: calc(var(--custom-radius) / 3 + 2px);
 .editor-wrapper {
   width: 100%;
   height: 100%;
-  border: 1px solid var(--fa-gray-300);
+  border: 1px solid var(--fa-border, #e6e8ec);
   border-radius: $box-radius !important;
 
   .w-e-bar {
@@ -314,7 +314,7 @@ $box-radius: calc(var(--custom-radius) / 3 + 2px);
   /* 下拉选择框元素配置 */
   .w-e-select-list ul li {
     margin-top: 5px;
-    font-size: 15px !important;
+    font-size: 16px !important;
     border-radius: $box-radius;
   }
 

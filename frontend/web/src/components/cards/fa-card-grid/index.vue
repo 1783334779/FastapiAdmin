@@ -62,12 +62,9 @@
         </ElRow>
       </div>
 
-      <!-- 空状态 -->
-      <ElEmpty v-else :description="emptyText" :image-size="emptyImageSize">
-        <template v-if="$slots.empty" #default>
-          <slot name="empty" />
-        </template>
-      </ElEmpty>
+      <!-- 空状态：有 #empty 插槽时整块替换，避免叠加默认 ElEmpty -->
+      <slot v-if="$slots.empty" name="empty" />
+      <FaEmptyState v-else icon="ri:inbox-line" :title="emptyText" />
     </ElScrollbar>
 
     <!-- 分页 -->
@@ -86,15 +83,7 @@
 
 <script setup lang="ts" generic="T extends Record<string, any>">
 import { computed } from "vue";
-import {
-  ElCard,
-  ElRow,
-  ElCol,
-  ElEmpty,
-  ElSkeleton,
-  ElSkeletonItem,
-  ElScrollbar,
-} from "element-plus";
+import { ElCard, ElRow, ElCol, ElSkeleton, ElSkeletonItem, ElScrollbar } from "element-plus";
 import FaPagination from "@/components/tables/fa-pagination/index.vue";
 
 defineOptions({ name: "FaCardGrid" });

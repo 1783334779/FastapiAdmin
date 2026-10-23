@@ -88,7 +88,7 @@
   min-width: 0;
   min-height: 0;
   margin-top: 12px;
-  border-radius: calc(var(--custom-radius) / 2 + 2px) !important;
+  border-radius: var(--fa-radius-md, 12px) !important;
 
   .el-card__body {
     display: flex;
@@ -188,7 +188,7 @@
   color: #fff;
   text-align: center;
   background: #fd4e4e;
-  border-radius: 4px;
+  border-radius: var(--fa-radius-xs, 6px);
 }
 
 @keyframes breathe {
@@ -260,21 +260,52 @@
   color: var(--fa-gray-500);
 
   .fa-empty-state__icon {
-    margin-bottom: 16px;
-    font-size: 48px;
-    opacity: 0.5;
+    margin-bottom: var(--fa-space-4, 16px);
+    font-size: var(--fa-empty-size, 60px);
+    color: var(--el-color-primary);
+    opacity: 0.9;
   }
 
   .fa-empty-state__title {
-    margin-bottom: 8px;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--fa-gray-600);
+    margin-bottom: var(--fa-space-2, 8px);
+    font-size: var(--fa-font-md, 14px);
+    font-weight: 600;
+    color: var(--el-text-color-primary);
   }
 
   .fa-empty-state__desc {
-    font-size: 13px;
-    color: var(--fa-gray-500);
+    font-size: var(--fa-font-sm, 12px);
+    color: var(--el-text-color-secondary);
+  }
+
+  .fa-empty-state__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  &.fa-empty-state--compact {
+    min-height: 120px;
+    padding: 16px 12px;
+
+    .fa-empty-state__icon {
+      margin-bottom: 8px;
+      font-size: 32px;
+    }
+
+    .fa-empty-state__title {
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .fa-empty-state__desc {
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .fa-empty-state__actions {
+      margin-top: 10px;
+    }
   }
 }
 

@@ -5,22 +5,18 @@
 // ─────────────────────────────────────────────────────────────────────
 
 :root {
-  --fa-radius-sm: calc(var(--custom-radius, 12px) + 2px);
-  --fa-radius-md: calc(var(--custom-radius, 12px) + 4px);
-  --fa-font-size-sm: 12px;
-  --fa-font-size-md: 13px;
-  --fa-font-size-title: 14px;
-  --fa-font-mono: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
-  --fa-terminal-bg: #1e1e1e;
-  --fa-terminal-fg: #d4d4d4;
-  --fa-empty-size: 60px;
+  --fa-font-size-sm: var(--fa-font-sm, 12px);
+  --fa-font-size-md: var(--fa-font-md, 14px);
+  --fa-font-size-title: var(--fa-font-md, 14px);
 }
 
 // 面板头（左右栏卡片顶部那一行）
 .fa-panel-header {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+  align-items: center;
+  min-width: 0;
   padding: 8px 12px;
   border-bottom: 1px solid var(--el-border-color-lighter);
 }
@@ -47,12 +43,12 @@
 // 列表项（连接 / 主机 / 表名），统一样式与交互
 .fa-list-item {
   display: flex;
-  align-items: center;
   gap: 8px;
+  align-items: center;
   padding: 8px 10px;
   margin-bottom: 2px;
-  border-radius: var(--fa-radius-sm);
   cursor: pointer;
+  border-radius: var(--fa-radius-sm);
   transition: background-color 0.15s;
 
   &:hover {
@@ -69,18 +65,18 @@
 }
 
 .fa-list-item__title {
-  font-size: var(--fa-font-size-md);
-  line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: var(--fa-font-size-md);
+  line-height: 1.4;
   white-space: nowrap;
 }
 
 .fa-list-item__meta {
-  font-size: var(--fa-font-size-sm);
-  color: var(--el-text-color-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: var(--fa-font-size-sm);
+  color: var(--el-text-color-secondary);
   white-space: nowrap;
 }
 
@@ -98,10 +94,10 @@
 
 // 状态点
 .fa-status-dot {
+  flex-shrink: 0;
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  flex-shrink: 0;
 }
 
 // 等宽文本 / 等宽输入框
@@ -114,15 +110,15 @@
 
 // 终端输出区
 .fa-terminal {
-  margin: 0;
   padding: 12px;
-  border-radius: var(--fa-radius-md);
-  background: var(--fa-terminal-bg);
-  color: var(--fa-terminal-fg);
+  margin: 0;
   font-family: var(--fa-font-mono);
   font-size: var(--fa-font-size-sm);
   line-height: 1.55;
+  color: var(--fa-terminal-fg);
   white-space: pre-wrap;
+  background: var(--fa-terminal-bg);
+  border-radius: var(--fa-radius-md);
 }
 
 // 卡片块（批量执行结果 / 命令片段等）
@@ -135,14 +131,20 @@
 
 .fa-block-card__output {
   max-height: 208px;
-  margin: 6px 0 0;
   padding: 8px;
+  margin: 6px 0 0;
   overflow: auto;
-  border-radius: calc(var(--fa-radius-sm) - 4px);
-  background: var(--fa-terminal-bg);
-  color: var(--fa-terminal-fg);
   font-family: var(--fa-font-mono);
   font-size: var(--fa-font-size-sm);
   line-height: 1.5;
+  color: var(--fa-terminal-fg);
   white-space: pre-wrap;
+  background: var(--fa-terminal-bg);
+  border-radius: var(--fa-radius-xs, 6px);
+}
+
+// 工具栏里的短标签不换行（窄屏时整块折行，而不是逐字竖排）
+.fa-panel-header .fa-hint,
+.fa-panel-header .fa-panel-title {
+  white-space: nowrap;
 }

@@ -19,7 +19,6 @@
           v-if="permImport"
           v-hasPerm="permImport"
           v-ripple
-          type="success"
           :loading="importLoading"
           :icon="Upload"
           @click="$emit('import')"
@@ -31,7 +30,6 @@
           v-if="permExport"
           v-hasPerm="permExport"
           v-ripple
-          type="warning"
           :loading="exportLoading"
           :icon="Download"
           @click="$emit('export')"
@@ -58,7 +56,7 @@
           type="info"
           :disabled="removeIds.length === 0 || deleteLoading || moreLoading"
         >
-          <ElButton type="info" plain :loading="moreLoading">
+          <ElButton :loading="moreLoading">
             更多
             <ElIcon class="el-icon--right">
               <ArrowDown />

@@ -852,7 +852,7 @@ watch(
   border: 1px solid color-mix(in srgb, var(--fa-card-border) 80%, transparent) !important;
 
   /* 卡片模式圆角不要半圆：与默认一致 */
-  border-radius: calc(var(--custom-radius) / 2.5 + 2px) !important;
+  border-radius: var(--fa-radius-sm, 8px) !important;
   box-shadow:
     0 1px 2px rgb(0 0 0 / 5%),
     inset 0 1px 0 rgb(255 255 255 / 45%);
