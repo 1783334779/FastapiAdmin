@@ -5,7 +5,8 @@
       <!-- 左：主机列表 -->
       <ElCard
         shadow="hover"
-        class="fa-card flex w-[280px] shrink-0 flex-col"
+        class="fa-card flex shrink-0 flex-col"
+        style="width: clamp(240px, 20vw, 300px)"
         body-class="flex min-h-0 flex-1 flex-col p-0"
       >
         <div class="flex h-full min-h-0 flex-col">
@@ -320,7 +321,8 @@
       :confirm-loading="submitLoading"
       @cancel="handleCloseDialog"
       @confirm="handleSubmit"
-     size="md">
+      size="md"
+    >
       <FaForm
         :key="formRenderKey"
         ref="dataFormRef"
@@ -348,7 +350,8 @@
       :confirm-loading="snippetSubmitLoading"
       @cancel="handleSnippetClose"
       @confirm="handleSnippetSubmit"
-     size="sm">
+      size="sm"
+    >
       <FaForm
         :key="snippetFormRenderKey"
         ref="snippetFormRef"

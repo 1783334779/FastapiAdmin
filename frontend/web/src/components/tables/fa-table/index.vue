@@ -608,6 +608,16 @@ const cleanBodyColumnProps = (col: ColumnOption) => {
   if (isOpCol && isMobile.value) {
     columnProps.width = 80;
   }
+  // 普通文本列默认省略 + 悬停显示完整内容（状态/格式化/操作列除外）
+  if (
+    columnProps.showOverflowTooltip === undefined &&
+    !isOpCol &&
+    !col.formatter &&
+    !col.status &&
+    !col.type
+  ) {
+    columnProps.showOverflowTooltip = true;
+  }
   // 创建人 / 更新人列：自动生成表头筛选选项，无需调用方手写 filters
   if (isPersonFilterColumn(col)) {
     columnProps.filters = getColumnFilterOptions(col);
