@@ -34,6 +34,7 @@
           v-model.trim="loginForm.username"
           clearable
           :placeholder="$t('login.placeholder.username')"
+          :aria-label="$t('login.placeholder.username')"
         >
           <template #prefix>
             <ElIcon><User /></ElIcon>
@@ -52,6 +53,7 @@
             clearable
             :placeholder="$t('login.placeholder.password')"
             @keyup="onPasswordKeyup"
+            :aria-label="$t('login.placeholder.password')"
           >
             <template #prefix>
               <ElIcon><Lock /></ElIcon>

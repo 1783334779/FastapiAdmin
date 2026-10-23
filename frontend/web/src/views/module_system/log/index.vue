@@ -59,7 +59,8 @@
           modal-class="crud-embed-dialog"
           form-mode="detail"
           @close="handleOpCloseDialog"
-         size="xl">
+          size="xl"
+        >
           <FaDescriptions
             :column="8"
             :data="opFormData"
@@ -156,7 +157,8 @@
           modal-class="crud-embed-dialog"
           form-mode="detail"
           @close="handleLoginCloseDialog"
-         size="md">
+          size="md"
+        >
           <FaDescriptions
             :column="4"
             :data="loginFormData"

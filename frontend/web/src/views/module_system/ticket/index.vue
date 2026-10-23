@@ -272,6 +272,7 @@
                 placeholder="输入评论内容..."
                 :disabled="commentSubmitting"
                 resize="none"
+                aria-label="输入评论内容..."
               />
               <ElButton
                 type="primary"

@@ -8,6 +8,7 @@
         placeholder="部门名称"
         size="small"
         clearable
+        aria-label="部门名称"
       >
         <template #prefix>
           <ElIcon class="text-(--el-text-color-placeholder)">

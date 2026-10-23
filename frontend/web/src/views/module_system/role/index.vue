@@ -64,7 +64,8 @@
       :confirm-loading="submitLoading"
       @cancel="handleCloseDialog"
       @confirm="dialogVisible.type === 'detail' ? handleCloseDialog() : handleSubmit()"
-     size="md">
+      size="md"
+    >
       <template v-if="dialogVisible.type === 'detail'">
         <FaDescriptions
           :column="4"

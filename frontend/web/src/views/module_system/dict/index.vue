@@ -75,7 +75,8 @@
       @cancel="handleCloseDialog"
       @close="handleCloseDialog"
       @confirm="handleSubmit()"
-     size="md">
+      size="md"
+    >
       <template v-if="dialogVisible.type === 'detail'">
         <FaDescriptions
           :column="4"

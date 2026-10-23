@@ -16,6 +16,7 @@
           clearable
           :placeholder="$t('login.placeholder.username')"
           @keyup.enter="$emit('submit')"
+          :aria-label="$t('login.placeholder.username')"
         >
           <template #prefix>
             <ElIcon><User /></ElIcon>

@@ -47,6 +47,7 @@
                 :placeholder="'输入' + field.label"
                 clearable
                 @input="onFieldChange(field)"
+                aria-label="'输入' + field.label"
               />
             </ParamFieldCard>
           </ParamTabPane>
@@ -71,6 +72,7 @@
                 :placeholder="'输入' + field.label"
                 clearable
                 @input="onFieldChange(field)"
+                aria-label="'输入' + field.label"
               />
             </ParamFieldCard>
           </ParamTabPane>
@@ -137,6 +139,7 @@
                     size="small"
                     class="w-48!"
                     @keyup.enter="addIp(fieldsMap.access[1]!)"
+                    aria-label="输入 IP 地址"
                   />
                   <ElButton
                     size="small"
@@ -212,6 +215,7 @@
                     size="small"
                     class="w-48!"
                     @keyup.enter="addIp(fieldsMap.demo[1]!)"
+                    aria-label="输入 IP 地址"
                   />
                   <ElButton
                     size="small"

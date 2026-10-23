@@ -15,6 +15,7 @@
           v-model.trim="registerForm.username"
           clearable
           :placeholder="$t('login.placeholder.username')"
+          :aria-label="$t('login.placeholder.username')"
         >
           <template #prefix>
             <ElIcon><User /></ElIcon>
@@ -27,6 +28,7 @@
           v-model.trim="registerForm.name"
           clearable
           :placeholder="$t('register.placeholder.name')"
+          :aria-label="$t('register.placeholder.name')"
         >
           <template #prefix>
             <ElIcon><User /></ElIcon>
@@ -44,6 +46,7 @@
             clearable
             :placeholder="$t('login.placeholder.password')"
             @keyup="checkCapsLock"
+            :aria-label="$t('login.placeholder.password')"
           >
             <template #prefix>
               <ElIcon><Lock /></ElIcon>
@@ -62,6 +65,7 @@
             clearable
             :placeholder="$t('login.message.password.confirm')"
             @keyup="checkCapsLock"
+            :aria-label="$t('login.message.password.confirm')"
           >
             <template #prefix>
               <ElIcon><Lock /></ElIcon>

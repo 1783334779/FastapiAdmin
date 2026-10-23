@@ -11,6 +11,7 @@
           clearable
           :placeholder="$t('login.mobilePhonePlaceholder')"
           @keyup.enter="submitMobileLogin"
+          :aria-label="$t('login.mobilePhonePlaceholder')"
         >
           <template #prefix>
             <ElIcon><Iphone /></ElIcon>

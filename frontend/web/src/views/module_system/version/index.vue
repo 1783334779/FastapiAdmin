@@ -51,7 +51,8 @@
       @cancel="handleCloseDialog"
       @close="handleCloseDialog"
       @confirm="handleSubmit()"
-     size="xl">
+      size="xl"
+    >
       <template v-if="dialogVisible.type === 'detail'">
         <FaDescriptions
           :column="4"

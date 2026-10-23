@@ -191,6 +191,7 @@
               v-model="formData.component_path"
               placeholder="请输入组件路径，如system/user/index"
               :style="'width: 95%'"
+              aria-label="组件路径，如system/user/index"
             >
               <template #prepend>src/views/</template>
               <template #append>.vue</template>
@@ -210,9 +211,19 @@
             </template>
             <template v-else>
               <div v-for="item in formData.params" :key="item.key">
-                <ElInput v-model="item.key" placeholder="参数名" :style="'width: 100px'" />
+                <ElInput
+                  v-model="item.key"
+                  placeholder="参数名"
+                  :style="'width: 100px'"
+                  aria-label="参数名"
+                />
                 <span class="mx-1">=</span>
-                <ElInput v-model="item.value" placeholder="参数值" :style="'width: 100px'" />
+                <ElInput
+                  v-model="item.value"
+                  placeholder="参数值"
+                  :style="'width: 100px'"
+                  aria-label="参数值"
+                />
                 <ElIcon
                   v-if="formData.params.indexOf(item) === formData.params.length - 1"
                   class="ml-2 cursor-pointer color-[var(--el-color-success)]"
@@ -245,6 +256,9 @@
                   ? '目录必填，一般为默认子路由 path，如 /system/user'
                   : '可选，请输入重定向路由'
               "
+              aria-label="formData.type === MenuTypeEnum.CATALOG
+                  ? '目录必填，一般为默认子路由 path，如 /system/user'
+                  : '可选，重定向路由'"
             />
           </template>
         </FaForm>
