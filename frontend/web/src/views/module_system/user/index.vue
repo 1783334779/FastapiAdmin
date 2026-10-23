@@ -965,4 +965,21 @@ async function handleMoreClick(value: "enable" | "disable") {
   min-height: 0;
   padding: 0;
 }
+
+/* 窄屏：隐藏部门栏，把宽度让给用户表格 */
+@media (width <= 800px) {
+  :deep(.el-splitter-panel:first-child),
+  :deep(.el-splitter-bar) {
+    display: none;
+  }
+
+  :deep(.el-splitter-panel:last-child) {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+  }
+
+  .user-main-panel {
+    padding-left: 0;
+  }
+}
 </style>

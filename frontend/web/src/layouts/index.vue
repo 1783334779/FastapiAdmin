@@ -60,9 +60,8 @@
  *   首次访问 → guideVisible=true → 用户完成/跳过指引 → onGuideFinished()
  *   → settingStore.showGuide=false → 后续不再显示
  */
-import { computed, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { useWindowSize } from "@vueuse/core";
 import { useAppStore, useSettingsStore, useUserStore } from "@stores";
 import AppConfig from "@/config";
 
@@ -70,11 +69,13 @@ defineOptions({ name: "AppLayout" });
 
 const appStore = useAppStore();
 const settingStore = useSettingsStore();
-const { width } = useWindowSize();
-const isMobile = computed(() => width.value <= 800);
+const isMobile = ref(window.innerWidth <= 800);
 const { menuOpen } = storeToRefs(settingStore);
 
-// 窄屏首次进入自动收起侧栏，留出完整内容区；由顶栏菜单按钮展开
+const handleResize = () => {
+  isMobile.value = window.innerWidth <= 800;
+};
+
 watch(
   isMobile,
   (mobile) => {
@@ -82,6 +83,15 @@ watch(
   },
   { immediate: true }
 );
+
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+  if (isMobile.value) settingStore.setMenuOpen(false);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", handleResize);
+});
 const userStore = useUserStore();
 
 // ── AI 助手 ──
