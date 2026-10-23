@@ -228,7 +228,12 @@
 
 // 表格按钮悬浮效果
 .hover-btn {
-  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
     box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
@@ -409,4 +414,12 @@
       0 2px 8px rgb(0 0 0 / 3%);
     transform: translateY(-2px);
   }
+}
+
+// 数字/日期等宽，避免表格里数字跳动
+.el-table .cell,
+.el-pagination,
+.el-descriptions__content,
+.el-statistic__number {
+  font-variant-numeric: tabular-nums;
 }

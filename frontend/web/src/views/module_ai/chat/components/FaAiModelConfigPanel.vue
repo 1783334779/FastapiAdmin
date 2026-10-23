@@ -691,7 +691,7 @@ onMounted(loadList);
   background: var(--el-fill-color-blank);
   border: 1px solid var(--el-border-color-lighter);
   border-radius: 8px;
-  transition: all 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
 
   &.active {
     background: var(--el-color-primary-light-9);
@@ -874,7 +874,7 @@ onMounted(loadList);
 /* 列表过渡 */
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .list-enter-from {

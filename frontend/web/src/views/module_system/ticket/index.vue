@@ -99,7 +99,7 @@
               <FaSvgIcon icon="ri:user-3-line" class="shrink-0" />
               <span
                 >{{ item.created_by?.name ?? "—" }} ·
-                {{ item.created_time?.slice(0, 10) ?? "" }}</span
+                {{ item.created_time ? formatToDate(item.created_time, "YYYY-MM-DD") : "" }}</span
               >
             </div>
             <div class="flex items-center justify-between">
@@ -172,7 +172,8 @@
       @cancel="handleCloseDialog"
       @close="handleCloseDialog"
       @confirm="handleDialogConfirm"
-     size="xl">
+      size="xl"
+    >
       <template v-if="dialogVisible.type === 'detail'">
         <ElScrollbar max-height="65vh">
           <FaDescriptions
@@ -387,6 +388,7 @@
 </template>
 
 <script setup lang="ts">
+import { formatToDate } from "@utils";
 import { useCrudForm } from "@/hooks/core/useCrudForm";
 import TicketAPI, {
   getTicketComments,
