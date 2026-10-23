@@ -1,7 +1,11 @@
 <template>
   <div class="chat-navbar">
     <div class="navbar-left">
-      <button class="collapse-btn" @click="toggleSidebar">
+      <button
+        class="collapse-btn"
+        :aria-label="props.isSidebarCollapsed ? '展开侧栏' : '折叠侧栏'"
+        @click="toggleSidebar"
+      >
         <FaSvgIcon
           v-if="!props.isSidebarCollapsed"
           :icon="resolveIconForFaSvgIcon('layout_leftbar_close_line')"
