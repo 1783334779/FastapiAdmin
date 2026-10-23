@@ -143,7 +143,12 @@
       </ElSkeleton>
 
       <ElScrollbar v-else class="job-cards-container mt-3 min-h-0 flex-1">
-        <FaEmptyState icon="ri:inbox-line" title="暂无数据" compact />
+        <FaEmptyState
+          v-if="!jobLoading && (!jobList || jobList.length === 0)"
+          icon="ri:inbox-line"
+          title="暂无数据"
+          compact
+        />
         <ElRow v-else :gutter="16">
           <ElCol
             v-for="job in jobList"

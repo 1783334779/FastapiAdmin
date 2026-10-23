@@ -182,6 +182,7 @@
                   <el-input
                     v-model="activeTab.keyword"
                     placeholder="文件名称搜索"
+                    aria-label="按文件名称搜索"
                     clearable
                     size="small"
                     class="w-55"

@@ -1,6 +1,7 @@
 <!-- 布局内容 -->
 <template>
   <div id="app-scroll-main" class="layout-content" :style="containerStyle">
+    <a class="fa-skip-link" href="#app-content">跳到主内容</a>
     <div id="app-content-header">
       <!-- 节日滚动 -->
       <FaFestivalTextScroll v-if="isHomePage" />

@@ -143,6 +143,7 @@
             <ElInput
               v-model="sql"
               type="textarea"
+              aria-label="SQL 编辑器"
               :rows="8"
               resize="vertical"
               class="fa-mono-textarea"

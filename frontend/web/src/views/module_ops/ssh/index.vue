@@ -108,6 +108,7 @@
                       v-model="logPath"
                       size="small"
                       placeholder="日志路径（可选）如 /var/log/nginx/error.log"
+                      aria-label="日志路径"
                       class="w-[250px]"
                       clearable
                     />

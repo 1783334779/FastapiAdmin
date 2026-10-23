@@ -42,7 +42,12 @@
       class="file-browser-body border border-(--el-border-color-lighter) rounded-lg overflow-hidden"
       style="height: 380px"
     >
-      <FaEmptyState icon="ri:inbox-line" title="该目录下没有文件" compact />
+      <FaEmptyState
+        v-if="!loading && entries.length === 0"
+        icon="ri:inbox-line"
+        title="该目录下没有文件"
+        compact
+      />
       <div v-else class="flex flex-col h-full">
         <div
           v-for="(item, idx) in entries"
