@@ -1,18 +1,18 @@
 <!-- 字典管理：左侧字典类型列表 + 右侧字典数据面板 -->
 <template>
   <div class="fa-full-height">
-    <ElSplitter :style="{ flex: 1, minHeight: 0 }">
+    <ElSplitter :layout="isMobile ? 'vertical' : 'horizontal'" :style="{ flex: 1, minHeight: 0 }">
       <!-- Left: Dict Type -->
-      <ElSplitterPanel size="36%" :min="520">
+      <ElSplitterPanel :size="isMobile ? '40%' : '36%'" :min="isMobile ? 180 : 520">
         <div class="flex flex-col h-full overflow-hidden pr-2">
           <FaSearchBar
-            v-show="showSearchBar"
+            v-show="showSearchBar && !isMobile"
             ref="searchBarRef"
             v-model="searchForm"
             :items="dictTypeSearchItems"
             :rules="searchBarRules"
             :span="24"
-            :is-expand="true"
+            :is-expand="!isMobile"
             :show-reset="true"
             :show-search="true"
             :disabled-search="false"
@@ -21,7 +21,10 @@
             @reset="onResetSearch"
           />
 
-          <ElCard class="fa-table-card" :style="{ 'margin-top': showSearchBar ? '12px' : '0' }">
+          <ElCard
+            class="fa-table-card"
+            :style="{ 'margin-top': showSearchBar && !isMobile ? '12px' : '0' }"
+          >
             <FaTableHeader
               v-model:columns="columnChecks"
               v-model:showSearchBar="showSearchBar"
@@ -52,7 +55,7 @@
       </ElSplitterPanel>
 
       <!-- Right: Dict Data -->
-      <ElSplitterPanel :min="300">
+      <ElSplitterPanel :min="isMobile ? 240 : 300">
         <div class="flex flex-col h-full overflow-hidden pl-2">
           <DictDataPanel
             :key="currentDictTypeId"
@@ -142,6 +145,17 @@ const dictStore = useDictStore();
 const searchForm = ref<DictTypeSearchForm>({
   dict_name: undefined,
   dict_type: undefined,
+});
+
+const isMobile = ref(window.innerWidth < 800);
+const handleResize = () => {
+  isMobile.value = window.innerWidth < 800;
+};
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+});
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", handleResize);
 });
 
 const showSearchBar = ref(true);
