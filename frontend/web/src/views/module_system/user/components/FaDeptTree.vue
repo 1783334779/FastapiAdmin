@@ -44,7 +44,7 @@
       @node-click="handleNodeClick"
     >
       <template #empty>
-        <ElEmpty :image-size="80" description="暂无数据" />
+        <FaEmptyState icon="ri:node-tree" title="暂无部门" compact />
       </template>
     </ElTree>
   </div>

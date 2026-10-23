@@ -66,7 +66,7 @@
             <div class="flex flex-wrap gap-1 items-center">
               <ElButton
                 v-hasPerm="['module_task:cronjob:job:scheduler']"
-                type="success"
+                type="primary"
                 :icon="VideoPlay"
                 :disabled="schedulerStatus.status !== '停止'"
                 size="small"
@@ -76,7 +76,6 @@
               </ElButton>
               <ElButton
                 v-hasPerm="['module_task:cronjob:job:scheduler']"
-                type="warning"
                 :icon="VideoPause"
                 :disabled="schedulerStatus.status !== '运行中'"
                 size="small"
@@ -86,7 +85,6 @@
               </ElButton>
               <ElButton
                 v-hasPerm="['module_task:cronjob:job:scheduler']"
-                type="primary"
                 :icon="RefreshRight"
                 :disabled="schedulerStatus.status !== '暂停'"
                 size="small"
@@ -97,6 +95,7 @@
               <ElButton
                 v-hasPerm="['module_task:cronjob:job:scheduler']"
                 type="danger"
+                plain
                 :icon="SwitchButton"
                 :disabled="schedulerStatus.status === '停止'"
                 size="small"
@@ -118,7 +117,6 @@
               </ElButton>
               <ElButton
                 v-hasPerm="['module_task:cronjob:job:query']"
-                type="info"
                 :icon="Monitor"
                 size="small"
                 @click="handleOpenConsole"
@@ -145,11 +143,7 @@
       </ElSkeleton>
 
       <ElScrollbar v-else class="job-cards-container mt-3 min-h-0 flex-1">
-        <ElEmpty
-          v-if="!jobLoading && (!jobList || jobList.length === 0)"
-          :image-size="80"
-          description="暂无数据"
-        />
+        <FaEmptyState icon="ri:inbox-line" title="暂无数据" compact />
         <ElRow v-else :gutter="16">
           <ElCol
             v-for="job in jobList"
@@ -195,7 +189,6 @@
                   <ElCol :span="6">
                     <ElButton
                       v-hasPerm="['module_task:cronjob:job:task']"
-                      :type="job.status === 1 ? 'primary' : 'warning'"
                       size="small"
                       plain
                       class="w-full"
@@ -209,7 +202,6 @@
                   <ElCol :span="6">
                     <ElButton
                       v-hasPerm="['module_task:cronjob:job:task']"
-                      type="success"
                       size="small"
                       plain
                       class="w-full"
@@ -223,7 +215,6 @@
                   <ElCol :span="6">
                     <ElButton
                       v-hasPerm="['module_task:cronjob:job:task']"
-                      type="primary"
                       size="small"
                       plain
                       class="w-full"

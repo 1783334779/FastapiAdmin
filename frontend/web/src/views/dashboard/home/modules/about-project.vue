@@ -7,7 +7,7 @@
 
       <div class="grid grid-cols-2 gap-3.5 max-w-150 mt-9">
         <div
-          class="flex items-center justify-between h-12.5 px-3.5 border border-g-300 cursor-pointer rounded-lg text-sm bg-g-100 duration-300 hover:-translate-y-1"
+          class="flex items-center justify-between h-12.5 px-3.5 border border-line cursor-pointer rounded-lg text-sm bg-g-100 duration-300 hover:-translate-y-1"
           v-for="link in linkList"
           :key="link.label"
           @click="goPage(link.url)"

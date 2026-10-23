@@ -20,7 +20,7 @@
     />
 
     <ElSegmented
-      class="mt-3"
+      class="mt-3 self-start"
       v-model="menuClientTab"
       :options="menuSegmentedOptions"
       @change="handleMenuClientTabChange"

@@ -216,7 +216,7 @@ const changeThemeColor = (color: string) => {
 .logo-version-pill {
   display: inline-block;
   padding: 0.28rem 0.6rem;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1.15;

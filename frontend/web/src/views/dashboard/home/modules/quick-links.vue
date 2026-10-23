@@ -42,11 +42,12 @@
         </div>
       </div>
     </ElScrollbar>
-    <ElEmpty
+    <FaEmptyState
       v-else
       class="absolute inset-0 flex items-center justify-center"
-      description="暂无链接"
-      :image-size="60"
+      icon="ri:link"
+      title="暂无链接"
+      compact
     />
   </div>
 </template>

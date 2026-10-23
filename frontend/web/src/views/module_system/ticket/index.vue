@@ -54,6 +54,22 @@
         @pagination:size-change="onPageSizeChange"
         @pagination:current-change="onPageCurrentChange"
       >
+        <template #empty>
+          <FaEmptyState
+            icon="ri:file-list-3-line"
+            title="暂无工单"
+            description="提交一个问题、建议或优化想法，我们会尽快处理"
+          >
+            <ElButton
+              v-hasPerm="['module_system:ticket:create']"
+              type="primary"
+              size="small"
+              @click="handleOpenDialog('create')"
+            >
+              提交工单
+            </ElButton>
+          </FaEmptyState>
+        </template>
         <template #header="{ item }">
           <div class="flex items-center gap-2 min-w-0">
             <span
@@ -242,7 +258,7 @@
                   </div>
                 </div>
               </template>
-              <ElEmpty v-else description="暂无评论" :image-size="60" />
+              <FaEmptyState v-else icon="ri:chat-3-line" title="暂无评论" compact />
             </ElScrollbar>
 
             <!-- 提交评论 -->

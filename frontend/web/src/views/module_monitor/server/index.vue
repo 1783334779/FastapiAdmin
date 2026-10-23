@@ -160,7 +160,7 @@
           </template>
           <ElTable :data="server.disks" stripe>
             <template #empty>
-              <ElEmpty :image-size="80" description="暂无数据" />
+              <FaEmptyState icon="ri:inbox-line" title="暂无数据" compact />
             </template>
             <ElTableColumn label="盘符路径" prop="dir_name" show-overflow-tooltip />
             <ElTableColumn label="文件系统" prop="sys_type_name" align="center" width="100" />

@@ -68,7 +68,13 @@
                 </template>
               </ElDropdown>
             </div>
-            <ElEmpty v-if="!filteredHosts.length" description="暂无主机" :image-size="56" />
+            <FaEmptyState
+              v-if="!filteredHosts.length"
+              icon="ri:server-line"
+              title="暂无主机"
+              description="新增 SSH 主机后开始运维"
+              compact
+            />
           </ElScrollbar>
 
           <div class="fa-hint px-3 py-2">双击主机直接打开终端</div>
@@ -225,10 +231,12 @@
                       item.stdout || item.stderr || item.error
                     }}</pre>
                   </div>
-                  <ElEmpty
+                  <FaEmptyState
                     v-if="!batchResults.length"
+                    icon="ri:terminal-box-line"
+                    title="暂无执行结果"
                     description="选择主机并执行命令后在此显示结果"
-                    :image-size="64"
+                    compact
                   />
                 </ElScrollbar>
               </div>
@@ -286,7 +294,13 @@
                       {{ item.description }}
                     </div>
                   </div>
-                  <ElEmpty v-if="!snippets.length" description="暂无片段" :image-size="64" />
+                  <FaEmptyState
+                    v-if="!snippets.length"
+                    icon="ri:command-line"
+                    title="暂无命令片段"
+                    description="保存常用命令，批量执行更高效"
+                    compact
+                  />
                 </ElScrollbar>
               </div>
             </ElTabPane>

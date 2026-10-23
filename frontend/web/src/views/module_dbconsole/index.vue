@@ -5,7 +5,7 @@
       <!-- 左：连接 + 库表 -->
       <ElCard
         shadow="hover"
-        class="fa-card flex w-[300px] shrink-0 flex-col"
+        class="fa-card flex w-[clamp(240px,20vw,300px)] shrink-0 flex-col"
         body-class="flex min-h-0 flex-1 flex-col p-0"
       >
         <div class="flex h-full min-h-0 flex-col">
@@ -58,7 +58,13 @@
                 </template>
               </ElDropdown>
             </div>
-            <ElEmpty v-if="!connections.length" description="暂无连接" :image-size="56" />
+            <FaEmptyState
+              v-if="!connections.length"
+              icon="ri:database-2-line"
+              title="暂无连接"
+              description="新增一个数据库连接"
+              compact
+            />
           </ElScrollbar>
 
           <div class="fa-panel-sep fa-hint">库 / 表</div>
@@ -105,7 +111,7 @@
               {{ currentConnection.name }}
             </ElTag>
             <span v-else class="fa-hint">未选择连接</span>
-            <div class="ml-auto flex items-center gap-3">
+            <div class="ml-auto flex flex-wrap items-center justify-end gap-2">
               <span class="fa-hint">允许写操作</span>
               <ElSwitch v-model="confirmed" size="small" />
               <ElDropdown trigger="click" :disabled="!history.length" @command="applyHistory">
@@ -174,12 +180,7 @@
                 class="min-h-0 flex-1"
               />
             </template>
-            <ElEmpty
-              v-else-if="!queryError"
-              class="mt-10"
-              description="执行 SQL 后在此显示结果"
-              :image-size="72"
-            />
+            <FaEmptyState icon="ri:inbox-line" title="执行 SQL 后在此显示结果" compact />
           </div>
 
           <div class="fa-panel-sep fa-hint flex items-center gap-2">

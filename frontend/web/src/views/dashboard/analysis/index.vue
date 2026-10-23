@@ -292,7 +292,7 @@ const stackXAxisData = ref(["产品A", "产品B", "产品C", "产品D", "产品E
 
 <style scoped>
 :deep(.el-card) {
-  --el-card-border-radius: calc(var(--custom-radius) + 2px);
+  --el-card-border-radius: var(--fa-radius-md, 12px);
 
   border: 1px solid var(--fa-card-border);
 }

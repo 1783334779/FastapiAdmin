@@ -74,7 +74,7 @@
               </div>
             </div>
             <div v-if="filteredSessions.length === 0" class="empty-state">
-              <ElEmpty description="暂无会话历史" :image-size="60" />
+              <FaEmptyState icon="ri:inbox-line" title="暂无会话历史" compact />
             </div>
           </div>
         </div>

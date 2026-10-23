@@ -115,7 +115,7 @@
               </div>
             </ElTimelineItem>
           </ElTimeline>
-          <ElEmpty v-else description="暂无消息记录" :image-size="60" />
+          <FaEmptyState v-else icon="ri:history-line" title="暂无消息记录" compact />
         </ElScrollbar>
       </template>
       <template v-else>

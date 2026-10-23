@@ -38,25 +38,17 @@
             </div>
           </div>
 
-          <!-- 空状态 - 直接显示添加按钮作为唯一行动 -->
-          <ElEmpty v-if="items.length === 0">
-            <template #image>
-              <div class="empty-illust">
-                <ElIcon :size="56"><Cpu /></ElIcon>
-                <ElIcon class="empty-icon-bg" :size="100"><ChatLineSquare /></ElIcon>
-              </div>
-            </template>
-            <template #description>
-              <div class="empty-title">添加你的第一个 AI 模型</div>
-              <div class="empty-desc">
-                支持 OpenAI、DeepSeek、Ollama 等任何 OpenAI 兼容服务<br />
-                配置后即可在 AI 助手页一键切换
-              </div>
-            </template>
+          <!-- 空状态 - 统一 FaEmptyState -->
+          <FaEmptyState
+            v-if="items.length === 0"
+            icon="ri:cpu-line"
+            title="添加你的第一个 AI 模型"
+            description="支持 OpenAI、DeepSeek、Ollama 等任何 OpenAI 兼容服务；配置后即可在 AI 助手页一键切换"
+          >
             <ElButton type="primary" size="large" :icon="Plus" @click="openCreate">
               立即添加
             </ElButton>
-          </ElEmpty>
+          </FaEmptyState>
 
           <!-- 列表 -->
           <div v-else class="config-list">
@@ -876,7 +868,7 @@ onMounted(loadList);
 }
 
 .preset-url {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--el-text-color-secondary);
 }
 

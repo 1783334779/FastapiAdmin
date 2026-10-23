@@ -140,6 +140,15 @@
         <template #actions="{ row }">
           <span v-html="formatTransferOperationCell(row as TransferTaskItem)" />
         </template>
+        <template #empty>
+          <FaEmptyState
+            icon="ri:exchange-line"
+            title="暂无传输任务"
+            description="创建第一个传输任务，把文件从源存储同步到目标存储"
+          >
+            <ElButton type="primary" size="small" @click="openCreate">新建传输任务</ElButton>
+          </FaEmptyState>
+        </template>
       </FaTable>
     </ElCard>
 
@@ -341,7 +350,7 @@
             </div>
           </template>
         </div>
-        <ElEmpty v-else description="暂无步骤" :image-size="60" />
+        <FaEmptyState icon="ri:inbox-line" title="暂无步骤" compact />
       </template>
     </FaDialog>
   </div>

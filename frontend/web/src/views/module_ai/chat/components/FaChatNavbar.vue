@@ -95,7 +95,7 @@ const toggleSidebar = () => emit("toggle-sidebar");
   }
 
   .navbar-title {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--el-text-color-primary);
   }

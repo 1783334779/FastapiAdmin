@@ -123,9 +123,9 @@
               <!-- 行2：文件操作 + 搜索（桶列表最外层时隐藏，无文件可操作） -->
               <div
                 v-if="!activeTab?.browseBuckets"
-                class="mb-2.5 flex items-center justify-between gap-2"
+                class="mb-2.5 flex flex-wrap items-center justify-between gap-2"
               >
-                <div class="flex min-w-0 items-center gap-2">
+                <div class="flex min-w-0 flex-wrap items-center gap-2">
                   <el-button size="small" type="primary" plain @click="triggerUpload">
                     <el-icon class="mr-1"><Upload /></el-icon>上传
                   </el-button>

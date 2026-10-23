@@ -115,7 +115,7 @@
             <ElScrollbar class="flex-1 min-h-0">
               <ElTable :loading="loading" :data="cacheNames" row-key="cache_name">
                 <template #empty>
-                  <ElEmpty :image-size="80" description="暂无数据" />
+                  <FaEmptyState icon="ri:inbox-line" title="暂无数据" compact />
                 </template>
                 <ElTableColumn prop="cache_name" label="缓存名称" show-overflow-tooltip>
                   <template #default="{ row }">
@@ -182,7 +182,7 @@
                 row-key="cacheKey"
               >
                 <template #empty>
-                  <ElEmpty :image-size="80" description="暂无数据" />
+                  <FaEmptyState icon="ri:inbox-line" title="暂无数据" compact />
                 </template>
                 <ElTableColumn prop="cacheKey" label="缓存键名" show-overflow-tooltip>
                   <template #default="{ row }">
@@ -313,11 +313,7 @@
               </template>
             </ElTableColumn>
           </ElTable>
-          <ElEmpty
-            v-if="!redisLoading && !redisKeys.length"
-            description="没有扫描到键（可换逻辑库或模式再试）"
-            :image-size="64"
-          />
+          <FaEmptyState icon="ri:inbox-line" title="没有扫描到键（可换逻辑库或模式再试）" compact />
         </ElCard>
 
         <ElDialog
@@ -598,21 +594,40 @@ const initCharts = async () => {
   commandstatsInstance = echarts.init(commandstats.value, "macarons");
   usedmemoryInstance = echarts.init(usedmemory.value, "macarons");
 
+  // 命令种类多时只展示 Top 8 + 其他，避免标签重叠成一团
+  const rawStats = cache.value.command_stats || [];
+  const sortedStats = [...rawStats].sort((a, b) => Number(b.value) - Number(a.value));
+  const topStats: Array<{ name: string; value: number }> = sortedStats
+    .slice(0, 8)
+    .map((item) => ({ name: item.name, value: Number(item.value) || 0 }));
+  const restStats = sortedStats.slice(8);
+  if (restStats.length > 0) {
+    topStats.push({
+      name: "其他",
+      value: restStats.reduce((sum, item) => sum + Number(item.value || 0), 0),
+    });
+  }
   commandstatsInstance.setOption({
     tooltip: { trigger: "item", formatter: "{a} <br/>{b} : {c} ({d}%)" },
+    legend: {
+      type: "scroll",
+      bottom: 0,
+      itemWidth: 10,
+      itemHeight: 10,
+      textStyle: { fontSize: 11 },
+    },
     series: [
       {
         name: "命令",
         type: "pie",
-        roseType: "radius",
-        radius: ["20%", "70%"],
-        center: ["50%", "50%"],
-        data: cache.value.command_stats || [],
+        radius: ["30%", "64%"],
+        center: ["50%", "44%"],
+        minAngle: 2,
+        data: topStats,
         animationEasing: "cubicInOut",
         animationDuration: 1000,
-        label: {
-          fontSize: 14,
-        },
+        label: { show: false },
+        labelLine: { show: false },
       },
     ],
   });
@@ -626,11 +641,18 @@ const initCharts = async () => {
         type: "gauge",
         min: 0,
         max: 1000,
-        radius: "70%",
-        detail: { formatter: usedMemory, fontSize: 16 },
+        radius: "72%",
+        splitNumber: 5,
+        detail: {
+          formatter: usedMemory,
+          fontSize: 16,
+          offsetCenter: [0, "58%"],
+        },
+        title: { offsetCenter: [0, "80%"], fontSize: 12 },
         data: [{ value: parseFloat(usedMemory) || 0, name: "内存消耗" }],
         axisLabel: {
-          fontSize: 12,
+          fontSize: 11,
+          distance: 8,
         },
       },
     ],

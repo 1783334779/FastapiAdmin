@@ -102,7 +102,7 @@
               <div
                 v-for="item in roleTagList"
                 :key="item"
-                class="py-1 px-1.5 mr-2.5 mb-2.5 text-xs border border-g-300 rounded"
+                class="py-1 px-1.5 mr-2.5 mb-2.5 text-xs border border-line rounded"
               >
                 {{ item }}
               </div>
@@ -162,7 +162,7 @@
       <!-- 右侧表单 -->
       <div class="flex-1 overflow-hidden max-md:w-full max-md:mt-3.5">
         <div class="fa-card-sm">
-          <h1 class="p-4 text-xl font-normal border-b border-g-300">基本设置</h1>
+          <h1 class="p-4 text-xl font-normal border-b border-line">基本设置</h1>
 
           <ElForm
             ref="infoFormRef"
@@ -241,7 +241,7 @@
         </div>
 
         <div class="fa-card-sm my-5">
-          <h1 class="p-4 text-xl font-normal border-b border-g-300">登录会话</h1>
+          <h1 class="p-4 text-xl font-normal border-b border-line">登录会话</h1>
 
           <div v-if="loadingSessions" class="flex justify-center py-6">
             <ElIcon class="is-loading" :size="20">
@@ -278,7 +278,7 @@
         </div>
 
         <div class="fa-card-sm my-5">
-          <h1 class="p-4 text-xl font-normal border-b border-g-300">更改密码</h1>
+          <h1 class="p-4 text-xl font-normal border-b border-line">更改密码</h1>
 
           <ElForm
             ref="passwordFormRef"

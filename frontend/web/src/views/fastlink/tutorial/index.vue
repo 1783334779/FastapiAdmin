@@ -78,7 +78,7 @@
                     </div>
                   </nav>
                   <div v-else class="manual-nav manual-nav--empty">
-                    <ElEmpty description="无匹配目录" :image-size="64" />
+                    <FaEmptyState icon="ri:inbox-line" title="无匹配目录" compact />
                   </div>
                 </aside>
               </ElSplitterPanel>
@@ -819,7 +819,7 @@
                       </div>
 
                       <div
-                        class="manual-footer-note mt-10 border-t border-g-200 pt-6 text-center text-xs text-g-500 dark:border-g-700 dark:text-g-400"
+                        class="manual-footer-note mt-10 border-t border-g-200 pt-6 text-center text-xs text-g-500 dark:border-line dark:text-g-400"
                       >
                         <p>
                           FastapiAdmin 功能点清单（完整性）—
@@ -1582,7 +1582,7 @@ const setSimpleEditorDemo = () => {
     small {
       display: block;
       margin-top: 0.4rem;
-      font-size: 0.8125rem;
+      font-size: 13px;
       font-weight: normal;
       line-height: 1.5;
       color: var(--el-text-color-secondary);

@@ -357,13 +357,16 @@ onDeactivated(disconnectWebSocket);
 <style lang="scss" scoped>
 /* 拆分条容器样式 */
 :deep(.el-splitter) {
+  overflow: hidden;
   border: 1px solid var(--el-border-color-light);
-  border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
+  border-radius: var(--fa-radius-md, 12px);
+  box-shadow: var(--fa-shadow-card, 0 1px 2px rgb(16 24 40 / 4%));
 }
 
 :deep(.el-splitter-panel) {
   overflow: hidden;
+  /* 与其它页面的卡片表面色一致：深色 #161618 / 浅色 #fff */
+  background: var(--default-box-color);
 }
 
 .sidebar-container {

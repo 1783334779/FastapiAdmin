@@ -230,7 +230,7 @@ const formatFileSize = (bytes: number): string => {
       }
 
       .message-text {
-        font-size: 15px;
+        font-size: 16px;
         line-height: 1.6;
         color: var(--el-text-color-primary);
         transition:

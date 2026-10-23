@@ -1,9 +1,9 @@
 <!-- 字典管理：左侧字典类型列表 + 右侧字典数据面板 -->
 <template>
   <div class="fa-full-height">
-    <ElSplitter :style="'height: 100%'">
+    <ElSplitter :style="{ flex: 1, minHeight: 0 }">
       <!-- Left: Dict Type -->
-      <ElSplitterPanel size="30%" :min="320">
+      <ElSplitterPanel size="36%" :min="520">
         <div class="flex flex-col h-full overflow-hidden pr-2">
           <FaSearchBar
             v-show="showSearchBar"
@@ -11,8 +11,8 @@
             v-model="searchForm"
             :items="dictTypeSearchItems"
             :rules="searchBarRules"
-            :is-expand="false"
-            :show-expand="true"
+            :span="24"
+            :is-expand="true"
             :show-reset="true"
             :show-search="true"
             :disabled-search="false"
@@ -155,7 +155,7 @@ const dictTypeSearchItems = computed<SearchFormItem[]>(() => [
     type: "input",
     placeholder: "请输入字典名称",
     clearable: true,
-    span: 8,
+    span: 24,
   },
   {
     label: "字典类型",
@@ -163,7 +163,7 @@ const dictTypeSearchItems = computed<SearchFormItem[]>(() => [
     type: "input",
     placeholder: "请输入字典类型",
     clearable: true,
-    span: 8,
+    span: 24,
   },
 ]);
 

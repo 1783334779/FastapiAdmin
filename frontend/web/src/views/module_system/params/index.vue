@@ -226,6 +226,11 @@
           </ParamTabPane>
         </ElTabPane>
       </ElTabs>
+
+      <div v-if="modifiedCount > 0" class="param-save-bar">
+        <span class="param-save-bar__text">有 {{ modifiedCount }} 项修改未保存</span>
+        <ElButton type="primary" :loading="saveAllLoading" @click="saveAll">保存全部</ElButton>
+      </div>
     </ElCard>
   </div>
 </template>
@@ -428,6 +433,41 @@ async function saveGroup(fields: ParamField[]) {
   }
 }
 
+const modifiedFields = computed(() =>
+  Object.values(fieldsMap)
+    .flat()
+    .filter((f) => f.modified && f.id)
+);
+const modifiedCount = computed(() => modifiedFields.value.length);
+const saveAllLoading = ref(false);
+
+async function saveAll() {
+  const modified = modifiedFields.value;
+  if (modified.length === 0) return;
+  saveAllLoading.value = true;
+  let successCount = 0;
+  for (const field of modified) {
+    try {
+      await ParamsAPI.updateParams(field.id!, {
+        config_value: field.localValue,
+        config_name: field.configName,
+        config_key: field.configKey,
+      });
+      field.modified = false;
+      field.displayValue = field.localValue;
+      successCount++;
+    } catch {
+      // 已由全局拦截器提示
+    }
+  }
+  saveAllLoading.value = false;
+  if (successCount > 0) {
+    ElMessage.success(`已保存 ${successCount} 项配置`);
+    configStore.isConfigLoaded = false;
+    await configStore.getConfig();
+  }
+}
+
 // ─── 初始化 ───
 
 onMounted(async () => {
@@ -439,6 +479,22 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.param-save-bar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 12px 16px;
+  margin-top: 12px;
+  background: var(--fa-surface, var(--default-box-color));
+  border-top: 1px solid var(--fa-border, var(--el-border-color-lighter));
+}
+.param-save-bar__text {
+  font-size: var(--fa-font-sm, 12px);
+  color: var(--el-text-color-secondary);
+}
 :deep(.el-card) {
   display: flex;
   flex: 1;

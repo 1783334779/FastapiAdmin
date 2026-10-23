@@ -59,7 +59,17 @@
         @selection-change="onTableSelectionChange"
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
-      />
+      >
+        <template #empty>
+          <FaEmptyState
+            icon="ri:notification-3-line"
+            title="暂无公告"
+            description="发布第一条系统公告，通知到所有用户"
+          >
+            <ElButton type="primary" size="small" @click="handleAdd">新增公告</ElButton>
+          </FaEmptyState>
+        </template>
+      </FaTable>
     </ElCard>
 
     <FaDialog

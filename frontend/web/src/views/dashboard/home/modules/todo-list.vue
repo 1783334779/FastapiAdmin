@@ -12,7 +12,7 @@
 
     <ElScrollbar class="h-[calc(100%-40px)]" view-style="padding-right: 16px">
       <div
-        class="flex items-center justify-between h-17.5 border-b border-g-300 text-sm last:border-b-0"
+        class="flex items-center justify-between h-17.5 border-b border-line text-sm last:border-b-0"
         v-for="item in list"
         :key="item.target"
       >

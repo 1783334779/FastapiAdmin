@@ -86,7 +86,7 @@ const rows = [
 
 .gencode-help-footnote code {
   padding: 0 4px;
-  font-size: 11px;
+  font-size: 12px;
   background: var(--el-fill-color);
   border-radius: 3px;
 }

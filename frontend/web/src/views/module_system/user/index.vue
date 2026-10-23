@@ -1,12 +1,12 @@
 <!-- 用户管理：左部门树 + 右 Art 表格 -->
 <template>
   <div class="fa-full-height user-manage-page">
-    <ElSplitter :style="'height: 100%'">
+    <ElSplitter :style="{ flex: 1, minHeight: 0 }">
       <ElSplitterPanel size="260px" :min="200" :max="400">
         <div class="user-dept-panel h-full pr-2">
-          <ElCard class="tree-card fa-card-xs flex flex-col h-full mt-0" shadow="hover">
+          <ElCard class="tree-card fa-card-xs flex flex-col h-full mt-0" shadow="never">
             <template #header>
-              <b>部门</b>
+              <span class="fa-panel-title">部门</span>
             </template>
             <ElScrollbar class="dept-tree-scroll min-h-0 flex-1">
               <FaDeptTree

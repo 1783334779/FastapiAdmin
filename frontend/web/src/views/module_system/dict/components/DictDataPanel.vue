@@ -42,6 +42,7 @@
             v-model="searchForm"
             :items="dictDataSearchItems"
             :rules="searchBarRules"
+            :span="8"
             :is-expand="false"
             :show-expand="true"
             :show-reset="true"
