@@ -69,7 +69,8 @@
       :confirm-loading="submitLoading"
       @cancel="handleCloseDialog"
       @confirm="dialogVisible.type === 'detail' ? handleCloseDialog() : handleSubmit()"
-     size="lg">
+      size="lg"
+    >
       <template v-if="dialogVisible.type === 'detail'">
         <FaDescriptions
           :column="2"
@@ -137,6 +138,7 @@
                       :placeholder="`默认：${field.default ?? '-'}`"
                       clearable
                       @update:model-value="setAdvancedValue(field.key, $event)"
+                      aria-label="`默认：${field.default ?? '-'}`"
                     />
                     <ElInputNumber
                       v-else-if="field.type === 'number'"

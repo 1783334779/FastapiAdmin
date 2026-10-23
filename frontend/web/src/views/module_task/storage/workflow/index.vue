@@ -56,7 +56,8 @@
       dialog-class="crud-embed-dialog"
       modal-class="crud-embed-dialog"
       @cancel="detailVisible = false"
-     size="md">
+      size="md"
+    >
       <FaDescriptions :column="2" :data="detailFormData" :items="flowDetailItems" max-height="70vh">
         <template #sources="{ row }">
           <div class="flex flex-col gap-1">
@@ -122,7 +123,8 @@
       v-model="executeVisible"
       :title="`执行流程 · ${executeRow?.name || ''}`"
       @cancel="executeVisible = false"
-     size="md">
+      size="md"
+    >
       <div class="mb-3 text-[13px] text-(--el-text-color-regular)">
         为以下源节点选择源文件 / 目录（回显节点默认源目录，可修改或浏览选择）：
       </div>
@@ -139,6 +141,7 @@
             v-model="s.path"
             size="small"
             placeholder="源文件 / 目录，留空使用节点默认源目录"
+            aria-label="源文件 / 目录，留空使用节点默认源目录"
           />
           <ElButton size="small" @click="openExecuteBrowser(idx)">浏览</ElButton>
         </div>

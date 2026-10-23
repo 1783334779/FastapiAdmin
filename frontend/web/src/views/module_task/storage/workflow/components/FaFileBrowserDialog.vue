@@ -5,7 +5,8 @@
     top="8vh"
     append-to-body
     @close="handleClose"
-   size="lg">
+    size="lg"
+  >
     <div class="mb-3 flex items-center gap-2">
       <ElBreadcrumb separator="/" class="flex-1 min-w-0">
         <ElBreadcrumbItem>

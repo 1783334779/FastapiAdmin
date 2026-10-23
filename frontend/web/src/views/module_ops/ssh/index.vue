@@ -24,7 +24,13 @@
           </div>
 
           <div class="px-2 pb-2">
-            <ElInput v-model="hostKeyword" size="small" placeholder="搜索名称 / 地址" clearable>
+            <ElInput
+              v-model="hostKeyword"
+              size="small"
+              placeholder="搜索名称 / 地址"
+              clearable
+              aria-label="搜索名称 / 地址"
+            >
               <template #prefix>
                 <ElIcon><Search /></ElIcon>
               </template>
@@ -154,6 +160,7 @@
                     :disabled="!terminalSessionId"
                     placeholder="输入命令后回车（↑/↓ 翻历史）"
                     @keydown="onTerminalInputKeydown"
+                    aria-label="输入命令后回车（↑/↓ 翻历史）"
                   />
                   <ElButton
                     type="primary"
@@ -207,6 +214,7 @@
                   :rows="4"
                   class="fa-mono-textarea"
                   placeholder="例如：uptime && df -h（可从「命令片段」填入）"
+                  aria-label="例如：uptime && df -h（可从「命令片段」填入）"
                 />
 
                 <ElScrollbar class="min-h-0 flex-1">
@@ -264,6 +272,7 @@
                     size="small"
                     placeholder="搜索片段名称 / 命令"
                     clearable
+                    aria-label="搜索片段名称 / 命令"
                   />
                 </div>
                 <ElScrollbar class="min-h-0 flex-1">

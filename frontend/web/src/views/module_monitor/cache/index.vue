@@ -246,10 +246,20 @@
             <ElScrollbar class="flex-1 min-h-0">
               <ElForm :model="cacheForm" label-suffix=":" label-position="top">
                 <ElFormItem label="缓存名称">
-                  <ElInput v-model="cacheForm.cache_name" readonly placeholder="缓存名称" />
+                  <ElInput
+                    v-model="cacheForm.cache_name"
+                    readonly
+                    placeholder="缓存名称"
+                    aria-label="缓存名称"
+                  />
                 </ElFormItem>
                 <ElFormItem label="缓存键名">
-                  <ElInput v-model="cacheForm.cache_key" readonly placeholder="缓存键名" />
+                  <ElInput
+                    v-model="cacheForm.cache_key"
+                    readonly
+                    placeholder="缓存键名"
+                    aria-label="缓存键名"
+                  />
                 </ElFormItem>
                 <ElFormItem label="缓存内容" class="cache-value-item">
                   <ElInput
@@ -258,6 +268,7 @@
                     readonly
                     placeholder="缓存内容"
                     :rows="10"
+                    aria-label="缓存内容"
                   />
                 </ElFormItem>
               </ElForm>
@@ -284,6 +295,7 @@
               style="width: 260px"
               clearable
               @keyup.enter="scanRedisKeys(true)"
+              aria-label="键模式，如 fastapiadmin:*"
             />
             <ElButton type="primary" :loading="redisLoading" @click="scanRedisKeys(true)"
               >扫描</ElButton

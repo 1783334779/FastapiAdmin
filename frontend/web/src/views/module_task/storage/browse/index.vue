@@ -418,7 +418,8 @@
         confirm-text="打开"
         @cancel="addDialogVisible = false"
         @confirm="confirmAdd"
-       size="sm">
+        size="sm"
+      >
         <el-select v-model="newNodeId" placeholder="选择要打开的节点" filterable class="w-full">
           <el-option
             v-for="n in nodes"
@@ -436,7 +437,8 @@
         title="分享文件"
         :close-on-click-modal="false"
         @close="shareDialog.visible = false"
-       size="sm">
+        size="sm"
+      >
         <div class="inline-flex items-center gap-2">
           <span class="text-[13px] text-[#909399]">有效期</span>
           <el-radio-group v-model="shareDialog.expireSeconds">
@@ -473,7 +475,8 @@
         :confirm-text="dirPicker.mode === 'copy' ? '复制' : '移动'"
         @cancel="dirPicker.visible = false"
         @confirm="confirmPickDir"
-       size="sm">
+        size="sm"
+      >
         <div class="mb-2 inline-flex w-full items-center gap-2">
           <span class="text-[13px] text-[#909399]">目标目录</span>
           <div

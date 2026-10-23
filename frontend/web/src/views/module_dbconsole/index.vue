@@ -210,7 +210,8 @@
       :confirm-loading="submitLoading"
       @cancel="handleCloseDialog"
       @confirm="handleSubmit"
-     size="md">
+      size="md"
+    >
       <FaForm
         :key="formRenderKey"
         ref="dataFormRef"

@@ -42,6 +42,7 @@
             class="flex-1"
             :placeholder="pathHint"
             @keyup.enter="handleSave"
+            aria-label="pathHint"
           />
           <ElButton :icon="FolderOpened" size="small" title="选择目录" @click="openPicker" />
         </div>

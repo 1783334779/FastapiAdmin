@@ -325,10 +325,11 @@
       :confirm-loading="modifyDialog.loading"
       @confirm="handleModifyJob"
       @close="modifyDialog.visible = false"
-     size="sm">
+      size="sm"
+    >
       <ElForm :model="modifyForm" label-width="96px" label-suffix=":">
         <ElFormItem label="任务名称">
-          <ElInput v-model="modifyForm.name" placeholder="请输入任务名称" />
+          <ElInput v-model="modifyForm.name" placeholder="请输入任务名称" aria-label="任务名称" />
         </ElFormItem>
         <ElFormItem label="合并运行">
           <ElRadioGroup v-model="modifyForm.coalesce">
@@ -354,7 +355,8 @@
       title="执行记录详情"
       form-mode="detail"
       @close="logDetailDialog.visible = false"
-     size="lg">
+      size="lg"
+    >
       <FaDescriptions
         :column="4"
         :data="logDetailFormData"

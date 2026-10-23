@@ -59,7 +59,8 @@
       :title="dialogVisible.title"
       @close="handleCloseDialog"
       @opened="handleDialogOpened"
-     size="xl">
+      size="xl"
+    >
       <ElSplitter direction="horizontal" :style="'height: 500px'">
         <ElSplitterPanel size="300px" :min="200" :max="400">
           <ElScrollbar :style="'height: 100%'">
@@ -104,7 +105,7 @@
                     :key="index"
                     class="flex gap-2 items-center [&_.el-input]:flex-1"
                   >
-                    <ElInput v-model="argsList[index]" placeholder="参数值" />
+                    <ElInput v-model="argsList[index]" placeholder="参数值" aria-label="参数值" />
                     <ElButton
                       type="danger"
                       :icon="Delete"
@@ -124,8 +125,8 @@
                     :key="item.key || index"
                     class="flex gap-2 items-center [&_.el-input]:flex-1"
                   >
-                    <ElInput v-model="item.key" placeholder="键" />
-                    <ElInput v-model="item.value" placeholder="值" />
+                    <ElInput v-model="item.key" placeholder="键" aria-label="键" />
+                    <ElInput v-model="item.value" placeholder="值" aria-label="值" />
                     <ElButton
                       type="danger"
                       :icon="Delete"
@@ -163,6 +164,7 @@
                     placeholder="请输入 * * * * * ? *"
                     readonly
                     @click="openCron = true"
+                    aria-label="* * * * * ? *"
                   />
                   <FaDialog
                     v-model="openCron"
@@ -190,6 +192,7 @@
                         v-model="formData.trigger_args"
                         placeholder="请点击设置间隔时间"
                         @click="openInterval = true"
+                        aria-label="请点击设置间隔时间"
                       />
                     </template>
                     <FaIntervalTab

@@ -43,6 +43,7 @@
                 clearable
                 size="small"
                 class="mb-3"
+                aria-label="搜索存储源名称"
               >
                 <template #prefix>
                   <ElIcon><Search /></ElIcon>

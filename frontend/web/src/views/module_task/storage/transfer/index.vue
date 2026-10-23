@@ -161,7 +161,8 @@
       :confirm-loading="submitting"
       @cancel="createVisible = false"
       @confirm="submit"
-     size="md">
+      size="md"
+    >
       <FaForm
         ref="formRef"
         v-model="form"
@@ -239,6 +240,9 @@
                     : '目标路径（对象存储填 Key 前缀）'
                 "
                 style="flex: 1"
+                aria-label="selectedFlowId && !t.target_path
+                    ? '目标节点未配置默认源目录，请填写目标路径'
+                    : '目标路径（对象存储填 Key 前缀）'"
               />
               <ElButton link type="danger" @click="removeTarget(idx)">删除</ElButton>
             </div>
@@ -262,7 +266,8 @@
       title="传输任务详情"
       form-mode="detail"
       @close="detailVisible = false"
-     size="xl">
+      size="xl"
+    >
       <template v-if="detailRow">
         <FaDescriptions
           :column="2"
