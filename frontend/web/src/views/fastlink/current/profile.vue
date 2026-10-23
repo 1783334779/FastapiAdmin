@@ -138,7 +138,8 @@
         title="裁剪头像"
         :draggable="false"
         @closed="onAvatarCropDialogClosed"
-       size="xl">
+        size="xl"
+      >
         <FaCutterImg
           v-if="avatarCropVisible && avatarCropSrc"
           :key="avatarCropSrc"
@@ -342,7 +343,7 @@ import { useUserStore, useDictStore } from "@stores";
 import { Camera, Loading } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { useI18n } from "vue-i18n";
-import { redirectToLogin, dataURLToFile } from "@utils";
+import { redirectToLogin, dataURLToFile, formatToDateTime } from "@utils";
 
 // 与路由 name 一致：KeepAlive 的 include/exclude 按组件 name 匹配
 defineOptions({ name: "FastlinkProfile" });
@@ -422,13 +423,7 @@ function formatDate(dateStr: string | undefined): string {
   if (!dateStr) return "—";
   const date = new Date(dateStr);
   if (isNaN(date.getTime())) return dateStr;
-  return date.toLocaleString("zh-CN", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatToDateTime(date, "YYYY-MM-DD HH:mm");
 }
 
 const infoFormState = reactive<InfoFormState>({

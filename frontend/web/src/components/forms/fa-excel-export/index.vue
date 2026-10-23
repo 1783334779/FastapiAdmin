@@ -21,6 +21,7 @@
 <script setup lang="ts">
 import * as XLSX from "xlsx";
 import FileSaver from "file-saver";
+import { formatToDate } from "@utils";
 import { ref, computed, nextTick } from "vue";
 import { Loading } from "@element-plus/icons-vue";
 import type { ButtonType } from "element-plus";
@@ -171,7 +172,7 @@ const formatCellValue = (
   }
 
   if (value instanceof Date) {
-    return value.toLocaleDateString("zh-CN");
+    return formatToDate(value, "YYYY-MM-DD");
   }
 
   if (typeof value === "boolean") {

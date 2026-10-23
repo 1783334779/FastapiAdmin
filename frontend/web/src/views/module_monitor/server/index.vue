@@ -177,12 +177,18 @@
             <ElTableColumn label="盘符名称" prop="type_name" show-overflow-tooltip />
             <ElTableColumn label="使用率" align="center" width="200">
               <template #default="{ row }">
-                <ElProgress
-                  :percentage="Number(row.usage)"
-                  :status="row.usage > 80 ? 'exception' : row.usage > 60 ? 'warning' : 'success'"
-                  :stroke-width="16"
-                  text-inside
-                />
+                <div class="flex items-center gap-2">
+                  <ElProgress
+                    class="flex-1"
+                    :percentage="Number(row.usage)"
+                    :status="row.usage > 80 ? 'exception' : row.usage > 60 ? 'warning' : 'success'"
+                    :stroke-width="16"
+                    :show-text="false"
+                  />
+                  <span class="w-11 text-right text-xs fa-tnum">
+                    {{ Number(row.usage).toFixed(1) }}%
+                  </span>
+                </div>
               </template>
             </ElTableColumn>
             <ElTableColumn label="总大小" prop="total" align="center" width="100" />

@@ -608,6 +608,18 @@ const cleanBodyColumnProps = (col: ColumnOption) => {
   if (isOpCol && isMobile.value) {
     columnProps.width = 80;
   }
+  // 数字类列默认右对齐（金额/数量/大小/比率等），可用 align 显式覆盖
+  const NUMERIC_PROP_RE =
+    /(price|amount|total|count|qty|quantity|size|score|rate|usage|percent|salary|balance|cost|fee|weight|duration|cpu|memory|disk)/i;
+  const NUMERIC_LABEL_RE =
+    /(金额|价格|数量|总数|次数|大小|占比|比率|百分比|容量|时长|内存|磁盘|使用率|得分|费用|余额)/;
+  if (
+    columnProps.align === undefined &&
+    !isOpCol &&
+    (NUMERIC_PROP_RE.test(String(col.prop || "")) || NUMERIC_LABEL_RE.test(String(col.label || "")))
+  ) {
+    columnProps.align = "right";
+  }
   // 普通文本列默认省略 + 悬停显示完整内容（状态/格式化/操作列除外）
   if (
     columnProps.showOverflowTooltip === undefined &&
