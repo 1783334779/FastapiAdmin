@@ -18,7 +18,7 @@
   /* tabbar 背景跟随暗色页面背景，避免与内容区断层 */
   --wot-tabbar-bg: var(--wot-filled-content);
   /* 卡片表面与 Web 深色卡片一致，形成层级差 */
-  --wot-filled-oppo: #191D24;
+  --wot-filled-oppo: #191D24 !important;
 }
 
 .wot-theme-dark.page-wraper,
@@ -57,4 +57,10 @@
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.08);
   }
+}
+
+
+/* 暗色卡片统一为 Web 表面色（Wot 默认可能是纯黑） */
+.wot-theme-dark .wot-bg-filled-oppo {
+  background-color: #191D24 !important;
 }

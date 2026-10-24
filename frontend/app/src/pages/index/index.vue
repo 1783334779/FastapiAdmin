@@ -619,7 +619,7 @@ function getGreeting() {
   }
 
   /* 问候 Banner：品牌卡，跟随主题色（primary），与用户卡/图表主色换肤一致；下方 ticket/stats 为语义色保留 */
-  &--greet { background: linear-gradient(135deg, var(--wot-primary-6), var(--wot-primary-4)); }
+  &--greet { background: linear-gradient(135deg, var(--fa-brand-blue, #4F6BFF), var(--fa-brand-violet, #6D5BFF)); }
   &--ticket { background: linear-gradient(135deg, var(--wot-orange-6), var(--wot-orange-4)); }
   &--ticket-empty { background: linear-gradient(135deg, var(--wot-green-6), var(--wot-green-4)); }
   &--stats { background: linear-gradient(135deg, var(--wot-purple-6), var(--wot-purple-4)); }
