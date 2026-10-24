@@ -11,7 +11,7 @@
         >
           <div class="flex h-full min-h-0 flex-col">
             <div class="fa-panel-header justify-between">
-              <span class="fa-panel-title">SSH 主机</span>
+              <span class="fa-panel-title">{{ $t("common.sshHost") }}</span>
               <ElButton
                 v-hasPerm="['module_ops:ssh:create']"
                 type="primary"
@@ -27,9 +27,9 @@
               <ElInput
                 v-model="hostKeyword"
                 size="small"
-                placeholder="搜索名称 / 地址"
+                :placeholder="$t('common.searchHost')"
                 clearable
-                aria-label="搜索名称 / 地址"
+                :aria-label="$t('common.searchHost')"
               >
                 <template #prefix>
                   <ElIcon><FaSvgIcon icon="ri:search-line" /></ElIcon>
@@ -67,10 +67,16 @@
                   <ElIcon class="fa-list-item__action"><FaSvgIcon icon="ri:more-2-fill" /></ElIcon>
                   <template #dropdown>
                     <ElDropdownMenu>
-                      <ElDropdownItem command="terminal">打开终端</ElDropdownItem>
-                      <ElDropdownItem command="test">测试连接</ElDropdownItem>
-                      <ElDropdownItem command="edit">编辑</ElDropdownItem>
-                      <ElDropdownItem command="delete" divided>删除</ElDropdownItem>
+                      <ElDropdownItem command="terminal">{{
+                        $t("common.openTerminal")
+                      }}</ElDropdownItem>
+                      <ElDropdownItem command="test">{{
+                        $t("common.testConnection")
+                      }}</ElDropdownItem>
+                      <ElDropdownItem command="edit">{{ $t("common.edit") }}</ElDropdownItem>
+                      <ElDropdownItem command="delete" divided>{{
+                        $t("common.delete")
+                      }}</ElDropdownItem>
                     </ElDropdownMenu>
                   </template>
                 </ElDropdown>
@@ -78,13 +84,13 @@
               <FaEmptyState
                 v-if="!filteredHosts.length"
                 icon="ri:server-line"
-                title="暂无主机"
-                description="新增 SSH 主机后开始运维"
+                :title="$t('common.noHost')"
+                :description="$t('common.noHostDesc')"
                 compact
               />
             </ElScrollbar>
 
-            <div class="fa-hint px-3 py-2">双击主机直接打开终端</div>
+            <div class="fa-hint px-3 py-2">{{ $t("common.doubleClickHint") }}</div>
           </div>
         </ElCard>
       </template>
@@ -98,7 +104,7 @@
         <div class="flex h-full min-h-0 flex-col">
           <ElTabs v-model="activeTab" class="fa-tabs-fill">
             <!-- 终端 -->
-            <ElTabPane label="终端" name="terminal">
+            <ElTabPane :label="$t('common.terminal')" name="terminal">
               <div class="flex h-full min-h-0 flex-col gap-2 p-3">
                 <div class="flex flex-wrap items-center gap-2">
                   <ElTag v-if="terminalSession" size="small" type="success">
@@ -108,15 +114,15 @@
                     {{
                       terminalSession
                         ? `会话 ${terminalSession.session_id.slice(0, 8)}`
-                        : "未打开会话"
+                        : $t("common.noSession")
                     }}
                   </span>
                   <div class="ml-auto flex flex-wrap items-center gap-2">
                     <ElInput
                       v-model="logPath"
                       size="small"
-                      placeholder="日志路径（可选）如 /var/log/nginx/error.log"
-                      aria-label="日志路径"
+                      :placeholder="$t('common.logPath')"
+                      :aria-label="$t('common.logPath')"
                       class="w-[250px]"
                       clearable
                     />
@@ -141,41 +147,45 @@
                       打开终端
                     </ElButton>
                     <template v-else>
-                      <ElButton size="small" @click="clearTerminalOutput">清屏</ElButton>
+                      <ElButton size="small" @click="clearTerminalOutput">{{
+                        $t("common.clearScreen")
+                      }}</ElButton>
                       <ElButton size="small" :loading="terminalOpening" @click="reconnectTerminal"
                         >重连</ElButton
                       >
                       <ElButton size="small" @click="sendCtrlC">Ctrl+C</ElButton>
-                      <ElButton size="small" @click="closeTerminal">关闭</ElButton>
+                      <ElButton size="small" @click="closeTerminal">{{
+                        $t("common.closeAction")
+                      }}</ElButton>
                     </template>
                   </div>
                 </div>
 
                 <pre ref="terminalRef" class="fa-terminal min-h-0 flex-1 overflow-auto">{{
-                  terminalOutput || "（双击左侧主机，或选择主机后点「打开终端」）"
+                  terminalOutput || $t("common.noOutputHint")
                 }}</pre>
 
                 <div class="flex items-center gap-2">
                   <ElInput
                     v-model="terminalInput"
                     :disabled="!terminalSessionId"
-                    placeholder="输入命令后回车（↑/↓ 翻历史）"
+                    :placeholder="$t('common.cmdPlaceholder')"
                     @keydown="onTerminalInputKeydown"
-                    aria-label="输入命令后回车（↑/↓ 翻历史）"
+                    :aria-label="$t('common.cmdPlaceholder')"
                   />
                   <ElButton
                     type="primary"
                     :disabled="!terminalSessionId"
                     @click="sendTerminalInput"
                   >
-                    发送
+                    {{ $t("common.send") }}
                   </ElButton>
                 </div>
               </div>
             </ElTabPane>
 
             <!-- 批量执行 -->
-            <ElTabPane label="批量执行" name="batch">
+            <ElTabPane :label="$t('common.batchExec')" name="batch">
               <div class="flex h-full min-h-0 flex-col gap-2 p-3">
                 <div class="flex flex-wrap items-center gap-2">
                   <ElSelect
@@ -254,10 +264,10 @@
             </ElTabPane>
 
             <!-- 命令片段 -->
-            <ElTabPane label="命令片段" name="snippet">
+            <ElTabPane :label="$t('common.snippets')" name="snippet">
               <div class="flex h-full min-h-0 flex-col p-3">
                 <div class="mb-2 flex items-center justify-between">
-                  <span class="fa-panel-title">常用命令</span>
+                  <span class="fa-panel-title">{{ $t("common.commonCommands") }}</span>
                   <ElButton
                     v-hasPerm="['module_ops:snippet:create']"
                     type="primary"
