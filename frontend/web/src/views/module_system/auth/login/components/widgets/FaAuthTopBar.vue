@@ -117,7 +117,7 @@ import { LanguageEnum } from "@/enums/appEnum";
 import { storeToRefs } from "pinia";
 import { useI18n } from "vue-i18n";
 import { useSettingsStore, useUserStore, useConfigStore } from "@stores";
-import { themeAnimation } from "@utils";
+import { themeAnimation, normalizeBrandName } from "@utils";
 import { languageOptions } from "@/locales";
 
 import AppConfig from "@/config";
@@ -178,7 +178,8 @@ const webLogoSrc = computed(
 );
 
 const siteTitle = computed(
-  () => configStore.configData.sys_name?.config_value?.trim() || AppConfig.systemInfo.name
+  () =>
+    normalizeBrandName(configStore.configData.sys_name?.config_value) || AppConfig.systemInfo.name
 );
 
 const displayVersion = computed(() => {

@@ -94,7 +94,7 @@
 import AppConfig from "@/config";
 import loginIcon from "@fa_imgs/background.svg";
 import { useConfigStore } from "@stores";
-import { themeAnimation } from "@utils";
+import { themeAnimation, normalizeBrandName } from "@utils";
 
 defineOptions({ name: "FaLoginLeftView" });
 
@@ -117,7 +117,8 @@ const webLogoSrc = computed(
 );
 
 const siteTitle = computed(
-  () => configStore.configData.sys_name?.config_value?.trim() || AppConfig.systemInfo.name
+  () =>
+    normalizeBrandName(configStore.configData.sys_name?.config_value) || AppConfig.systemInfo.name
 );
 
 const DEFAULT_APP_VERSION = "3.0.0";
