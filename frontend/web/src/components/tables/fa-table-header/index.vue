@@ -73,6 +73,12 @@
           </div>
         </template>
         <div>
+          <div class="mb-2 flex items-center justify-between">
+            <span class="text-xs font-medium text-g-600">{{ t("table.toolbar.columns") }}</span>
+            <ElButton link type="primary" size="small" @click="resetColumns">
+              {{ t("table.toolbar.reset") }}
+            </ElButton>
+          </div>
           <ElScrollbar max-height="380px">
             <VueDraggable
               v-model="columns"
@@ -218,6 +224,41 @@ const updateColumnVisibility = (col: ColumnOption, value: boolean | string | num
   col.checked = boolValue;
   col.visible = boolValue;
 };
+
+/** 首次渲染时的列状态，用于“重置” */
+const initialColumnState = ref<Array<{ key: string; visible: boolean }>>([]);
+
+watch(
+  columns,
+  (cols) => {
+    if (!initialColumnState.value.length && cols?.length) {
+      initialColumnState.value = cols.map((col) => ({
+        key: col.prop || col.type || "",
+        visible: getColumnVisibility(col),
+      }));
+    }
+  },
+  { immediate: true }
+);
+
+function resetColumns(): void {
+  if (!initialColumnState.value.length) return;
+  const current = new Map(columns.value.map((col) => [col.prop || col.type || "", col]));
+  const restored = initialColumnState.value
+    .map((state) => current.get(state.key))
+    .filter((col): col is ColumnOption => !!col);
+
+  restored.forEach((col) => {
+    const initial = initialColumnState.value.find(
+      (state) => state.key === (col.prop || col.type || "")
+    );
+    const visible = initial ? initial.visible : true;
+    col.visible = visible;
+    col.checked = visible;
+  });
+
+  columns.value = restored;
+}
 
 /** 表格大小选项配置 */
 const tableSizeOptions = computed(() => [

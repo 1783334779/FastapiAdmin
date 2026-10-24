@@ -649,7 +649,9 @@
       "enableRowDrag": "开启行拖拽排序（当前页）",
       "disableRowDrag": "关闭行拖拽排序",
       "fullscreen": "全屏",
-      "exitFullscreen": "退出全屏"
+      "exitFullscreen": "退出全屏",
+      "columns": "列设置",
+      "reset": "重置"
     }
   },
   "navbar": {
