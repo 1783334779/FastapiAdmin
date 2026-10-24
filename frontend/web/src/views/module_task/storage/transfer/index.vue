@@ -44,7 +44,7 @@
         </template>
       </FaTableHeader>
 
-      <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
+      <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
         <div v-if="!tasks.length" class="py-12">
           <FaEmptyState
             icon="ri:exchange-box-line"
@@ -475,7 +475,7 @@ const enabledSources = computed(() => sources.value.filter((s) => s.status !== 1
 const sourceById = (id?: number | null) => (id ? sourceMap.value[id] : undefined);
 const sourceName = (id?: number | null) => (id ? sourceMap.value[id]?.name || `#${id}` : "—");
 const { width: viewportWidth } = useWindowSize();
-const isNarrow = computed(() => viewportWidth.value < 800);
+const isNarrow = computed(() => viewportWidth.value < 1025);
 
 const protoText = (s?: SourceTable) => s?.protocol || "?";
 

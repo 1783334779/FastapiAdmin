@@ -71,7 +71,7 @@
           </template>
         </FaTableHeader>
 
-        <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
+        <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
           <div v-if="!data.length" class="py-12">
             <FaEmptyState
               icon="ri:book-open-line"
@@ -661,7 +661,7 @@ async function handleAdd() {
 }
 
 const { width: viewportWidth } = useWindowSize();
-const isNarrow = computed(() => viewportWidth.value < 800);
+const isNarrow = computed(() => viewportWidth.value < 1025);
 
 function buildDictDataRowActions(row: DictDataTable): TableOperationAction[] {
   const all: TableOperationAction[] = [

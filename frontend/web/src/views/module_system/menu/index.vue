@@ -55,7 +55,7 @@
         </template>
       </FaTableHeader>
 
-      <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
+      <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
         <div v-if="!mobileMenuRows.length" class="py-12">
           <FaEmptyState
             icon="ri:menu-line"
@@ -936,7 +936,7 @@ async function handleOpenMenuDetail(id: number) {
 }
 
 const { width: viewportWidth } = useWindowSize();
-const isNarrow = computed(() => viewportWidth.value < 800);
+const isNarrow = computed(() => viewportWidth.value < 1025);
 
 const expandedMenuIds = ref<Set<number>>(new Set());
 

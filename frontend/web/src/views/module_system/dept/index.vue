@@ -44,7 +44,7 @@
         </template>
       </FaTableHeader>
 
-      <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
+      <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
         <div v-if="!mobileDeptRows.length" class="py-12">
           <FaEmptyState
             icon="ri:node-tree"
@@ -455,7 +455,7 @@ async function handleOpenDeptDetail(id: number) {
 }
 
 const { width: viewportWidth } = useWindowSize();
-const isNarrow = computed(() => viewportWidth.value < 800);
+const isNarrow = computed(() => viewportWidth.value < 1025);
 
 const expandedDeptIds = ref<Set<number>>(new Set());
 

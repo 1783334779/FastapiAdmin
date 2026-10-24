@@ -59,7 +59,7 @@
               </template>
             </FaTableHeader>
 
-            <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
+            <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
               <div v-if="!data.length" class="py-12">
                 <FaEmptyState
                   icon="ri:user-3-line"
@@ -427,7 +427,7 @@ const deptFilterId = ref<string | number | undefined>(undefined);
 
 const appStore = useAppStore();
 const { width: viewportWidth } = useWindowSize();
-const isNarrow = computed(() => viewportWidth.value < 800);
+const isNarrow = computed(() => viewportWidth.value < 1025);
 
 const drawerSize = computed(() => (appStore.device === DeviceEnum.DESKTOP ? "450px" : "90%"));
 const deptOptions = ref<OptionType[]>();

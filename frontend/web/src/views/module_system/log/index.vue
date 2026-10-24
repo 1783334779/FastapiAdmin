@@ -40,7 +40,7 @@
             </template>
           </FaTableHeader>
 
-          <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
+          <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
             <div v-if="!opData.length" class="py-12">
               <FaEmptyState icon="ri:file-list-3-line" title="暂无操作日志" />
             </div>
@@ -188,7 +188,7 @@
             </template>
           </FaTableHeader>
 
-          <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
+          <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
             <div v-if="!loginData.length" class="py-12">
               <FaEmptyState icon="ri:login-box-line" title="暂无登录日志" />
             </div>
@@ -531,7 +531,7 @@ async function deleteOpRow(id: number, name: string) {
 }
 
 const { width: viewportWidth } = useWindowSize();
-const isNarrow = computed(() => viewportWidth.value < 800);
+const isNarrow = computed(() => viewportWidth.value < 1025);
 
 function responseTagType(code?: number | string): "success" | "warning" | "danger" | "info" {
   const value = Number(code);
