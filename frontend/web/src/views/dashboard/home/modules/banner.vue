@@ -203,4 +203,10 @@ const PresetBanners = {
   font-size: 22px;
   line-height: 1.4;
 }
+
+@media (width <= 1440px) {
+  :deep(.basic-banner__background-image) {
+    display: none;
+  }
+}
 </style>
