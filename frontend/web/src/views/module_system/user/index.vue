@@ -611,7 +611,7 @@ const {
       {
         prop: "status",
         label: "状态",
-        width: 88,
+        width: 80,
         status: {
           0: { type: "success", text: "启用" },
           1: { type: "danger", text: "停用" },
@@ -626,7 +626,7 @@ const {
       {
         prop: "gender",
         label: "性别",
-        width: 88,
+        width: 70,
         status: {
           "0": { type: "info", text: "男" },
           "1": { type: "info", text: "女" },
@@ -635,21 +635,16 @@ const {
       {
         prop: "created_time",
         label: "创建时间",
-        width: 168,
-        sortable: true,
-        showOverflowTooltip: true,
-      },
-      {
-        prop: "updated_time",
-        label: "更新时间",
-        width: 168,
+        width: 120,
+        formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
+          row.created_time ? row.created_time.slice(0, 10) : "—",
         sortable: true,
         showOverflowTooltip: true,
       },
       {
         prop: "operation",
         label: "操作",
-        width: 280,
+        width: 200,
         fixed: "right",
         align: "center",
         formatter: (row: UserInfo) => formatUserOperationCell(row, opCtx),
