@@ -59,7 +59,7 @@
               </template>
             </FaTableHeader>
 
-            <div v-if="isNarrow" class="flex flex-col gap-3">
+            <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
               <div v-if="!data.length" class="py-12">
                 <FaEmptyState
                   icon="ri:user-3-line"
@@ -94,7 +94,7 @@
                   <span>性别：{{ row.gender === "1" ? "女" : "男" }}</span>
                   <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
                 </div>
-                <div class="flex justify-end gap-1 mt-3">
+                <div class="flex justify-end gap-1.5 mt-4">
                   <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
                     详情
                   </ElButton>

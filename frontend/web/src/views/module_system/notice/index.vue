@@ -50,7 +50,7 @@
         </template>
       </FaTableHeader>
 
-      <div v-if="isNarrow" class="flex flex-col gap-3">
+      <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
         <div v-if="!data.length" class="py-12">
           <FaEmptyState
             icon="ri:notification-3-line"
@@ -81,7 +81,7 @@
           </div>
           <div class="mt-2 text-xs text-g-600">创建：{{ formatDateTime(row.created_time) }}</div>
           <div class="mt-1 text-xs text-g-600">更新：{{ formatDateTime(row.updated_time) }}</div>
-          <div class="flex justify-end gap-1 mt-3">
+          <div class="flex justify-end gap-1.5 mt-4">
             <ElButton link type="primary" size="small" @click="handleOpenDialog('detail', row.id!)">
               详情
             </ElButton>

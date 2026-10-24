@@ -43,7 +43,7 @@
         </template>
       </FaTableHeader>
 
-      <div v-if="isNarrow" class="flex flex-col gap-3">
+      <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
         <div v-if="!data.length" class="py-12">
           <FaEmptyState
             icon="ri:shield-user-line"
@@ -73,7 +73,7 @@
             <span class="col-span-2 truncate">所属部门：{{ deptText(row) }}</span>
             <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
           </div>
-          <div class="flex justify-end gap-1 mt-3">
+          <div class="flex justify-end gap-1.5 mt-4">
             <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
               详情
             </ElButton>

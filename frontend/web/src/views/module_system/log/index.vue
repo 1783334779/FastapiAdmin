@@ -40,7 +40,7 @@
             </template>
           </FaTableHeader>
 
-          <div v-if="isNarrow" class="flex flex-col gap-3">
+          <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
             <div v-if="!opData.length" class="py-12">
               <FaEmptyState icon="ri:file-list-3-line" title="暂无操作日志" />
             </div>
@@ -65,7 +65,7 @@
                 <span class="col-span-2 truncate">描述：{{ row.description || "—" }}</span>
                 <span class="col-span-2">时间：{{ formatDateTime(row.created_time) }}</span>
               </div>
-              <div class="flex justify-end gap-1 mt-3">
+              <div class="flex justify-end gap-1.5 mt-4">
                 <ElButton
                   link
                   type="primary"
@@ -188,7 +188,7 @@
             </template>
           </FaTableHeader>
 
-          <div v-if="isNarrow" class="flex flex-col gap-3">
+          <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
             <div v-if="!loginData.length" class="py-12">
               <FaEmptyState icon="ri:login-box-line" title="暂无登录日志" />
             </div>
@@ -214,7 +214,7 @@
                 <span class="col-span-2 truncate">提示：{{ row.msg || "—" }}</span>
                 <span class="col-span-2">时间：{{ formatDateTime(row.created_time) }}</span>
               </div>
-              <div class="flex justify-end gap-1 mt-3">
+              <div class="flex justify-end gap-1.5 mt-4">
                 <ElButton
                   link
                   type="primary"

@@ -44,7 +44,7 @@
         </template>
       </FaTableHeader>
 
-      <div v-if="isNarrow" class="flex flex-col gap-3">
+      <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
         <div v-if="!mobileDeptRows.length" class="py-12">
           <FaEmptyState
             icon="ri:node-tree"

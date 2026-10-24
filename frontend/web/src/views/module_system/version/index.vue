@@ -30,7 +30,7 @@
         </template>
       </FaTableHeader>
 
-      <div v-if="isNarrow" class="flex flex-col gap-3">
+      <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
         <div v-if="!data.length" class="py-12">
           <FaEmptyState
             icon="ri:git-branch-line"
@@ -58,7 +58,7 @@
             <span>排序：{{ row.sort ?? "—" }}</span>
             <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
           </div>
-          <div class="flex justify-end gap-1 mt-3">
+          <div class="flex justify-end gap-1.5 mt-4">
             <ElButton link type="primary" size="small" @click="openDetailDialog(row)">
               详情
             </ElButton>
