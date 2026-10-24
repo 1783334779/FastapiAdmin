@@ -10,6 +10,9 @@
         mode="scaleToFill"
         :style="pieceStyle"
       />
+      <view class="fa-puzzle__refresh" @click.stop="emit('refresh')">
+        <wd-icon name="refresh" size="16px" />
+      </view>
       <view v-if="loading" class="fa-puzzle__mask">
         <wd-loading size="20px" />
       </view>
@@ -62,6 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   verify: [position: number]
+  refresh: []
 }>()
 
 const instance = getCurrentInstance()
@@ -180,6 +184,21 @@ defineExpose({ reset })
 
 .fa-puzzle__piece {
   filter: drop-shadow(0 4rpx 8rpx rgb(0 0 0 / 45%));
+}
+
+.fa-puzzle__refresh {
+  position: absolute;
+  top: 12rpx;
+  right: 12rpx;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52rpx;
+  height: 52rpx;
+  color: #fff;
+  background: rgb(0 0 0 / 38%);
+  border-radius: 12rpx;
 }
 
 .fa-puzzle__mask {

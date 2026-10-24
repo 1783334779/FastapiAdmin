@@ -150,6 +150,7 @@ async function handleSliderSuccess(position: number) {
     console.error('滑块验证失败', e)
     uni.showToast({ title: t('login.sliderFailed'), icon: 'none' })
     sliderCaptchaRef.value?.reset()
+    void getCaptcha()
   }
 }
 
@@ -303,9 +304,10 @@ async function handleOAuth(provider: OAuthProvider) {
             :bg-height="captchaState.bg_height"
             :passed="sliderPassed"
             :loading="loading"
-            :text="t('login.sliderText')"
+            :text="t('login.puzzleText')"
             :success-text="t('login.sliderSuccessText')"
             @verify="handleSliderSuccess"
+            @refresh="getCaptcha"
           />
         </wd-form-item>
 
