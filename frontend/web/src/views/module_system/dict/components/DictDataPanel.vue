@@ -29,7 +29,7 @@
     <template v-else>
       <ElCard class="fa-table-card" :style="{ 'margin-top': '0' }">
         <template #header>
-          <div class="flex items-center">
+          <div class="flex flex-col items-start sm:flex-row sm:items-center">
             <span class="text-base font-medium">字典数据【{{ dictLabel }}】</span>
             <span class="text-gray-400 ml-1">({{ dictType }})</span>
           </div>

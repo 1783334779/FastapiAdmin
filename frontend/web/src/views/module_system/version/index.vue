@@ -54,8 +54,9 @@
             />
           </div>
           <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-3 text-xs text-g-600">
-            <span>发布日期：{{ row.date || "—" }}</span>
-            <span>排序：{{ row.sort ?? "—" }}</span>
+            <span class="col-span-2">
+              发布：{{ row.date || "—" }} · 排序：{{ row.sort ?? "—" }}
+            </span>
             <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
           </div>
           <div class="mobile-card-actions">
