@@ -16,7 +16,7 @@ description: "15-30 分钟跑通一个可演示的 MVP:环境准备、代码拉�
 
 | 类型 | 技术栈 | 版本 |
 |------|--------|------|
-| 后端 | Python | ≥ 3.10（推荐 3.12） |
+| 后端 | Python | ≥ 3.12 |
 | 后端 | FastAPI | 0.109+ |
 | 前端 | Node.js | ≥ 20.0 |
 | 前端 | pnpm | ≥ 9.0 |
@@ -77,17 +77,17 @@ uv run main.py upgrade --env=dev
 # Web 前端 (Vue3)
 cd FastapiAdmin/frontend/web
 pnpm install
-pnpm run dev
+pnpm run dev --port 5173
 
 # 移动端 (UniApp)
 cd FastapiAdmin/frontend/app
 pnpm install
-pnpm run dev:h5
+pnpm run dev:h5 --port 5175
 
 # 文档网站 (VitePress)
 cd FastapiAdmin/frontend/docs
 pnpm install
-pnpm run dev
+pnpm run dev --port 5174
 ```
 
 ## 本地访问地址
@@ -95,7 +95,7 @@ pnpm run dev
 | 服务 | 地址 |
 |------|------|
 | Web 前端 | `http://127.0.0.1:5173` |
-| 移动端 H5 | `http://127.0.0.1:8080` |
+| 移动端 H5 | `http://127.0.0.1:5175` |
 | 文档网站 | `http://127.0.0.1:5174` |
 | 后端 API | `http://127.0.0.1:8001` |
 | Swagger | `http://127.0.0.1:8001/docs` |

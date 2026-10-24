@@ -194,7 +194,7 @@ onLoad(() => loadData())
           @search="onSearch"
           @clear="onReset"
         >
-          <template #default>
+          <template #suffix>
             <wd-drop-menu custom-class="inline-block! w-auto!" :z-index="20">
               <wd-drop-menu-item v-model="typeFilter" :options="TYPE_FILTER_OPTIONS" :title="t('tickets.typeFilter')" @change="handleTypeFilter" />
             </wd-drop-menu>
@@ -232,14 +232,6 @@ onLoad(() => loadData())
               border
               @click="navigateToDetail(item.id!)"
             >
-              <template #suffix>
-                <view class="flex flex-col items-end gap-1">
-                  <wd-text class="wot-text-text-auxiliary text-2.5" :text="(item.created_time || '').slice(0, 10)" />
-                  <wd-tag :type="ticketStatusTag(item.status) as any" plain size="small">
-                    {{ statusLabel(item.status) }}
-                  </wd-tag>
-                </view>
-              </template>
             </wd-cell>
           </wd-swipe-action>
         </wd-cell-group>
