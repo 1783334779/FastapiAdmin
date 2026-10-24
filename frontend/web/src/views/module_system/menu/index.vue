@@ -87,10 +87,10 @@
           :scrollbar="false"
         >
           <template #type="{ row }">
-            <FaStatusTag v-if="row?.type === MenuTypeEnum.CATALOG" type="warning" label="目录" />
+            <FaStatusTag v-if="row?.type === MenuTypeEnum.CATALOG" type="primary" label="目录" />
             <FaStatusTag v-if="row?.type === MenuTypeEnum.MENU" type="success" label="菜单" />
-            <FaStatusTag v-if="row?.type === MenuTypeEnum.BUTTON" type="danger" label="按钮" />
-            <FaStatusTag v-if="row?.type === MenuTypeEnum.EXTLINK" type="info" label="外链" />
+            <FaStatusTag v-if="row?.type === MenuTypeEnum.BUTTON" type="info" label="按钮" />
+            <FaStatusTag v-if="row?.type === MenuTypeEnum.EXTLINK" type="warning" label="外链" />
           </template>
           <template #scope="{ row }">
             <FaStatusTag v-if="row?.scope === MenuClientEnum.PC" type="primary" label="PC" />
@@ -893,10 +893,10 @@ const { columnChecks, columns } = useTableColumns<MenuTable>(
       width: 80,
       align: "center",
       status: {
-        1: { type: "warning", text: "目录" },
+        1: { type: "primary", text: "目录" },
         2: { type: "success", text: "菜单" },
-        3: { type: "danger", text: "按钮" },
-        4: { type: "info", text: "外链" },
+        3: { type: "info", text: "按钮" },
+        4: { type: "warning", text: "外链" },
       },
     },
     { prop: "title", label: "菜单标题", minWidth: 120, showOverflowTooltip: true },
