@@ -44,7 +44,70 @@
         </template>
       </FaTableHeader>
 
+      <div v-if="isNarrow" class="flex flex-col gap-3">
+        <div v-if="!mobileDeptRows.length" class="py-12">
+          <FaEmptyState
+            icon="ri:node-tree"
+            title="暂无部门"
+            description="新增第一个部门后在这里展示"
+          />
+        </div>
+        <div
+          v-for="{ row, depth } in mobileDeptRows"
+          :key="row.id"
+          class="p-3 rounded-lg bg-(--default-box-color) border border-(--default-border)"
+          :style="{ marginLeft: `${depth * 12}px` }"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-1 min-w-0">
+              <button
+                v-if="row.children?.length"
+                type="button"
+                class="flex items-center justify-center shrink-0 size-5 text-g-600"
+                @click="toggleMobileDept(row.id!)"
+              >
+                <FaSvgIcon
+                  :icon="
+                    expandedDeptIds.has(row.id!) ? 'ri:arrow-down-s-line' : 'ri:arrow-right-s-line'
+                  "
+                />
+              </button>
+              <span class="text-sm font-medium truncate">{{ row.name }}</span>
+            </div>
+            <FaStatusTag
+              :type="row.status === 0 ? 'success' : 'danger'"
+              :label="row.status === 0 ? '启用' : '停用'"
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-1 mt-2 text-xs text-g-600">
+            <span class="truncate">编码：{{ row.code }}</span>
+            <span>排序：{{ row.order ?? "—" }}</span>
+            <span class="col-span-2 truncate">上级：{{ row.parent_name || "—" }}</span>
+            <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
+          </div>
+          <div class="flex justify-end gap-1 mt-2">
+            <ElButton link type="primary" size="small" @click="opCtx.onAddChild(row.id!)">
+              新增子级
+            </ElButton>
+            <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
+              详情
+            </ElButton>
+            <ElButton link type="primary" size="small" @click="opCtx.onEdit(row.id!)">
+              编辑
+            </ElButton>
+            <ElButton
+              link
+              type="danger"
+              size="small"
+              @click="opCtx.onDelete(row.id!, row.name ?? '')"
+            >
+              删除
+            </ElButton>
+          </div>
+        </div>
+      </div>
       <FaTable
+        v-else
         ref="tableRef"
         row-key="id"
         :loading="loading"
@@ -101,6 +164,7 @@
 </template>
 
 <script setup lang="ts">
+import { useWindowSize } from "@vueuse/core";
 import DeptAPI, {
   type DeptForm,
   type DeptPageQuery,
@@ -386,6 +450,32 @@ async function handleOpenDeptDetail(id: number) {
   const response = await DeptAPI.detailDept(id);
   Object.assign(detailFormData.value, response.data.data ?? {});
   dialogVisible.visible = true;
+}
+
+const { width: viewportWidth } = useWindowSize();
+const isNarrow = computed(() => viewportWidth.value < 800);
+
+const expandedDeptIds = ref<Set<number>>(new Set());
+
+const mobileDeptRows = computed(() => {
+  const rows: Array<{ row: DeptTable; depth: number }> = [];
+  const walk = (nodes: DeptTable[], depth: number) => {
+    nodes.forEach((node) => {
+      rows.push({ row: node, depth });
+      if (node.children?.length && expandedDeptIds.value.has(node.id!)) {
+        walk(node.children, depth + 1);
+      }
+    });
+  };
+  walk(tableData.value ?? [], 0);
+  return rows;
+});
+
+function toggleMobileDept(id: number) {
+  const next = new Set(expandedDeptIds.value);
+  if (next.has(id)) next.delete(id);
+  else next.add(id);
+  expandedDeptIds.value = next;
 }
 
 const opCtx = {
