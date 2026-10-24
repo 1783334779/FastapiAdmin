@@ -155,7 +155,19 @@
     "email": "Email",
     "position": "Position",
     "password": "Password",
-    "superuser": "Superuser"
+    "superuser": "Superuser",
+    "placeholder": {
+      "account": "Enter account",
+      "username": "Enter username",
+      "phone": "Enter phone number",
+      "email": "Enter email",
+      "password": "Enter password",
+      "description": "Enter description",
+      "gender": "Select gender",
+      "dept": "Select department",
+      "role": "Select role",
+      "position": "Select position"
+    }
   },
   "search": {
     "placeholder": "Search page",

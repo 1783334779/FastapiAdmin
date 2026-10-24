@@ -155,7 +155,19 @@
     "email": "邮箱",
     "position": "岗位",
     "password": "密码",
-    "superuser": "是否超管"
+    "superuser": "是否超管",
+    "placeholder": {
+      "account": "请输入账号",
+      "username": "请输入用户名",
+      "phone": "请输入手机号码",
+      "email": "请输入邮箱",
+      "password": "请输入密码",
+      "description": "请输入描述",
+      "gender": "请选择性别",
+      "dept": "请选择上级部门",
+      "role": "请选择角色",
+      "position": "请选择岗位"
+    }
   },
   "search": {
     "placeholder": "搜索页面",
