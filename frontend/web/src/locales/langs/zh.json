@@ -343,7 +343,30 @@
     },
     "help": "帮助",
     "privacy": "隐私",
-    "terms": "条款"
+    "terms": "条款",
+    "aiConfig": {
+      "title": "配置中心",
+      "loading": "加载中...",
+      "current": "当前使用",
+      "restore": "恢复系统默认",
+      "configuredModels": "已配置的模型",
+      "countUnit": "个",
+      "emptyTitle": "添加你的第一个 AI 模型",
+      "emptyDesc": "支持 OpenAI、DeepSeek、Ollama 等任何 OpenAI 兼容服务；配置后即可在 AI 助手页一键切换",
+      "addNow": "立即添加",
+      "inUse": "使用中",
+      "addModel": "添加新模型",
+      "editModel": "编辑模型",
+      "newModel": "新增模型",
+      "configName": "配置名称",
+      "modelId": "模型 ID",
+      "fetchModels": "拉取模型",
+      "testConnection": "测试连通",
+      "cancel": "取消",
+      "save": "保存",
+      "addAndUse": "新增并使用",
+      "preset": "预设"
+    }
   },
   "search": {
     "placeholder": "搜索页面",

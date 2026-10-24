@@ -1,15 +1,20 @@
 <template>
-  <FaDrawer v-model="drawerVisible" title="配置中心" size="60%" destroy-on-close>
+  <FaDrawer
+    v-model="drawerVisible"
+    :title="$t('common.aiConfig.title')"
+    size="60%"
+    destroy-on-close
+  >
     <div class="ai-model-config">
       <div v-if="loading" class="loading-tip">
         <ElIcon class="is-loading"><Loading /></ElIcon>
-        <span>加载中...</span>
+        <span>{{ $t("common.aiConfig.loading") }}</span>
       </div>
       <template v-else>
         <!-- 顶部状态栏 -->
         <div class="status-bar">
           <div class="status-info">
-            <span class="status-title">当前使用</span>
+            <span class="status-title">{{ $t("common.aiConfig.current") }}</span>
             <ElTag :type="activeId ? 'primary' : 'info'" effect="dark" size="small">
               <ElIcon class="tag-icon"
                 ><FaSvgIcon v-if="activeId" icon="ri:checkbox-circle-line" /><Cpu v-else
@@ -25,7 +30,7 @@
             @click="handleUseDefault"
           >
             <ElIcon><RefreshLeft /></ElIcon>
-            <span>恢复系统默认</span>
+            <span>{{ $t("common.aiConfig.restore") }}</span>
           </ElButton>
         </div>
 
@@ -33,9 +38,9 @@
         <div class="config-section">
           <div class="section-header">
             <div class="header-left">
-              <span class="section-title">已配置的模型</span>
+              <span class="section-title">{{ $t("common.aiConfig.configuredModels") }}</span>
               <ElTag v-if="items.length > 0" size="small" effect="plain" type="info">
-                {{ items.length }} 个
+                {{ items.length }} {{ $t("common.aiConfig.countUnit") }}
               </ElTag>
             </div>
           </div>
@@ -44,11 +49,11 @@
           <FaEmptyState
             v-if="items.length === 0"
             icon="ri:cpu-line"
-            title="添加你的第一个 AI 模型"
-            description="支持 OpenAI、DeepSeek、Ollama 等任何 OpenAI 兼容服务；配置后即可在 AI 助手页一键切换"
+            :title="$t('common.aiConfig.emptyTitle')"
+            :description="$t('common.aiConfig.emptyDesc')"
           >
             <ElButton type="primary" size="large" :icon="Plus" @click="openCreate">
-              立即添加
+              {{ $t("common.aiConfig.addNow") }}
             </ElButton>
           </FaEmptyState>
 
@@ -77,7 +82,7 @@
                     <div class="item-row1">
                       <span class="item-name">{{ item.name }}</span>
                       <ElTag v-if="item.id === activeId" type="success" size="small" effect="light">
-                        使用中
+                        {{ $t("common.aiConfig.inUse") }}
                       </ElTag>
                     </div>
                     <div class="item-model">{{ item.model_id }}</div>
@@ -153,7 +158,7 @@
         <!-- 底部固定添加按钮 - 始终可见 -->
         <div v-if="items.length > 0" class="footer-add">
           <ElButton type="primary" plain :icon="Plus" class="add-btn" @click="openCreate">
-            添加新模型
+            {{ $t("common.aiConfig.addModel") }}
           </ElButton>
         </div>
       </template>
@@ -161,7 +166,7 @@
       <!-- 新增/编辑弹窗 -->
       <FaDialog
         v-model="dialogVisible"
-        :title="form.id ? '编辑模型' : '新增模型'"
+        :title="form.id ? $t('common.aiConfig.editModel') : $t('common.aiConfig.newModel')"
         :close-on-click-modal="false"
         size="sm"
       >
@@ -173,7 +178,7 @@
           label-position="right"
           @submit.prevent="handleSave"
         >
-          <ElFormItem label="配置名称" prop="name">
+          <ElFormItem :label="$t('common.aiConfig.configName')" prop="name">
             <ElInput
               v-model="form.name"
               placeholder="如：日常对话 / 代码助手"
@@ -218,7 +223,7 @@
               clearable
             />
           </ElFormItem>
-          <ElFormItem label="模型 ID" prop="model_id">
+          <ElFormItem :label="$t('common.aiConfig.modelId')" prop="model_id">
             <div class="w-full">
               <div class="flex items-center gap-2">
                 <ElInput
@@ -227,8 +232,12 @@
                   clearable
                   class="flex-1"
                 />
-                <ElButton :loading="probingModels" @click="fetchAvailableModels">拉取模型</ElButton>
-                <ElButton :loading="testingConnection" @click="testConnection">测试连通</ElButton>
+                <ElButton :loading="probingModels" @click="fetchAvailableModels">{{
+                  $t("common.aiConfig.fetchModels")
+                }}</ElButton>
+                <ElButton :loading="testingConnection" @click="testConnection">{{
+                  $t("common.aiConfig.testConnection")
+                }}</ElButton>
               </div>
               <div v-if="availableModels.length" class="mt-1.5 flex flex-wrap gap-1">
                 <ElTag
@@ -256,10 +265,12 @@
           </ElFormItem>
         </ElForm>
         <template #footer>
-          <ElButton @click="dialogVisible = false">取消</ElButton>
+          <ElButton @click="dialogVisible = false">{{ $t("common.aiConfig.cancel") }}</ElButton>
           <ElButton type="primary" :loading="saving" @click="handleSave">
             <ElIcon><FaSvgIcon icon="ri:check-line" /></ElIcon>
-            <span>{{ form.id ? "保存" : "新增并使用" }}</span>
+            <span>{{
+              form.id ? $t("common.aiConfig.save") : $t("common.aiConfig.addAndUse")
+            }}</span>
           </ElButton>
         </template>
       </FaDialog>

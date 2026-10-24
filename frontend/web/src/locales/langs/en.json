@@ -343,7 +343,30 @@
     },
     "help": "Help",
     "privacy": "Privacy",
-    "terms": "Terms"
+    "terms": "Terms",
+    "aiConfig": {
+      "title": "Configuration",
+      "loading": "Loading...",
+      "current": "In use",
+      "restore": "Restore defaults",
+      "configuredModels": "Configured models",
+      "countUnit": "",
+      "emptyTitle": "Add your first AI model",
+      "emptyDesc": "Works with OpenAI, DeepSeek, Ollama and any OpenAI-compatible service",
+      "addNow": "Add now",
+      "inUse": "In use",
+      "addModel": "Add model",
+      "editModel": "Edit model",
+      "newModel": "New model",
+      "configName": "Config name",
+      "modelId": "Model ID",
+      "fetchModels": "Fetch models",
+      "testConnection": "Test connection",
+      "cancel": "Cancel",
+      "save": "Save",
+      "addAndUse": "Add and use",
+      "preset": "Presets"
+    }
   },
   "search": {
     "placeholder": "Search page",
