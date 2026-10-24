@@ -148,7 +148,14 @@
       "name": "名称",
       "code": "编码",
       "remark": "备注"
-    }
+    },
+    "account": "账号",
+    "username": "用户名",
+    "phone": "手机号",
+    "email": "邮箱",
+    "position": "岗位",
+    "password": "密码",
+    "superuser": "是否超管"
   },
   "search": {
     "placeholder": "搜索页面",

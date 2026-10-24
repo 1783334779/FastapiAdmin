@@ -148,7 +148,14 @@
       "name": "Name",
       "code": "Code",
       "remark": "Remark"
-    }
+    },
+    "account": "Account",
+    "username": "Username",
+    "phone": "Phone",
+    "email": "Email",
+    "position": "Position",
+    "password": "Password",
+    "superuser": "Superuser"
   },
   "search": {
     "placeholder": "Search page",
