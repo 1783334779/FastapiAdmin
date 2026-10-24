@@ -213,7 +213,7 @@ onLoad(() => loadData())
     <template v-else>
       <view class="mt-2 px-3">
         <wd-empty v-if="!loading && list.length === 0" :tip="hasFilter ? t('tickets.emptyWithFilter') : t('tickets.empty')" />
-        <wd-cell-group v-else border custom-class="rounded-2! overflow-hidden">
+        <wd-cell-group v-else border custom-class="rounded-3! overflow-hidden">
           <wd-swipe-action
             v-for="item in list"
             :key="item.id"
