@@ -100,8 +100,8 @@
           </template>
           <!-- 性别 → 三种状态 Tag -->
           <template #gender="{ row }">
-            <FaStatusTag v-if="row?.gender === '0'" type="success" label="男" />
-            <FaStatusTag v-else-if="row?.gender === '1'" type="warning" label="女" />
+            <FaStatusTag v-if="row?.gender === '0'" type="info" label="男" />
+            <FaStatusTag v-else-if="row?.gender === '1'" type="info" label="女" />
             <FaStatusTag v-else type="info" label="未知" />
           </template>
           <!-- 角色 → 根据 IDs 从选项解析名称 -->
@@ -628,8 +628,8 @@ const {
         label: "性别",
         width: 88,
         status: {
-          "0": { type: "success", text: "男" },
-          "1": { type: "warning", text: "女" },
+          "0": { type: "info", text: "男" },
+          "1": { type: "info", text: "女" },
         },
       },
       {
