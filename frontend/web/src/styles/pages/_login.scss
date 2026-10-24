@@ -499,3 +499,24 @@ html.dark .login-third-on-dark {
 html.dark .oauth-social-btn:hover {
   background-color: rgb(255 255 255 / 10%);
 }
+
+@media (width <= 480px) {
+  .login-page-footer {
+    padding-inline: 16px;
+    border-top-color: transparent;
+
+    .login-footer-text {
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .login-footer-row {
+      white-space: normal;
+    }
+
+    .login-page-footer__link {
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
