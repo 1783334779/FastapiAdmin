@@ -1,5 +1,5 @@
 <template>
-  <div class="fa-card p-5 h-138 overflow-hidden">
+  <div class="fa-card p-5 h-[586px] overflow-hidden">
     <div class="fa-card-header">
       <div class="title">
         <h4>待办事项</h4>
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <ElScrollbar class="h-[calc(100%-40px)]" view-style="padding-right: 16px; padding-bottom: 16px">
+    <ElScrollbar class="h-[490px]" view-style="padding-right: 16px">
       <div
         class="flex items-center justify-between h-17.5 border-b border-line text-sm last:border-b-0"
         v-for="item in list"
