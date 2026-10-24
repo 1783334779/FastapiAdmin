@@ -27,7 +27,13 @@ const redirect = ref('/pages/index/index')
 const BASE_PATH = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`
 
 /** 品牌区参数（来自后端系统参数，带默认值兜底；web 端消费方式：configData?.[key]?.config_value） */
-const brandLogo = computed(() => configStore.configData?.logo_url?.config_value?.trim() || `${BASE_PATH}static/logo.png`)
+// 官方默认 Logo 统一使用内置新品牌标识；管理员自定义上传的 Logo 仍优先
+const OFFICIAL_LOGO_HOST = 'service.fastapiadmin.com'
+const brandLogo = computed(() => {
+  const custom = configStore.configData?.logo_url?.config_value?.trim()
+  if (!custom || custom.includes(OFFICIAL_LOGO_HOST)) return `${BASE_PATH}static/logo.png`
+  return custom
+})
 const brandTitle = computed(() => configStore.configData?.sys_name?.config_value?.trim() || 'FastapiAdmin')
 const brandSubtitle = computed(() => configStore.configData?.login_title?.config_value?.trim() || t('login.brandSubtitle'))
 

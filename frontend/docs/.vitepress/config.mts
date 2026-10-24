@@ -67,6 +67,10 @@ export default defineConfig({
   lastUpdated: true,
   cleanUrls: true,
   metaChunk: true,
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg?v=2' }],
+    ['link', { rel: 'shortcut icon', href: '/favicon.ico?v=2' }],
+  ],
   themeConfig: {
     search: {
       provider: 'local',
