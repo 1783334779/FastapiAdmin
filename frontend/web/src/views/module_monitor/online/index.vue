@@ -38,6 +38,7 @@
       </FaTableHeader>
 
       <FaTable
+        mobile-cards
         row-key="session_id"
         :loading="loading"
         :data="data"

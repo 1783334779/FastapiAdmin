@@ -29,6 +29,45 @@
           </template>
         </ElSkeleton>
       </div>
+      <!-- 通用移动端卡片：由列配置自动渲染 -->
+      <div v-else-if="mobileCardsActive" class="fa-table__mobile-cards pb-12">
+        <div v-if="!(data && data.length)" class="py-10 text-center text-sm text-g-500">
+          暂无数据
+        </div>
+        <div
+          v-for="(row, rowIndex) in data ?? []"
+          :key="rowIndex"
+          class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0 text-sm font-medium truncate">
+              <component :is="() => mobileCell(mobileTitleColumn as ColumnOption, row)" />
+            </div>
+            <div v-if="mobileOperationColumn" class="mobile-card-actions mt-0! shrink-0">
+              <component :is="() => mobileCell(mobileOperationColumn as ColumnOption, row)" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-3 text-xs text-g-600">
+            <div
+              v-for="col in mobileFieldColumns"
+              :key="col.prop"
+              class="min-w-0"
+              :class="{
+                'col-span-2': [
+                  'created_time',
+                  'updated_time',
+                  'login_time',
+                  'request_path',
+                  'description',
+                ].includes(col.prop ?? ''),
+              }"
+            >
+              <span class="text-g-500">{{ col.label }}：</span>
+              <component :is="() => mobileCell(col, row)" />
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- 数据表格 -->
       <template v-else>
         <VueDraggable
@@ -209,6 +248,8 @@ interface Props extends TableProps<Record<string, any>> {
   loading?: boolean;
   /** 列渲染配置 */
   columns?: ColumnOption[];
+  /** 窄屏使用通用卡片列表（生成页/普通表格页可开启） */
+  mobileCards?: boolean;
   /** 分页状态 */
   pagination?: FaPaginationConfig;
   /** 分页配置 */
@@ -225,6 +266,7 @@ interface Props extends TableProps<Record<string, any>> {
 
 const props = withDefaults(defineProps<Props>(), {
   columns: () => [],
+  mobileCards: false,
   fit: true,
   showHeader: true,
   stripe: undefined,
@@ -346,6 +388,55 @@ const stripe = computed(() => props.stripe ?? isZebra.value);
 const size = computed(() => props.size ?? tableSize.value);
 const { t: translate } = useI18n();
 const displayColumns = computed(() => translateColumnLabels(props.columns ?? [], translate));
+const mobileCardsActive = computed(() => props.mobileCards && isMobile.value);
+
+function getRowValue(row: Record<string, unknown>, path: string): unknown {
+  return path.split(".").reduce<unknown>((acc, key) => {
+    if (acc && typeof acc === "object") return (acc as Record<string, unknown>)[key];
+    return undefined;
+  }, row);
+}
+
+function mobileCell(col: ColumnOption, row: Record<string, unknown>) {
+  const slot = col.prop ? slots[col.prop] : undefined;
+  if (slot) {
+    const rendered = slot({ row });
+    return Array.isArray(rendered) ? h("span", rendered) : rendered;
+  }
+  if (col.formatter) {
+    const out = col.formatter(row);
+    return isVNode(out) ? out : h("span", String(out ?? "—"));
+  }
+  const value = col.prop ? getRowValue(row, col.prop) : "";
+  return h("span", value === null || value === undefined || value === "" ? "—" : String(value));
+}
+
+const mobileTitleColumn = computed(
+  () =>
+    displayColumns.value.find((col) =>
+      ["name", "title", "username", "notice_title", "request_path", "version"].includes(
+        col.prop ?? ""
+      )
+    ) ?? displayColumns.value.find((col) => col.prop && col.prop !== "operation")
+);
+
+const mobileFieldColumns = computed(() =>
+  displayColumns.value
+    .filter(
+      (col) =>
+        col.prop &&
+        col.prop !== "operation" &&
+        col.prop !== mobileTitleColumn.value?.prop &&
+        col.type !== "selection" &&
+        col.type !== "globalIndex" &&
+        col.type !== "expand"
+    )
+    .slice(0, 8)
+);
+
+const mobileOperationColumn = computed(() =>
+  displayColumns.value.find((col) => col.prop === "operation")
+);
 // 数据是否为空
 const isEmpty = computed(() => props.data?.length === 0);
 
@@ -883,5 +974,10 @@ defineExpose({
   :deep(.cell.highlight .fa-filter-icon) {
     color: var(--theme-color);
   }
+}
+
+.fa-table__mobile-cards {
+  height: 100%;
+  overflow-y: auto;
 }
 </style>
