@@ -2,7 +2,7 @@
 layout: doc
 outline: "deep"
 title: Quick Start
-description: "Spin up a working MVP in 15-30 minutes: prerequisites, source, Docker Compose, first run."
+description: "Spin up a working MVP in 5–15 minutes: prerequisites, source, Docker Compose and first run."
 ---
 
 ## Demo Environment

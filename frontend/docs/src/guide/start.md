@@ -2,7 +2,7 @@
 layout: doc
 outline: "deep"
 title: 快速开始
-description: "15-30 分钟跑通一个可演示的 MVP:环境准备、代码拉取、Docker Compose 一键启动、初始化数据、本地访问 Web 端与 App 端,常见问题排查。"
+description: "5–15 分钟跑通一个可演示的 MVP：环境准备、代码拉取、Docker Compose 一键启动、初始化数据、本地访问 Web 与移动端，常见问题排查。"
 ---
 
 ## 🍪 演示环境
