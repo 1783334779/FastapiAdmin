@@ -16,3 +16,18 @@ page {
   --fa-shadow-card: 0 1px 2px rgb(16 24 40 / 4%);
   --fa-shadow-pop: 0 4px 16px rgb(16 24 40 / 8%), 0 2px 8px rgb(16 24 40 / 4%);
 }
+
+/* 品牌色映射到 wot-ui 主色阶（浅/深主题都生效） */
+page.wot-theme-light,
+page.wot-theme-dark {
+  --wot-primary-1: #EEF1FF;
+  --wot-primary-2: #DCE2FF;
+  --wot-primary-3: #C3CDFF;
+  --wot-primary-4: #A5B3FF;
+  --wot-primary-5: #4F6BFF;
+  --wot-primary-6: #4F6BFF;
+  --wot-primary-7: #3D55E0;
+  --wot-primary-8: #2F43B8;
+  --wot-primary-9: #24348F;
+  --wot-primary-10: #1A2669;
+}

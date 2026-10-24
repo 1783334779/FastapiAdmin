@@ -8,7 +8,7 @@ import { dirname, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
 const tokens = JSON.parse(readFileSync(resolve(root, "design/tokens.json"), "utf8"));
-const { brand, neutral, radius, space, font, shadow, control, table, layout } = tokens;
+const { brand, brandRamp, neutral, radius, space, font, shadow, control, table, layout } = tokens;
 
 function write(path, content) {
   mkdirSync(dirname(path), { recursive: true });
@@ -110,6 +110,12 @@ page {
   --fa-page-padding: ${layout.pagePadding}px;
   --fa-shadow-card: ${shadow.card};
   --fa-shadow-pop: ${shadow.pop};
+}
+
+/* 品牌色映射到 wot-ui 主色阶（浅/深主题都生效） */
+page.wot-theme-light,
+page.wot-theme-dark {
+${Object.entries(brandRamp).map(([k,v]) => `  --wot-primary-${k}: ${v};`).join("\n")}
 }
 `
 );

@@ -56,6 +56,11 @@ node scripts/design-tokens/generate.mjs
 | 官网 | `.dark` | 已映射 `--vp-c-bg*`、divider、text |
 | 小程序 | `.wot-theme-dark` | 已映射 wot 背景/文字/边框/主色 |
 
+## 验收材料
+
+- 三端浅色/深色对比：[`docs/brand/three-platform.png`](../docs/brand/three-platform.png)
+- 三端暗色对比：[`docs/brand/dark-consistency.png`](../docs/brand/dark-consistency.png)
+
 ## 与规范的关系
 
 - 界面规范：[`docs/UI-SPEC.md`](../docs/UI-SPEC.md)
