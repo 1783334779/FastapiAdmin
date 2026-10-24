@@ -152,7 +152,12 @@ import type { SearchFormItem } from "@/components/forms/fa-search-bar/index.vue"
 import type FaSearchBar from "@/components/forms/fa-search-bar/index.vue";
 import type { FormItem } from "@/components/forms/fa-form/index.vue";
 import type FaForm from "@/components/forms/fa-form/index.vue";
-import { formatToDateTime, renderTableOperationCell, type TableOperationAction } from "@utils";
+import {
+  formatDateTime,
+  formatToDateTime,
+  renderTableOperationCell,
+  type TableOperationAction,
+} from "@utils";
 import type { ColumnOption } from "@/types/component";
 import FaDescriptions from "@/components/display/fa-descriptions/index.vue";
 import FaTable from "@/components/tables/fa-table/index.vue";
@@ -324,18 +329,18 @@ const {
       {
         prop: "created_time",
         label: "创建时间",
-        width: 168,
+        width: 190,
         formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-          row.created_time ? row.created_time.slice(0, 16) : "—",
+          formatDateTime(row.created_time),
         sortable: true,
         showOverflowTooltip: true,
       },
       {
         prop: "updated_time",
         label: "更新时间",
-        width: 168,
+        width: 190,
         formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-          row.updated_time ? row.updated_time.slice(0, 16) : "—",
+          formatDateTime(row.updated_time),
         sortable: true,
         showOverflowTooltip: true,
       },
