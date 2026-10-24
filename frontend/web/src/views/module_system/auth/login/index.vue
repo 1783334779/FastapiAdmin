@@ -67,6 +67,7 @@
                           @register="setAuthPanel('register')"
                           @oauth="handleOAuthLogin"
                           @slider-pass="handleSliderPass"
+                          @request-puzzle="handlePuzzleRequest"
                         />
                       </template>
 
@@ -508,6 +509,12 @@ async function getCaptcha() {
   } finally {
     codeLoading.value = false;
   }
+}
+
+/** 每次点击入口都换一张新题，再打开弹窗 */
+async function handlePuzzleRequest() {
+  await getCaptcha();
+  accountFormRef.value?.openPuzzle?.();
 }
 
 /** 拼图滑块释放后交给后端校验位置 */

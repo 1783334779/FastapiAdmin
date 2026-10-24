@@ -92,6 +92,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   verify: [position: number];
   refresh: [];
+  request: [];
 }>();
 
 const areaRef = ref<HTMLElement>();
@@ -135,6 +136,11 @@ const topPx = computed(
 const handlerLeft = computed(
   () => progress.value * Math.max(0, (trackWidth.value || 300) - HANDLER)
 );
+
+function requestPanel(): void {
+  if (props.loading) return;
+  emit("request");
+}
 
 function openPanel(): void {
   if (props.loading) return;
@@ -186,7 +192,7 @@ function reset(): void {
   panelOpen.value = false;
 }
 
-defineExpose({ reset });
+defineExpose({ reset, open: openPanel });
 </script>
 
 <style scoped lang="scss">

@@ -86,6 +86,7 @@
               :close-text="$t('common.closeAction')"
               :entry-text="$t('login.puzzleEntry')"
               @verify="(pos) => emit('sliderPass', pos)"
+              @request="emit('requestPuzzle')"
               @refresh="emit('getCaptcha')"
             />
           </div>
@@ -180,12 +181,13 @@ interface Emits {
   register: [];
   oauth: [provider: "wechat" | "qq" | "github" | "gitee"];
   sliderPass: [position: number];
+  requestPuzzle: [];
 }
 
 const emit = defineEmits<Emits>();
 
 const formRef = ref();
-const puzzleRef = ref<{ reset?: () => void } | null>(null);
+const puzzleRef = ref<{ reset?: () => void; open?: () => void } | null>(null);
 const isCapsLock = ref(false);
 
 function onPasswordKeyup(event: KeyboardEvent) {
@@ -201,5 +203,6 @@ defineExpose({
   validate: () => formRef.value?.validate?.(),
   clearValidate: () => formRef.value?.clearValidate?.(),
   resetDragVerify: () => puzzleRef.value?.reset?.(),
+  openPuzzle: () => puzzleRef.value?.open?.(),
 });
 </script>
