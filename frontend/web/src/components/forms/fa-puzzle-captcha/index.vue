@@ -405,6 +405,12 @@ defineExpose({ reset });
 }
 
 .is-passed {
+  .fa-puzzle__entry {
+    color: var(--el-color-success);
+    background: color-mix(in srgb, var(--el-color-success) 8%, transparent);
+    border-color: var(--el-color-success-light-5);
+  }
+
   .fa-puzzle__track {
     color: var(--el-color-success);
     border-color: var(--el-color-success-light-5);
