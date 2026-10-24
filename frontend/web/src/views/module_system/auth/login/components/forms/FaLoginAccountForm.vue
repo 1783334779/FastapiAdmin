@@ -14,6 +14,7 @@
         <ElSelect
           :model-value="demoAccountKey"
           class="custom-height w-full"
+          popper-class="login-account-dropdown"
           :placeholder="$t('login.quickSelectAccount')"
           @update:model-value="$emit('setupAccount', $event as AccountKey)"
         >

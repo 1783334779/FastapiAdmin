@@ -521,3 +521,13 @@ html.dark .oauth-social-btn:hover {
     }
   }
 }
+
+// 小屏账号下拉：选项行高与控件保持紧凑一致
+@media (width < 768px) {
+  .login-account-dropdown .el-select-dropdown__item {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 13px;
+    line-height: 32px;
+  }
+}
