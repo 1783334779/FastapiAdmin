@@ -234,7 +234,9 @@ onLoad(() => loadData())
               <template #value>
                 <view class="flex flex-col items-end gap-1">
                   <wd-text class="wot-text-text-auxiliary text-2.5" :text="(item.created_time || '').slice(0, 10)" />
-                  <StatusBadge :status="item.status" :map="TICKET_STATUS_MAP" />
+                  <wd-tag :type="ticketStatusTag(item.status) as any" plain size="small">
+                    {{ statusLabel(item.status) }}
+                  </wd-tag>
                 </view>
               </template>
             </wd-cell>
