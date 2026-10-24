@@ -87,7 +87,7 @@
 | 📱 移动端 | [service.fastapiadmin.com/app](https://service.fastapiadmin.com/app) | `admin` / `123456` |
 | 📖 官方文档 | [service.fastapiadmin.com](https://service.fastapiadmin.com) | 无需登录 |
 
-## 🚀 5 分钟本地跑起来
+## 🚀 5–15 分钟本地跑起来
 
 ```bash
 # 1. 克隆

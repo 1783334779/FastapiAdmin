@@ -87,7 +87,7 @@ English | [简体中文](./README.md)
 | 📱 Mobile | [service.fastapiadmin.com/app](https://service.fastapiadmin.com/app) | `admin` / `123456` |
 | 📖 Official Docs | [service.fastapiadmin.com](https://service.fastapiadmin.com) | No login |
 
-## 🚀 5-Minute Quick Start
+## 🚀 5–15 Minute Quick Start
 
 ```bash
 # 1. Clone
