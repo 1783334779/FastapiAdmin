@@ -49,9 +49,9 @@
       </Transition>
     </Teleport>
 
-    <button type="button" class="fa-puzzle__entry" :disabled="loading" @click="openPanel">
+    <button type="button" class="fa-puzzle__entry" :disabled="loading" @click="requestPanel">
       <FaSvgIcon :icon="passed ? 'ri:check-line' : 'ri:lock-2-line'" />
-      <span>{{ passed ? successText : entryText }}</span>
+      <span class="fa-puzzle__entry-text">{{ passed ? successText : entryText }}</span>
       <FaSvgIcon v-if="!passed" icon="ri:arrow-right-line" class="fa-puzzle__entry-arrow" />
     </button>
   </div>
@@ -244,9 +244,36 @@ defineExpose({ reset, open: openPanel });
   opacity: 0.6;
 }
 
+.fa-puzzle__entry-text {
+  background: linear-gradient(
+    to right,
+    var(--el-color-primary) 0%,
+    var(--el-color-primary) 42%,
+    #dbe4ff 50%,
+    var(--el-color-primary) 58%,
+    var(--el-color-primary) 100%
+  );
+  background-clip: text;
+  background-size: 200% 100%;
+  animation: puzzle-entry-shimmer 2.4s cubic-bezier(0, 0.2, 1, 1) infinite;
+  -webkit-text-fill-color: transparent;
+}
+
 .fa-puzzle__entry-arrow {
   font-size: 12px;
   opacity: 0.75;
+  animation: puzzle-arrow-nudge 2.4s ease-in-out infinite;
+}
+
+.is-passed .fa-puzzle__entry-text {
+  color: var(--el-color-success);
+  background: none;
+  -webkit-text-fill-color: currentcolor;
+  animation: none;
+}
+
+.is-passed .fa-puzzle__entry-arrow {
+  animation: none;
 }
 
 .fa-puzzle__title {
@@ -448,6 +475,40 @@ defineExpose({ reset, open: openPanel });
     color: var(--el-color-success);
     background: none;
     -webkit-text-fill-color: currentcolor;
+    animation: none;
+  }
+}
+
+@keyframes puzzle-entry-shimmer {
+  0% {
+    background-position: 150% 0;
+  }
+
+  100% {
+    background-position: -50% 0;
+  }
+}
+
+@keyframes puzzle-arrow-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fa-puzzle__entry-text {
+    color: var(--el-color-primary);
+    background: none;
+    -webkit-text-fill-color: currentcolor;
+    animation: none;
+  }
+
+  .fa-puzzle__entry-arrow {
     animation: none;
   }
 }
