@@ -231,7 +231,7 @@ onLoad(() => loadData())
               border
               @click="navigateToDetail(item.id!)"
             >
-              <template #value>
+              <template #suffix>
                 <view class="flex flex-col items-end gap-1">
                   <wd-text class="wot-text-text-auxiliary text-2.5" :text="(item.created_time || '').slice(0, 10)" />
                   <wd-tag :type="ticketStatusTag(item.status) as any" plain size="small">
