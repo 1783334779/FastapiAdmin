@@ -378,16 +378,20 @@ const useScrolling = () => {
 
     const { scrollWidth, ulWidth, offsetLeft, curTabRight, targetLeft } = positions;
 
+    /** 右侧有滚动箭头工具栏覆盖，按 96px 预留可视区 */
+    const rightGutter = 96;
+
     if (
-      (offsetLeft > Math.abs(scrollState.value.translateX) && curTabRight <= scrollWidth) ||
+      (offsetLeft > Math.abs(scrollState.value.translateX) &&
+        curTabRight <= scrollWidth - rightGutter) ||
       (scrollState.value.translateX < targetLeft && targetLeft < 0)
     ) {
       return;
     }
 
     requestAnimationFrame(() => {
-      if (curTabRight > scrollWidth) {
-        scrollState.value.translateX = Math.max(targetLeft - 6, scrollWidth - ulWidth);
+      if (curTabRight > scrollWidth - rightGutter) {
+        scrollState.value.translateX = Math.max(targetLeft - rightGutter, scrollWidth - ulWidth);
       } else if (offsetLeft < Math.abs(scrollState.value.translateX)) {
         scrollState.value.translateX = -offsetLeft;
       }
