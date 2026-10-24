@@ -549,13 +549,14 @@ const statusText: Record<TransferStatus, string> = {
   failed: "失败",
   canceled: "已取消",
 };
-const statusTypeMap: Record<TransferStatus, "info" | "warning" | "success" | "danger"> = {
-  pending: "info",
-  running: "warning",
-  success: "success",
-  failed: "danger",
-  canceled: "info",
-};
+const statusTypeMap: Record<TransferStatus, "info" | "primary" | "warning" | "success" | "danger"> =
+  {
+    pending: "info",
+    running: "primary",
+    success: "success",
+    failed: "danger",
+    canceled: "info",
+  };
 
 function formatSize(bytes?: number | null): string {
   if (!bytes || bytes <= 0) return "0 B";
