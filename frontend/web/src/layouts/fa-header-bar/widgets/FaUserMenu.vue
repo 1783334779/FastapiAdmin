@@ -86,7 +86,7 @@
             </li>
             <div class="w-full h-px my-2 bg-g-300/80"></div>
             <li
-              class="flex p-2 select-none rounded-md cursor-pointer last:mb-0 hover:bg-(--fa-gray-200) justify-center mt-5 mb-0 py-1.5 text-xs border border-g-400 hover:text-(--el-color-danger) hover:border-(--el-color-danger-light-3)"
+              class="flex p-2 select-none rounded-md cursor-pointer last:mb-0 justify-center mt-5 mb-0 py-1.5 text-xs border border-(--el-color-danger-light-5) bg-transparent text-(--el-color-danger) hover:bg-(--el-color-danger)/10 hover:border-(--el-color-danger-light-3)"
               @click="handleLogout"
             >
               {{ $t("topBar.user.logout") }}
