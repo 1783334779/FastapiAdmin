@@ -388,7 +388,7 @@ const stripe = computed(() => props.stripe ?? isZebra.value);
 const size = computed(() => props.size ?? tableSize.value);
 const { t: translate } = useI18n();
 const displayColumns = computed(() => translateColumnLabels(props.columns ?? [], translate));
-const mobileCardsActive = computed(() => props.mobileCards && isMobile.value);
+const mobileCardsActive = computed(() => props.mobileCards && width.value < 1025);
 
 function getRowValue(row: Record<string, unknown>, path: string): unknown {
   return path.split(".").reduce<unknown>((acc, key) => {
@@ -979,5 +979,18 @@ defineExpose({
 .fa-table__mobile-cards {
   height: 100%;
   overflow-y: auto;
+}
+
+@media (width >= 800px) and (width <= 1200px) {
+  .fa-table__mobile-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 16px;
+  }
+
+  .fa-table__mobile-cards > .py-10 {
+    grid-column: 1 / -1;
+  }
 }
 </style>
