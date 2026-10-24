@@ -353,11 +353,11 @@ const lightboxNext = () => {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--vp-brand-accent);
-  background: rgba(139, 92, 246, 0.12);
+  background: rgba(109, 91, 255, 0.12);
   padding: 0.35rem 0.75rem;
   border-radius: 9999px;
   margin-bottom: 1rem;
-  border: 1px solid rgba(139, 92, 246, 0.25);
+  border: 1px solid rgba(109, 91, 255, 0.25);
 }
 
 .endtoend-step-title {
@@ -425,7 +425,7 @@ const lightboxNext = () => {
   cursor: pointer;
   text-align: left;
   box-shadow:
-    0 24px 60px rgba(99, 102, 241, 0.18),
+    0 24px 60px rgba(79, 107, 255, 0.18),
     0 8px 20px rgba(0, 0, 0, 0.08);
   transition:
     transform 0.5s var(--vp-ease-emphasis, cubic-bezier(0.34, 1.56, 0.64, 1)),
@@ -439,7 +439,7 @@ const lightboxNext = () => {
   inset: -1px;
   border-radius: var(--vp-radius-xl);
   padding: 1px;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), transparent 50%, rgba(99, 102, 241, 0.3));
+  background: linear-gradient(135deg, rgba(109, 91, 255, 0.4), transparent 50%, rgba(79, 107, 255, 0.3));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -455,7 +455,7 @@ const lightboxNext = () => {
 .endtoend-step-image-wrap:hover {
   transform: translateY(-4px);
   box-shadow:
-    0 32px 80px rgba(99, 102, 241, 0.28),
+    0 32px 80px rgba(79, 107, 255, 0.28),
     0 12px 30px rgba(0, 0, 0, 0.12);
 }
 

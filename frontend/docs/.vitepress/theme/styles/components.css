@@ -81,7 +81,7 @@
 /* 暗色模式加强 — 紫粉渐变更显眼 */
 .dark .VPHomeHero::before {
   background:
-    radial-gradient(ellipse 60% 55% at 50% 30%, rgba(91, 108, 247, 0.20), transparent 70%),
+    radial-gradient(ellipse 60% 55% at 50% 30%, rgba(79, 107, 255, 0.20), transparent 70%),
     radial-gradient(ellipse 50% 45% at 30% 60%, rgba(109, 91, 255, 0.12), transparent 75%),
     radial-gradient(ellipse 50% 45% at 70% 60%, rgba(109, 91, 255, 0.10), transparent 75%);
 }

@@ -47,8 +47,8 @@ useRevealOnScroll(endToEndSection)
   height: 2px;
   max-width: 720px;
   margin: 4rem auto;
-  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.35), rgba(91, 108, 247, 0.5), rgba(236, 72, 153, 0.35), transparent);
-  box-shadow: 0 0 16px rgba(139, 92, 246, 0.25);
+  background: linear-gradient(90deg, transparent, rgba(109, 91, 255, 0.35), rgba(79, 107, 255, 0.5), rgba(109, 91, 255, 0.35), transparent);
+  box-shadow: 0 0 16px rgba(109, 91, 255, 0.25);
   border-radius: 2px;
 }
 
@@ -61,8 +61,8 @@ useRevealOnScroll(endToEndSection)
   height: 6px;
   border-radius: 50%;
   transform: translateY(-50%);
-  background: #a78bfa;
-  box-shadow: 0 0 12px #a78bfa;
+  background: #8FA4FF;
+  box-shadow: 0 0 12px #8FA4FF;
 }
 
 .section-divider::before { left: 30%; opacity: 0.6; }

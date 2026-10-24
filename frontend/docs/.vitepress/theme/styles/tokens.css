@@ -171,8 +171,8 @@
   --vp-pricing-text-3: rgba(255, 255, 255, 0.4);
   --vp-pricing-bg: #141420;
   --vp-pricing-border: rgba(255, 255, 255, 0.08);
-  --vp-pricing-badge-bg: rgba(91, 108, 247, 0.15);
-  --vp-pricing-badge-border: rgba(91, 108, 247, 0.3);
+  --vp-pricing-badge-bg: rgba(79, 107, 255, 0.15);
+  --vp-pricing-badge-border: rgba(79, 107, 255, 0.3);
   --vp-pricing-badge-text: #5B6CF7;
 
   /* Alt 按钮(深色 — 玻璃拟态) */
