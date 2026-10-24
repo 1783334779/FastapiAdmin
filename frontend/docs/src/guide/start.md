@@ -29,9 +29,9 @@ description: "15-30 分钟跑通一个可演示的 MVP:环境准备、代码拉�
 ## 获取代码
 
 ```bash
-git clone https://github.com/fastapiadmin/FastApiAdmin.git
+git clone https://github.com/fastapiadmin/FastapiAdmin.git
 # 或使用 Gitee
-git clone https://gitee.com/fastapiadmin/FastApiAdmin.git
+git clone https://gitee.com/fastapiadmin/FastapiAdmin.git
 ```
 
 ## 后端启动

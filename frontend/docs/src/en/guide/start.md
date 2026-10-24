@@ -29,9 +29,9 @@ description: "Spin up a working MVP in 15-30 minutes: prerequisites, source, Doc
 ## Get the Code
 
 ```bash
-git clone https://github.com/fastapiadmin/FastApiAdmin.git
+git clone https://github.com/fastapiadmin/FastapiAdmin.git
 # or via Gitee
-git clone https://gitee.com/fastapiadmin/FastApiAdmin.git
+git clone https://gitee.com/fastapiadmin/FastapiAdmin.git
 ```
 
 ## Backend Setup

@@ -128,7 +128,7 @@
 import AppConfig from "@/config";
 import { useConfigStore, useSettingsStore, useMenuStore } from "@stores";
 import { MenuWidth, MenuTypeEnum } from "@/enums/appEnum";
-import { isIframe, handleMenuJump, formatMenuTitle } from "@utils";
+import { isIframe, handleMenuJump, formatMenuTitle, normalizeBrandName } from "@utils";
 import SidebarSubmenu from "./widgets/FaSidebarSubmenu.vue";
 import { useCommon } from "@/hooks/core/useCommon";
 import { useWindowSize, useTimeoutFn } from "@vueuse/core";
@@ -152,7 +152,7 @@ const sidebarLogoSrc = computed(() => {
 
 const sidebarTitle = computed(() => {
   const raw = configStore.configData.sys_name?.config_value;
-  if (typeof raw === "string" && raw.trim()) return raw.trim();
+  if (typeof raw === "string" && raw.trim()) return normalizeBrandName(raw);
   return AppConfig.systemInfo.name;
 });
 

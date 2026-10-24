@@ -212,7 +212,7 @@ import {
 } from "@stores";
 import AppConfig from "@/config";
 import { languageOptions } from "@/locales";
-import { mittBus, themeAnimation } from "@utils";
+import { mittBus, normalizeBrandName, themeAnimation } from "@utils";
 import { useCommon } from "@/hooks/core/useCommon";
 import { useHeaderBar } from "@/hooks/core/useHeaderBar";
 import { ElMessage } from "element-plus";
@@ -241,7 +241,7 @@ const headerLogoSrc = computed(() => {
 
 const headerSystemName = computed(() => {
   const raw = configStore.configData.sys_name?.config_value;
-  if (typeof raw === "string" && raw.trim()) return raw.trim();
+  if (typeof raw === "string" && raw.trim()) return normalizeBrandName(raw);
   return AppConfig.systemInfo.name;
 });
 

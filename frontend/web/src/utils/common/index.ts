@@ -699,3 +699,14 @@ class QuickStartManager {
  * ```
  */
 export const quickStartManager = new QuickStartManager();
+
+
+/**
+ * 品牌名规范：后端默认值「FastapiAdmin系统」统一显示为 FastapiAdmin。
+ * 自定义名称保持原样。
+ */
+export function normalizeBrandName(name?: string | null): string {
+  const value = (name ?? "").trim();
+  if (!value) return "FastapiAdmin";
+  return /^fastapiadmin\s*系统$/i.test(value) ? "FastapiAdmin" : value;
+}

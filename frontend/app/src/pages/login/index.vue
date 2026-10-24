@@ -34,7 +34,11 @@ const brandLogo = computed(() => {
   if (!custom || custom.includes(OFFICIAL_LOGO_HOST)) return `${BASE_PATH}static/logo.png`
   return custom
 })
-const brandTitle = computed(() => configStore.configData?.sys_name?.config_value?.trim() || 'FastapiAdmin')
+const brandTitle = computed(() => {
+  const raw = configStore.configData?.sys_name?.config_value?.trim()
+  if (!raw) return 'FastapiAdmin'
+  return /^fastapiadmin\s*系统$/i.test(raw) ? 'FastapiAdmin' : raw
+})
 const brandSubtitle = computed(() => configStore.configData?.login_title?.config_value?.trim() || t('login.brandSubtitle'))
 
 /** 表单验证 schema — 用户名/密码字段级错误提示（wot-ui 函数式校验） */
