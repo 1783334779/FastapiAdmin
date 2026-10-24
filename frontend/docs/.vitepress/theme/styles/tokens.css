@@ -47,7 +47,7 @@
   --vp-c-indigo: var(--fa-brand-blue);
   --vp-c-indigo-deep: #3D55E8;
   --vp-c-violet: var(--fa-brand-violet);
-  --vp-c-cyan: #06b6d4;
+  --vp-c-cyan: #8FA4FF;
   --vp-c-pink: #6D5BFF;
 
   /* 品牌主渐变(token 化,所有组件统一引用) */
