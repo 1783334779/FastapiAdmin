@@ -248,7 +248,7 @@
                         c.created_by_name || c.created_by?.name || "匿名"
                       }}</span>
                       <span class="text-xs text-(--el-text-color-placeholder)">{{
-                        c.created_time?.slice(0, 16) ?? ""
+                        formatDateTime(c.created_time)
                       }}</span>
                     </div>
                     <div
@@ -389,7 +389,7 @@
 </template>
 
 <script setup lang="ts">
-import { formatToDate } from "@utils";
+import { formatDateTime, formatToDate } from "@utils";
 import { useCrudForm } from "@/hooks/core/useCrudForm";
 import TicketAPI, {
   getTicketComments,

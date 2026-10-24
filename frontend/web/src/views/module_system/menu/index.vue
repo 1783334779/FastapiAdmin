@@ -286,7 +286,12 @@ import MenuAPI, {
 } from "@/api/module_system/menu";
 import { MenuClientEnum, MenuTypeEnum } from "@/enums/system/menu.enum";
 import { formatTree } from "@utils/common";
-import { renderTableOperationCell, resolveStatusColumns, type TableOperationAction } from "@utils";
+import {
+  formatDateTime,
+  renderTableOperationCell,
+  resolveStatusColumns,
+  type TableOperationAction,
+} from "@utils";
 import type { SearchFormItem } from "@/components/forms/fa-search-bar/index.vue";
 import type FaSearchBar from "@/components/forms/fa-search-bar/index.vue";
 import type { FormItem } from "@/components/forms/fa-form/index.vue";
@@ -1049,9 +1054,9 @@ const { columnChecks, columns } = useTableColumns<MenuTable>(
     {
       prop: "created_time",
       label: "创建时间",
-      width: 168,
+      width: 190,
       formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-        row.created_time ? row.created_time.slice(0, 16) : "—",
+        formatDateTime(row.created_time),
       sortable: true,
       showOverflowTooltip: true,
       visible: false,
@@ -1059,9 +1064,9 @@ const { columnChecks, columns } = useTableColumns<MenuTable>(
     {
       prop: "updated_time",
       label: "更新时间",
-      width: 168,
+      width: 190,
       formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-        row.updated_time ? row.updated_time.slice(0, 16) : "—",
+        formatDateTime(row.updated_time),
       sortable: true,
       showOverflowTooltip: true,
       visible: false,

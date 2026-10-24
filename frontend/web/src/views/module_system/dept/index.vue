@@ -108,6 +108,7 @@ import DeptAPI, {
 } from "@/api/module_system/dept";
 import { useUserStore } from "@stores";
 import {
+  formatDateTime,
   formatTree,
   renderTableOperationCell,
   resolveStatusColumns,
@@ -415,18 +416,18 @@ const { columnChecks, columns } = useTableColumns<DeptTable>(
     {
       prop: "created_time",
       label: "创建时间",
-      width: 168,
+      width: 190,
       formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-        row.created_time ? row.created_time.slice(0, 16) : "—",
+        formatDateTime(row.created_time),
       sortable: true,
       showOverflowTooltip: true,
     },
     {
       prop: "updated_time",
       label: "更新时间",
-      width: 168,
+      width: 190,
       formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-        row.updated_time ? row.updated_time.slice(0, 16) : "—",
+        formatDateTime(row.updated_time),
       sortable: true,
       showOverflowTooltip: true,
     },

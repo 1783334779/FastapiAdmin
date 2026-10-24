@@ -147,7 +147,7 @@ import { useCrudForm } from "@/hooks/core/useCrudForm";
 import { confirmToggleStatus } from "@/hooks/core/useConfirm";
 import NoticeAPI, { type NoticeForm, type NoticeTable } from "@/api/module_system/notice";
 import {
-  formatToDateTime,
+  formatDateTime,
   renderTableOperationCell,
   resolveStatusColumns,
   type TableOperationAction,
@@ -432,18 +432,18 @@ const {
       {
         prop: "created_time",
         label: "创建时间",
-        width: 150,
+        width: 190,
         sortable: true,
         showOverflowTooltip: true,
-        formatter: (row: NoticeTable) => formatToDateTime(row.created_time, "YYYY-MM-DD HH:mm"),
+        formatter: (row: NoticeTable) => formatDateTime(row.created_time),
       },
       {
         prop: "updated_time",
         label: "更新时间",
-        width: 150,
+        width: 190,
         sortable: true,
         showOverflowTooltip: true,
-        formatter: (row: NoticeTable) => formatToDateTime(row.updated_time, "YYYY-MM-DD HH:mm"),
+        formatter: (row: NoticeTable) => formatDateTime(row.updated_time),
       },
       {
         prop: "created_id",

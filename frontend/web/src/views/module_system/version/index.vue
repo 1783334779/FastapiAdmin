@@ -137,7 +137,12 @@
 </template>
 
 <script setup lang="ts">
-import { renderTableOperationCell, resolveStatusColumns, type TableOperationAction } from "@utils";
+import {
+  formatDateTime,
+  renderTableOperationCell,
+  resolveStatusColumns,
+  type TableOperationAction,
+} from "@utils";
 import VersionAPI, { type VersionForm, type VersionTable } from "@/api/module_system/version";
 import type { AuditSearchFormParams } from "@/components/forms/fa-search-bar/auditSearchFormItems";
 import type { FormItem } from "@/components/forms/fa-form/index.vue";
@@ -249,18 +254,18 @@ const {
       {
         prop: "created_time",
         label: "创建时间",
-        width: 168,
+        width: 190,
         formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-          row.created_time ? row.created_time.slice(0, 16) : "—",
+          formatDateTime(row.created_time),
         sortable: true,
         showOverflowTooltip: true,
       },
       {
         prop: "updated_time",
         label: "更新时间",
-        width: 168,
+        width: 190,
         formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-          row.updated_time ? row.updated_time.slice(0, 16) : "—",
+          formatDateTime(row.updated_time),
         sortable: true,
         showOverflowTooltip: true,
       },

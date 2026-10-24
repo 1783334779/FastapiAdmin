@@ -148,6 +148,7 @@ import { useCrudForm } from "@/hooks/core/useCrudForm";
 import { confirmToggleStatus } from "@/hooks/core/useConfirm";
 
 import {
+  formatDateTime,
   renderTableOperationCell,
   resolveStatusColumns,
   stripPaginationParams,
@@ -589,9 +590,9 @@ const {
       {
         prop: "created_time",
         label: "创建时间",
-        width: 150,
+        width: 190,
         formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-          row.created_time ? row.created_time.slice(0, 16) : "—",
+          formatDateTime(row.created_time),
         sortable: true,
         showOverflowTooltip: true,
       },

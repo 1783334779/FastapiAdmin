@@ -160,7 +160,7 @@ import FaGenCodeDrawer from "./components/FaGenCodeDrawer.vue";
 import FaImportDbTableDialog from "./components/FaImportDbTableDialog.vue";
 import FaCreateTableDialog from "./components/FaCreateTableDialog.vue";
 import { GENCODE_BASIC_FORM_KEY, GENCODE_CM_KEY } from "./gencodeInjectionKeys";
-import { formatToDateTime, renderTableOperationCell, type TableOperationAction } from "@utils";
+import { formatDateTime, renderTableOperationCell, type TableOperationAction } from "@utils";
 import type { TreeNode } from "./types";
 import type { ColumnOption } from "@/types/component";
 import FaTableHeader from "@/components/tables/fa-table-header/index.vue";
@@ -828,20 +828,18 @@ const useTableResult = useTable({
       {
         prop: "created_time",
         label: "创建时间",
-        width: 168,
+        width: 190,
         sortable: true,
         showOverflowTooltip: true,
-        formatter: (row: { created_time?: string }) =>
-          formatToDateTime(row.created_time, "YYYY-MM-DD HH:mm"),
+        formatter: (row: { created_time?: string }) => formatDateTime(row.created_time),
       },
       {
         prop: "updated_time",
         label: "更新时间",
-        width: 168,
+        width: 190,
         sortable: true,
         showOverflowTooltip: true,
-        formatter: (row: { updated_time?: string }) =>
-          formatToDateTime(row.updated_time, "YYYY-MM-DD HH:mm"),
+        formatter: (row: { updated_time?: string }) => formatDateTime(row.updated_time),
       },
       {
         prop: "operation",
