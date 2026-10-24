@@ -22,7 +22,7 @@
       @touchmove.prevent="onTouchMove"
       @touchend="onTouchEnd"
     >
-      <view class="fa-puzzle__fill" :style="{ width: `${progress * 100}%` }" />
+      <view class="fa-puzzle__fill" :style="{ width: `${fillWidth}%` }" />
       <view class="fa-puzzle__button" :style="{ transform: `translateX(${buttonX}px)` }">
         <wd-icon :name="passed ? 'check' : 'double-right'" size="20px" />
       </view>
@@ -78,9 +78,12 @@ const pieceStyle = computed(() => ({
   height: `${(props.pieceHeight / props.bgHeight) * 100}%`,
 }))
 
-const buttonX = computed(() =>
-  Math.max(0, progress.value * Math.max(0, trackWidth.value - buttonSize)),
-)
+const fillWidth = computed(() => (props.passed ? 100 : progress.value * 100))
+
+const buttonX = computed(() => {
+  const max = Math.max(0, trackWidth.value - buttonSize)
+  return props.passed ? max : progress.value * max
+})
 
 function measureTrack(): Promise<void> {
   return new Promise((resolve) => {
