@@ -372,19 +372,28 @@ onDeactivated(disconnectWebSocket);
 /* 固定双栏，无分割线、无拖拽 */
 .chat-shell {
   display: flex;
+  gap: 16px;
+  height: 100%;
+  min-height: 0;
+}
+
+.sidebar-container {
+  flex: 0 0 auto;
   height: 100%;
   overflow: hidden;
   background: var(--default-box-color);
   border: 1px solid var(--el-border-color-light);
   border-radius: var(--fa-radius-md, 12px);
   box-shadow: var(--fa-shadow-card, 0 1px 2px rgb(16 24 40 / 4%));
+  transition: width 0.3s ease;
 }
 
-.sidebar-container {
-  flex: 0 0 auto;
-  height: 100%;
-  background: transparent;
-  transition: width 0.3s ease;
+.chat-container {
+  overflow: hidden;
+  background: var(--default-box-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: var(--fa-radius-md, 12px);
+  box-shadow: var(--fa-shadow-card, 0 1px 2px rgb(16 24 40 / 4%));
 }
 
 .chat-header {
