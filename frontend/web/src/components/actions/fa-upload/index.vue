@@ -52,7 +52,16 @@
             :preview-src-list="props.enablePreview ? [internalFileList[0]!.url] : []"
             :preview-teleported="true"
             @click.stop="handleImageClick"
-          />
+          >
+            <template #error>
+              <div
+                class="flex flex-col items-center justify-center w-full h-full gap-1 bg-(--el-fill-color-light)"
+              >
+                <FaSvgIcon icon="ri:image-line" class="text-xl text-g-400" />
+                <span class="text-xs text-g-400">加载失败</span>
+              </div>
+            </template>
+          </ElImage>
           <ElIcon
             v-if="!props.disabled"
             class="single-upload__delete-btn"
