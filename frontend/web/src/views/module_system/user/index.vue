@@ -60,6 +60,14 @@
             </FaTableHeader>
 
             <div v-if="isNarrow" class="flex flex-col gap-3">
+              <div v-if="!data.length" class="py-12">
+                <FaEmptyState
+                  icon="ri:user-3-line"
+                  title="暂无用户"
+                  description="新增用户或调整筛选条件后重试"
+                />
+              </div>
+
               <div
                 v-for="row in data"
                 :key="row.id"

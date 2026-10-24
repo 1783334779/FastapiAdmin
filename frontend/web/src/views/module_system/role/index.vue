@@ -44,6 +44,14 @@
       </FaTableHeader>
 
       <div v-if="isNarrow" class="flex flex-col gap-3">
+        <div v-if="!data.length" class="py-12">
+          <FaEmptyState
+            icon="ri:shield-user-line"
+            title="暂无角色"
+            description="新增第一个角色后在这里展示"
+          />
+        </div>
+
         <div
           v-for="row in data"
           :key="row.id"
@@ -90,6 +98,7 @@
           </div>
         </div>
         <ElPagination
+          v-if="data.length"
           class="justify-center mt-1"
           layout="prev, pager, next"
           :current-page="pagination.current"
