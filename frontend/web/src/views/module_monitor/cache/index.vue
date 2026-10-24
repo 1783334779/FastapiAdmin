@@ -3,10 +3,10 @@
     <ElTabs v-model="activeTab" class="fa-tabs-fill">
       <!-- 监控信息 Tab -->
       <ElTabPane label="监控信息" name="0">
-        <div class="flex flex-col gap-4 h-full min-h-0">
+        <div class="flex flex-col gap-4 h-full min-h-0 overflow-y-auto xl:overflow-hidden">
           <ElRow :gutter="16">
             <ElCol :span="24">
-              <ElCard shadow="hover" class="fa-card">
+              <ElCard shadow="hover" class="fa-card shrink-0">
                 <template #header>
                   <div class="flex items-center gap-2">
                     <FaSvgIcon icon="ri:database-2-line" class="text-lg" />
@@ -60,9 +60,9 @@
             </ElCol>
           </ElRow>
 
-          <ElRow :gutter="16" class="flex-1 min-h-0">
-            <ElCol :xs="24" :sm="12" class="mb-5">
-              <ElCard shadow="hover" class="fa-card flex-1 flex flex-col chart-card">
+          <ElRow :gutter="16" class="flex-1 min-h-0 overflow-hidden">
+            <ElCol :xs="24" :sm="12" class="mb-0 h-full">
+              <ElCard shadow="hover" class="fa-card h-full flex flex-col chart-card">
                 <template #header>
                   <div class="flex items-center gap-2">
                     <FaSvgIcon icon="ri:bar-chart-2-line" class="text-lg" />
@@ -72,8 +72,8 @@
                 <div ref="commandstats" class="flex flex-1 items-center justify-center min-h-75" />
               </ElCard>
             </ElCol>
-            <ElCol :xs="24" :sm="12" class="mb-5">
-              <ElCard shadow="hover" class="fa-card flex-1 flex flex-col chart-card">
+            <ElCol :xs="24" :sm="12" class="mb-0 h-full">
+              <ElCard shadow="hover" class="fa-card h-full flex flex-col chart-card">
                 <template #header>
                   <div class="flex items-center gap-2">
                     <FaSvgIcon icon="ri:pie-chart-2-line" class="text-lg" />
@@ -89,12 +89,14 @@
 
       <!-- 缓存管理 Tab -->
       <ElTabPane label="缓存管理" name="1">
-        <div class="grid grid-cols-3 gap-4 h-150">
+        <div
+          class="grid grid-cols-1 xl:grid-cols-3 xl:grid-rows-1 gap-4 h-full min-h-0 overflow-y-auto xl:overflow-hidden"
+        >
           <!-- 缓存列表 -->
           <ElCard
             :loading="loading"
             shadow="hover"
-            class="fa-card flex flex-col min-h-0"
+            class="fa-card flex flex-col min-h-100 xl:min-h-0"
             body-class="flex flex-col flex-1 min-h-0 overflow-hidden"
           >
             <template #header>
@@ -157,7 +159,7 @@
           <ElCard
             :loading="loading"
             shadow="hover"
-            class="fa-card flex flex-col min-h-0"
+            class="fa-card flex flex-col min-h-100 xl:min-h-0"
             body-class="flex flex-col flex-1 min-h-0 overflow-hidden"
           >
             <template #header>
@@ -223,7 +225,7 @@
           <ElCard
             :loading="loading"
             shadow="hover"
-            class="fa-card flex flex-col min-h-0"
+            class="fa-card flex flex-col min-h-100 xl:min-h-0"
             body-class="flex flex-col flex-1 min-h-0 overflow-hidden"
           >
             <template #header>
@@ -278,7 +280,11 @@
       </ElTabPane>
 
       <ElTabPane label="键空间浏览" name="2">
-        <ElCard shadow="hover" class="fa-card">
+        <ElCard
+          shadow="hover"
+          class="fa-card flex flex-col h-full min-h-0"
+          body-class="flex flex-col flex-1 min-h-0 overflow-hidden"
+        >
           <div class="flex flex-wrap items-center gap-2">
             <span class="text-[13px] text-(--el-text-color-secondary)">逻辑库</span>
             <ElSelect v-model="redisDb" style="width: 160px" @change="scanRedisKeys(true)">
@@ -308,8 +314,8 @@
           <ElTable
             v-loading="redisLoading"
             :data="redisKeys"
-            class="mt-3"
-            max-height="52vh"
+            class="mt-3 flex-1 min-h-0"
+            height="100%"
             @row-click="openRedisValue"
           >
             <ElTableColumn prop="key" label="键名" min-width="320" show-overflow-tooltip />
@@ -325,7 +331,12 @@
               </template>
             </ElTableColumn>
           </ElTable>
-          <FaEmptyState icon="ri:inbox-line" title="没有扫描到键（可换逻辑库或模式再试）" compact />
+          <FaEmptyState
+            v-if="!redisKeys.length"
+            icon="ri:inbox-line"
+            title="没有扫描到键（可换逻辑库或模式再试）"
+            compact
+          />
         </ElCard>
 
         <ElDialog
