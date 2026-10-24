@@ -679,6 +679,15 @@ watch(tabOverflow, (overflow) => {
 
 watch(list, () => nextTick(measureTabOverflow));
 
+// 路由/激活页签变化后，等 DOM 更新再滚动到可见位置，避免激活页签停在可视区外
+watch(activeTab, () => {
+  setTransition();
+  nextTick(() => {
+    autoPositionTab();
+    measureTabOverflow();
+  });
+});
+
 watch(
   () => currentRoute.value,
   () => {
