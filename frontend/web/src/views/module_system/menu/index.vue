@@ -490,13 +490,13 @@ const menuDetailItems: import("@/components/display/fa-descriptions/index.vue").
       },
     },
     {
-      label: "显示红点角标",
+      label: "红点角标",
       prop: "show_badge",
       tag: {
         map: { true: { type: "success", text: "是" }, false: { type: "danger", text: "否" } },
       },
     },
-    { label: "文字角标内容", prop: "show_text_badge" },
+    { label: "角标文字", prop: "show_text_badge" },
     {
       label: "状态",
       prop: "status",
@@ -658,7 +658,7 @@ const menuDialogFormItems = computed<FormItem[]>(() => {
     },
     {
       key: "show_badge",
-      label: "显示红点角标",
+      label: "红点角标",
       type: "radiogroup",
       hidden: t === MenuTypeEnum.BUTTON,
       props: {
@@ -670,7 +670,7 @@ const menuDialogFormItems = computed<FormItem[]>(() => {
     },
     {
       key: "show_text_badge",
-      label: "文字角标内容",
+      label: "角标文字",
       type: "input",
       hidden: t === MenuTypeEnum.BUTTON || !formData.value.show_badge,
       props: { placeholder: "请输入文字角标内容" },
