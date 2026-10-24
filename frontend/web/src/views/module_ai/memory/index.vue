@@ -39,6 +39,7 @@
       </FaTableHeader>
 
       <FaTable
+        mobile-cards
         ref="faTableRef"
         row-key="id"
         :loading="loading"

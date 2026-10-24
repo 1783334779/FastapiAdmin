@@ -279,7 +279,8 @@
     "clickSelect": "click to select",
     "message": "Message",
     "dictSelectType": "Select a dictionary type on the left",
-    "dictSelectDesc": "Its data will be shown on the right"
+    "dictSelectDesc": "Its data will be shown on the right",
+    "selectAll": "Select all"
   },
   "search": {
     "placeholder": "Search page",

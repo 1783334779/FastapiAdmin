@@ -296,6 +296,7 @@
             </template>
           </FaTableHeader>
           <FaTable
+            mobile-cards
             ref="logfaTableRef"
             row-key="id"
             :loading="logLoading"

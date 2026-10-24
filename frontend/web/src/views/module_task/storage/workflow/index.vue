@@ -38,6 +38,7 @@
       </FaTableHeader>
 
       <FaTable
+        mobile-cards
         ref="faTableRef"
         :loading="loading"
         :data="data"

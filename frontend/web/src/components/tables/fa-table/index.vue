@@ -31,6 +31,15 @@
       </div>
       <!-- 通用移动端卡片：由列配置自动渲染 -->
       <div v-else-if="mobileCardsActive" class="fa-table__mobile-cards pb-12">
+        <div v-if="data && data.length" class="flex items-center gap-2 px-1">
+          <ElCheckbox
+            :model-value="mobileAllSelected"
+            :indeterminate="mobilePartiallySelected"
+            @change="toggleMobileAll"
+          >
+            {{ $t("common.selectAll") }}
+          </ElCheckbox>
+        </div>
         <div v-if="!(data && data.length)" class="py-10 text-center text-sm text-g-500">
           暂无数据
         </div>
@@ -40,7 +49,12 @@
           class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
         >
           <div class="flex items-start justify-between gap-2">
-            <div class="min-w-0 text-sm font-medium truncate">
+            <ElCheckbox
+              class="mt-0.5 shrink-0"
+              :model-value="isMobileRowSelected(row)"
+              @change="toggleMobileRow(row)"
+            />
+            <div class="min-w-0 flex-1 text-sm font-medium truncate">
               <component :is="() => mobileCell(mobileTitleColumn as ColumnOption, row)" />
             </div>
             <div v-if="mobileOperationColumn" class="mobile-card-actions mt-0! shrink-0">
@@ -436,6 +450,46 @@ const mobileFieldColumns = computed(() =>
 
 const mobileOperationColumn = computed(() =>
   displayColumns.value.find((col) => col.prop === "operation")
+);
+
+const mobileSelectedRows = ref<Record<string, unknown>[]>([]);
+
+const mobileAllSelected = computed(() => {
+  const rows = props.data ?? [];
+  return rows.length > 0 && mobileSelectedRows.value.length === rows.length;
+});
+
+const mobilePartiallySelected = computed(() => {
+  const count = mobileSelectedRows.value.length;
+  return count > 0 && count < (props.data?.length ?? 0);
+});
+
+function isMobileRowSelected(row: Record<string, unknown>): boolean {
+  return mobileSelectedRows.value.includes(row);
+}
+
+function emitMobileSelection(): void {
+  emit("selection-change", [...mobileSelectedRows.value]);
+}
+
+function toggleMobileRow(row: Record<string, unknown>): void {
+  const index = mobileSelectedRows.value.indexOf(row);
+  if (index >= 0) mobileSelectedRows.value.splice(index, 1);
+  else mobileSelectedRows.value.push(row);
+  emitMobileSelection();
+}
+
+function toggleMobileAll(checked: boolean | string | number): void {
+  mobileSelectedRows.value = checked ? [...(props.data ?? [])] : [];
+  emitMobileSelection();
+}
+
+watch(
+  () => props.data,
+  () => {
+    mobileSelectedRows.value = [];
+    if (mobileCardsActive.value) emitMobileSelection();
+  }
 );
 // 数据是否为空
 const isEmpty = computed(() => props.data?.length === 0);

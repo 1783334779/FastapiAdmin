@@ -279,7 +279,8 @@
     "clickSelect": "点击选择文件",
     "message": "提示消息",
     "dictSelectType": "请在左侧选择一个字典类型",
-    "dictSelectDesc": "选择后将在右侧展示该字典的数据列表"
+    "dictSelectDesc": "选择后将在右侧展示该字典的数据列表",
+    "selectAll": "全选"
   },
   "search": {
     "placeholder": "搜索页面",
