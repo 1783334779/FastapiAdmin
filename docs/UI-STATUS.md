@@ -2,6 +2,7 @@
 
 > 对应审计：`tmp/ui-audit/UI-REVIEW.md`（58 项，本地资料，不入库）
 > 设计决策：`tmp/ui-modern/UI-DESIGN-DECISIONS.md`（本地资料，不入库）
+> 产品规范：`docs/UI-SPEC.md`（改 UI 前先读）
 
 ## 提交与远端
 
