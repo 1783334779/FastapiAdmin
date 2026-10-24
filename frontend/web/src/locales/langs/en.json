@@ -264,7 +264,11 @@
     "chain": "Chain",
     "multiTarget": "Multi-target",
     "operationLog": "Operation logs",
-    "loginLog": "Login logs"
+    "loginLog": "Login logs",
+    "search": "Search",
+    "uploadExcel": "Upload Excel",
+    "clearData": "Clear data",
+    "chooseFile": "Choose file"
   },
   "search": {
     "placeholder": "Search page",

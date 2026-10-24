@@ -12,7 +12,7 @@
     </div>
     <el-button v-else type="primary" plain :loading="uploading" @click="fileInputRef?.click()">
       <el-icon class="mr-1"><UploadFilled /></el-icon>
-      <span>选择文件</span>
+      <span>{{ $t("common.chooseFile") }}</span>
     </el-button>
     <input
       ref="fileInputRef"
