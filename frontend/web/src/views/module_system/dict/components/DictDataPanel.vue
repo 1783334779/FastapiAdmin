@@ -101,7 +101,7 @@
               </div>
             </div>
             <div class="mt-2 text-xs text-g-600">排序：{{ row.dict_sort ?? "—" }}</div>
-            <div class="flex justify-end gap-1.5 mt-4">
+            <div class="mobile-card-actions">
               <ElButton
                 link
                 type="primary"

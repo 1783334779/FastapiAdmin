@@ -434,3 +434,18 @@ html,
 body {
   overflow-x: clip;
 }
+
+/* 移动端卡片操作区：按钮右对齐、可换行，避免长按钮行溢出卡片 */
+.mobile-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 4px;
+  justify-content: flex-end;
+  margin-top: 16px;
+
+  .el-button {
+    flex: 0 0 auto;
+    margin-left: 0 !important;
+    font-size: 13px;
+  }
+}

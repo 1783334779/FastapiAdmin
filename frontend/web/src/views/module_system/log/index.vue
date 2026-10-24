@@ -65,7 +65,7 @@
                 <span class="col-span-2 truncate">描述：{{ row.description || "—" }}</span>
                 <span class="col-span-2">时间：{{ formatDateTime(row.created_time) }}</span>
               </div>
-              <div class="flex justify-end gap-1.5 mt-4">
+              <div class="mobile-card-actions">
                 <ElButton
                   link
                   type="primary"
@@ -214,7 +214,7 @@
                 <span class="col-span-2 truncate">提示：{{ row.msg || "—" }}</span>
                 <span class="col-span-2">时间：{{ formatDateTime(row.created_time) }}</span>
               </div>
-              <div class="flex justify-end gap-1.5 mt-4">
+              <div class="mobile-card-actions">
                 <ElButton
                   link
                   type="primary"

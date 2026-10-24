@@ -73,7 +73,7 @@
             <span class="col-span-2 truncate">所属部门：{{ deptText(row) }}</span>
             <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
           </div>
-          <div class="flex justify-end gap-1.5 mt-4">
+          <div class="mobile-card-actions">
             <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
               详情
             </ElButton>
