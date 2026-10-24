@@ -22,3 +22,23 @@ def test_detail_permissions_exist() -> None:
     permissions = {n.get("permission") for n in _walk(json.loads(MENU_SEED.read_text(encoding="utf-8")))}
     assert "module_system:log:detail" in permissions
     assert "module_monitor:cache:detail" in permissions
+
+
+def test_ops_permission_buttons_exist() -> None:
+    permissions = {n.get("permission") for n in _walk(json.loads(MENU_SEED.read_text(encoding="utf-8")))}
+    expected = {
+        "module_dbconsole:conn:create",
+        "module_dbconsole:conn:update",
+        "module_dbconsole:conn:delete",
+        "module_dbconsole:query:execute",
+        "module_ops:ssh:create",
+        "module_ops:ssh:update",
+        "module_ops:ssh:delete",
+        "module_ops:ssh:terminal",
+        "module_ops:ssh:exec",
+        "module_ops:snippet:query",
+        "module_ops:snippet:create",
+        "module_ops:snippet:update",
+        "module_ops:snippet:delete",
+    }
+    assert expected <= permissions
