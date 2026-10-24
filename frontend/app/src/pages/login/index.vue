@@ -527,6 +527,15 @@ async function handleOAuth(provider: OAuthProvider) {
   box-shadow: 0 4rpx 16rpx rgba(15, 23, 42, 0.05);
 }
 
+/* 成功文案默认隐藏：Wot 初始轨道宽度不为 0 时会从滑块两侧漏出 */
+:deep(.wd-slide-verify__track-text) {
+  opacity: 0;
+}
+
+:deep(.wd-slide-verify.is-success .wd-slide-verify__track-text) {
+  opacity: 1;
+}
+
 .wot-theme-dark .login-page :deep(.wd-input) {
   /* 比卡片背景（filled-content）亮一档，输入框在暗色卡片上凸起有层次 */
   --wot-input-bg: var(--wot-coolgrey-8, var(--wot-filled-content));
