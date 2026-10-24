@@ -44,7 +44,82 @@
         </template>
       </FaTableHeader>
 
+      <div v-if="isNarrow" class="mt-4 flex flex-col gap-4">
+        <div v-if="!tasks.length" class="py-12">
+          <FaEmptyState
+            icon="ri:exchange-box-line"
+            title="暂无传输任务"
+            description="创建第一个传输任务后在这里展示"
+          />
+        </div>
+        <div
+          v-for="row in tasks"
+          :key="row.id"
+          class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="text-sm font-medium truncate">{{ row.name }}</div>
+              <div class="flex items-center gap-1 mt-1">
+                <FaStatusTag
+                  :type="row.task_type === 'chain' ? 'warning' : 'primary'"
+                  :label="row.task_type === 'chain' ? '链式' : '多目标'"
+                />
+                <FaStatusTag
+                  type="info"
+                  :label="
+                    row.source_type === 'local' ? '本地' : protoText(sourceById(row.source_id))
+                  "
+                />
+              </div>
+            </div>
+            <FaStatusTag
+              :type="statusTypeMap[row.status as TransferStatus] || 'info'"
+              :label="statusText[row.status as TransferStatus] || row.status"
+            />
+          </div>
+          <div class="mt-2 text-xs text-g-600 truncate">
+            {{ row.source_name || row.source_path || "—" }}
+          </div>
+          <div class="mt-1 text-xs text-g-600 truncate">目标：{{ targetShortText(row) }}</div>
+          <ElProgress
+            class="mt-2"
+            :percentage="row.progress || 0"
+            :status="row.status === 'failed' ? 'exception' : undefined"
+          />
+          <div class="flex justify-between mt-1 text-xs text-g-600">
+            <span>{{ formatSize(row.transferred_size) }} / {{ formatSize(row.total_size) }}</span>
+            <span v-if="row.speed > 0">{{ formatSpeed(row.speed) }}</span>
+          </div>
+          <div v-if="row.error_msg" class="mt-1 text-xs text-(--el-color-danger)">
+            {{ row.error_msg }}
+          </div>
+          <div class="mobile-card-actions">
+            <ElButton link type="primary" size="small" @click="openDetail(row)"> 详情 </ElButton>
+            <ElButton
+              v-if="row.status === 'running' || row.status === 'pending'"
+              link
+              type="warning"
+              size="small"
+              @click="cancelTask(row)"
+            >
+              取消
+            </ElButton>
+            <ElButton link type="danger" size="small" @click="removeTask(row)">删除</ElButton>
+          </div>
+        </div>
+        <ElPagination
+          v-if="tasks.length"
+          class="justify-center mt-1"
+          layout="prev, pager, next"
+          :current-page="page"
+          :page-size="pageSize"
+          :total="total"
+          @current-change="onPageChange"
+        />
+      </div>
       <FaTable
+        v-else
         :data="tasks"
         :columns="columns"
         :pagination="{ current: page, size: pageSize, total }"
@@ -360,6 +435,7 @@
 </template>
 
 <script setup lang="ts">
+import { useWindowSize } from "@vueuse/core";
 import TransferAPI, {
   TransferStream,
   type TransferPushMessage,
@@ -396,6 +472,9 @@ const sourceMap = computed<Record<number, SourceTable>>(() => {
 const enabledSources = computed(() => sources.value.filter((s) => s.status !== 1));
 const sourceById = (id?: number | null) => (id ? sourceMap.value[id] : undefined);
 const sourceName = (id?: number | null) => (id ? sourceMap.value[id]?.name || `#${id}` : "—");
+const { width: viewportWidth } = useWindowSize();
+const isNarrow = computed(() => viewportWidth.value < 800);
+
 const protoText = (s?: SourceTable) => s?.protocol || "?";
 
 async function loadSources() {
