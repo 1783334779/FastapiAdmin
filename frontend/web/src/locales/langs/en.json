@@ -131,7 +131,12 @@
     "publish": "Release",
     "source": "Source",
     "target": "Target",
-    "dataScope": "Data scope"
+    "dataScope": "Data scope",
+    "addNew": "New",
+    "batchDelete": "Batch delete",
+    "batchEnable": "Batch enable",
+    "batchDisable": "Batch disable",
+    "more": "More"
   },
   "search": {
     "placeholder": "Search page",

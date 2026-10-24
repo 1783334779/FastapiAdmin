@@ -131,7 +131,12 @@
     "publish": "发布",
     "source": "来源",
     "target": "目标",
-    "dataScope": "数据权限"
+    "dataScope": "数据权限",
+    "addNew": "新增",
+    "batchDelete": "批量删除",
+    "batchEnable": "批量启用",
+    "batchDisable": "批量停用",
+    "more": "更多"
   },
   "search": {
     "placeholder": "搜索页面",

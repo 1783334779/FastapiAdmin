@@ -13,7 +13,7 @@
           @click="$emit('add')"
           plain
         >
-          新增
+          {{ $t("common.addNew") }}
         </ElButton>
         <ElButton
           v-if="permImport"
@@ -24,7 +24,7 @@
           @click="$emit('import')"
           plain
         >
-          导入
+          {{ $t("common.import") }}
         </ElButton>
         <ElButton
           v-if="permExport"
@@ -35,7 +35,7 @@
           @click="$emit('export')"
           plain
         >
-          导出
+          {{ $t("common.export") }}
         </ElButton>
         <ElButton
           v-if="permDelete"
@@ -47,7 +47,11 @@
           @click="$emit('delete')"
           plain
         >
-          {{ removeIds.length > 0 ? `批量删除 (${removeIds.length})` : "批量删除" }}
+          {{
+            removeIds.length > 0
+              ? `${$t("common.batchDelete")} (${removeIds.length})`
+              : $t("common.batchDelete")
+          }}
         </ElButton>
         <ElDropdown
           v-if="permPatch"
@@ -57,18 +61,18 @@
           :disabled="removeIds.length === 0 || deleteLoading || moreLoading"
         >
           <ElButton :loading="moreLoading">
-            更多
+            {{ $t("common.more") }}
             <ElIcon class="el-icon--right">
               <ArrowDown />
             </ElIcon>
           </ElButton>
           <template #dropdown>
             <ElDropdownMenu>
-              <ElDropdownItem icon="Check" @click="$emit('more', 'enable')"
-                >批量启用</ElDropdownItem
-              >
+              <ElDropdownItem icon="Check" @click="$emit('more', 'enable')">{{
+                $t("common.batchEnable")
+              }}</ElDropdownItem>
               <ElDropdownItem icon="CircleClose" @click="$emit('more', 'disable')">
-                批量停用
+                {{ $t("common.batchDisable") }}
               </ElDropdownItem>
             </ElDropdownMenu>
           </template>
