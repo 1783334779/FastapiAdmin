@@ -280,7 +280,7 @@
       <ElTabPane label="键空间浏览" name="2">
         <ElCard shadow="hover" class="fa-card">
           <div class="flex flex-wrap items-center gap-2">
-            <span class="text-[13px] text-[#909399]">逻辑库</span>
+            <span class="text-[13px] text-(--el-text-color-secondary)">逻辑库</span>
             <ElSelect v-model="redisDb" style="width: 160px" @change="scanRedisKeys(true)">
               <ElOption
                 v-for="item in redisDatabases"
@@ -301,7 +301,7 @@
               >扫描</ElButton
             >
             <ElButton :disabled="!redisCursor" @click="scanRedisKeys(false)">加载更多</ElButton>
-            <span class="text-xs text-[#909399]"
+            <span class="text-xs text-(--el-text-color-secondary)"
               >只读浏览；敏感键（token/session 等）的值自动脱敏</span
             >
           </div>

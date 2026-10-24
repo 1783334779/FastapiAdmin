@@ -129,7 +129,7 @@
                           class="cursor-pointer whitespace-nowrap"
                           :class="
                             i === segments.length - 1
-                              ? 'text-[#909399] hover:text-(--el-color-primary)'
+                              ? 'text-(--el-text-color-secondary) hover:text-(--el-color-primary)'
                               : 'text-(--el-text-color-primary) hover:text-(--el-color-primary)'
                           "
                           @click="goToSegment(i)"
@@ -257,7 +257,9 @@
                 v-loading="activeTab.loading"
                 class="min-h-0 flex-1"
               >
-                <div class="mb-2 flex items-center justify-between text-[13px] text-[#909399]">
+                <div
+                  class="mb-2 flex items-center justify-between text-[13px] text-(--el-text-color-secondary)"
+                >
                   <span>存储桶（账号下全部，点击进入）</span>
                   <el-button
                     size="small"
@@ -289,7 +291,9 @@
                     class="shrink-0"
                     >当前桶</el-tag
                   >
-                  <span class="ml-auto shrink-0 text-xs text-[#909399]">点击进入</span>
+                  <span class="ml-auto shrink-0 text-xs text-(--el-text-color-secondary)"
+                    >点击进入</span
+                  >
                 </div>
                 <FaEmptyState
                   v-if="!activeTab.loading && !objectBuckets.length"
@@ -317,14 +321,21 @@
                 >
                   <template #name="{ row }">
                     <span class="inline-flex items-center gap-1">
-                      <el-icon :size="16" :class="row.is_dir ? 'text-[#e6a23c]' : 'text-[#909399]'">
+                      <el-icon
+                        :size="16"
+                        :class="
+                          row.is_dir
+                            ? 'text-(--el-color-warning)'
+                            : 'text-(--el-text-color-secondary)'
+                        "
+                      >
                         <FaSvgIcon v-if="row.is_dir" icon="ri:folder-2-line" />
                         <FaSvgIcon v-else icon="ri:file-text-line" />
                       </el-icon>
                       <span
                         :class="
                           row.is_dir
-                            ? 'cursor-pointer font-medium text-[#409eff] hover:underline'
+                            ? 'cursor-pointer font-medium text-(--el-color-primary) hover:underline'
                             : ''
                         "
                         :title="row.name"
@@ -332,7 +343,7 @@
                         >{{ row.name }}</span
                       >
                       <el-icon
-                        class="shrink-0 cursor-pointer text-[#c0c4cc] hover:text-(--el-color-primary)"
+                        class="shrink-0 cursor-pointer text-(--el-text-color-placeholder) hover:text-(--el-color-primary)"
                         :size="14"
                         title="复制文件名"
                         @click.stop="copyName(row.name)"
@@ -341,12 +352,14 @@
                     </span>
                   </template>
                   <template #size="{ row }">
-                    <span class="text-xs text-[#909399]">{{
+                    <span class="text-xs text-(--el-text-color-secondary)">{{
                       row.is_dir ? "—" : formatSize(row.size)
                     }}</span>
                   </template>
                   <template #modified_time="{ row }">
-                    <span class="text-xs text-[#909399]">{{ formatTime(row.modified_time) }}</span>
+                    <span class="text-xs text-(--el-text-color-secondary)">{{
+                      formatTime(row.modified_time)
+                    }}</span>
                   </template>
                   <template #operation="{ row }">
                     <div class="inline-flex items-center justify-end gap-1">
@@ -405,7 +418,7 @@
               <!-- 状态栏 + 游标分页（桶列表最外层不显示） -->
               <div
                 v-if="!activeTab?.browseBuckets"
-                class="mt-2.5 flex shrink-0 items-center gap-2 text-[13px] text-[#606266]"
+                class="mt-2.5 flex shrink-0 items-center gap-2 text-[13px] text-(--el-text-color-regular)"
               >
                 <span>当前页 {{ entries.length }} 项 · 第 {{ pageNo }} 页</span>
                 <span v-if="selectedRows.length" class="text-(--el-color-primary)"
@@ -489,7 +502,7 @@
         size="sm"
       >
         <div class="inline-flex items-center gap-2">
-          <span class="text-[13px] text-[#909399]">有效期</span>
+          <span class="text-[13px] text-(--el-text-color-secondary)">有效期</span>
           <el-radio-group v-model="shareDialog.expireSeconds">
             <el-radio v-for="opt in shareExpireOptions" :key="opt.value" :value="opt.value">{{
               opt.label
@@ -500,7 +513,7 @@
           <el-input v-model="shareDialog.url" readonly class="min-w-0 flex-1" />
           <el-button type="primary" :icon="CopyDocument" @click="copyShareUrl">复制</el-button>
         </div>
-        <p class="mt-2 text-xs text-[#909399]">
+        <p class="mt-2 text-xs text-(--el-text-color-secondary)">
           {{
             shareDialog.url
               ? "链接已生成，有效期结束后自动失效"
@@ -527,12 +540,12 @@
         size="sm"
       >
         <div class="mb-2 inline-flex w-full items-center gap-2">
-          <span class="text-[13px] text-[#909399]">目标目录</span>
+          <span class="text-[13px] text-(--el-text-color-secondary)">目标目录</span>
           <div
             class="flex h-7 min-w-0 flex-1 items-center gap-2 rounded px-2 text-xs text-(--el-text-color-regular)"
             :title="dirPicker.dir || '（最外层）'"
           >
-            <span class="text-xs text-[#909399]">/</span
+            <span class="text-xs text-(--el-text-color-secondary)">/</span
             ><span class="truncate">{{ dirPicker.dir || "（最外层）" }}</span>
           </div>
           <el-button link type="primary" size="small" :disabled="!dirPicker.dir" @click="pickerBack"
@@ -548,7 +561,10 @@
         </div>
         <div class="rounded border border-(--el-border-color)">
           <el-scrollbar max-height="320px">
-            <div v-if="dirPicker.loading" class="py-6 text-center text-xs text-[#909399]">
+            <div
+              v-if="dirPicker.loading"
+              class="py-6 text-center text-xs text-(--el-text-color-secondary)"
+            >
               <el-icon class="is-loading"><Loading /></el-icon>
             </div>
             <template v-else>
@@ -559,7 +575,7 @@
                 :title="`进入 ${e.name}`"
                 @click="pickerEnter(e.name || '')"
               >
-                <el-icon class="shrink-0 text-[#e6a23c]"
+                <el-icon class="shrink-0 text-(--el-color-warning)"
                   ><FaSvgIcon icon="ri:folder-2-line"
                 /></el-icon>
                 <span class="min-w-0 flex-1 truncate">{{ e.name }}</span>
@@ -573,7 +589,7 @@
             </template>
           </el-scrollbar>
         </div>
-        <p class="mt-2 text-xs text-[#909399]">
+        <p class="mt-2 text-xs text-(--el-text-color-secondary)">
           文件将{{ dirPicker.mode === "copy" ? "复制" : "移动" }}到当前显示的目录
         </p>
       </FaDialog>

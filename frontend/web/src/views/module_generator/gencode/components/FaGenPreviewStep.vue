@@ -11,13 +11,13 @@
     <template v-else>
       <ElCol :span="24" class="mb-2">
         <div class="flex items-center gap-3">
-          <span class="text-sm text-[#909399]">预览范围</span>
+          <span class="text-sm text-(--el-text-color-secondary)">预览范围</span>
           <ElRadioGroup v-model="previewScope" size="small">
             <ElRadioButton value="all">全部</ElRadioButton>
             <ElRadioButton value="frontend">前端</ElRadioButton>
             <ElRadioButton value="backend">后端</ElRadioButton>
           </ElRadioGroup>
-          <span class="ml-3 text-sm text-[#909399]">类型</span>
+          <span class="ml-3 text-sm text-(--el-text-color-secondary)">类型</span>
           <ElCheckboxGroup v-model="previewTypes" size="small">
             <ElCheckboxButton v-for="t in previewTypeOptions" :key="t" :value="t">
               {{ t }}

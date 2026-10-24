@@ -96,7 +96,7 @@
                   >{{ sourceName(t.target_id) }}</ElTag
                 >
               </ElTooltip>
-              <span class="text-xs text-[#909399]">{{ t.target_path }}</span>
+              <span class="text-xs text-(--el-text-color-secondary)">{{ t.target_path }}</span>
             </div>
           </div>
         </template>
