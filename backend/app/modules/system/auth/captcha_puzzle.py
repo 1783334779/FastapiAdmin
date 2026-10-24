@@ -1,13 +1,14 @@
-"""滑块拼图验证码的 SVG 出题器。
+"""滑块拼图验证码：品牌化出题器。
 
-不依赖 Pillow：用随机几何图形拼出背景，再按拼图缺口裁剪出滑块图块。
-前端把图块按用户拖动位置覆盖到背景上，服务端只保存缺口横坐标并校验。
+背景使用产品页面截图，图块使用品牌 Logo；缺口横坐标只保存在服务端 Redis，
+前端拖动到正确位置后由服务端校验。
 """
 
 from __future__ import annotations
 
 import base64
 import random
+from pathlib import Path
 
 WIDTH = 320
 HEIGHT = 160
@@ -16,98 +17,74 @@ KNOB = 7
 PIECE_WIDTH = PIECE + KNOB
 RADIUS = 8
 
-PALETTE = [
-    "#4F6BFF",
-    "#6D5BFF",
-    "#22C55E",
-    "#F59E0B",
-    "#EC4899",
-    "#06B6D4",
-    "#A855F7",
-    "#F97316",
-]
+_ASSET_DIR = Path(__file__).parent / "assets"
+
+
+def _read_asset_data_uri(name: str, mime: str) -> str:
+    path = _ASSET_DIR / name
+    if not path.exists():
+        return ""
+    encoded = base64.b64encode(path.read_bytes()).decode("utf-8")
+    return f"data:{mime};base64,{encoded}"
+
+
+BG_IMAGE = _read_asset_data_uri("page-bg.png", "image/png")
+LOGO_IMAGE = _read_asset_data_uri("logo.svg", "image/svg+xml")
 
 
 def _svg_data(svg: str) -> str:
     return "data:image/svg+xml;base64," + base64.b64encode(svg.encode("utf-8")).decode()
 
 
-def _background_shapes(rnd: random.Random) -> str:
-    parts = [
-        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#bg)"/>',
-    ]
-    for _ in range(14):
-        cx = rnd.randint(-20, WIDTH + 20)
-        cy = rnd.randint(-20, HEIGHT + 20)
-        r = rnd.randint(14, 52)
-        color = rnd.choice(PALETTE)
-        opacity = round(rnd.uniform(0.18, 0.55), 2)
-        parts.append(f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{color}" opacity="{opacity}"/>')
-    for _ in range(5):
-        x = rnd.randint(0, WIDTH - 40)
-        y = rnd.randint(0, HEIGHT - 20)
-        w = rnd.randint(30, 100)
-        h = rnd.randint(8, 26)
-        color = rnd.choice(PALETTE)
-        parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="6" fill="{color}" opacity="0.28" transform="rotate({rnd.randint(-18, 18)} {x} {y})"/>')
-    parts.append(f'<g stroke="#ffffff" stroke-opacity="0.12"><path d="M0 {HEIGHT * 2 // 3} L{WIDTH} {HEIGHT // 3}"/><path d="M0 {HEIGHT // 3} L{WIDTH} {HEIGHT * 2 // 3}"/></g>')
-    return "".join(parts)
+def _fallback_background() -> str:
+    return '<rect width="320" height="160" fill="#1b2140"/><circle cx="250" cy="50" r="70" fill="#4f6bff" opacity="0.3"/><circle cx="80" cy="120" r="60" fill="#6d5bff" opacity="0.28"/>'
 
 
 def build_puzzle(key: str) -> dict:
-    """返回背景、图块、缺口坐标；target_x 由调用方写入 Redis，不下发给前端。"""
+    """返回背景、图块与缺口坐标；target_x 写入 Redis，不下发前端。"""
     rnd = random.Random(key)
     target_x = rnd.randint(80, WIDTH - PIECE_WIDTH - 16)
     target_y = rnd.randint(12, HEIGHT - PIECE - 12)
 
-    shapes = _background_shapes(rnd)
-    defs = (
-        "<defs>"
-        '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">'
-        '<stop offset="0" stop-color="#1B2140"/>'
-        '<stop offset="0.55" stop-color="#2A1F45"/>'
-        '<stop offset="1" stop-color="#0E2233"/>'
-        "</linearGradient>"
-        '<mask id="hole">'
-        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="#fff"/>'
-        f'<rect x="{target_x}" y="{target_y}" width="{PIECE}" height="{PIECE}" rx="{RADIUS}" fill="#000"/>'
-        f'<circle cx="{target_x + PIECE}" cy="{target_y + PIECE // 2}" r="{KNOB}" fill="#000"/>'
-        "</mask>"
-        "</defs>"
-    )
+    background = f'<image href="{BG_IMAGE}" x="0" y="0" width="{WIDTH}" height="{HEIGHT}" preserveAspectRatio="xMidYMid slice"/>' if BG_IMAGE else _fallback_background()
 
     bg_svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" '
-        f'viewBox="0 0 {WIDTH} {HEIGHT}">{defs}'
-        f'<g mask="url(#hole)">{shapes}</g>'
+        f'viewBox="0 0 {WIDTH} {HEIGHT}">'
+        f"{background}"
+        '<rect width="320" height="160" fill="#0b0d12" opacity="0.28"/>'
         f'<rect x="{target_x}" y="{target_y}" width="{PIECE}" height="{PIECE}" '
-        f'rx="{RADIUS}" fill="none" stroke="#ffffff" stroke-opacity="0.4"/>'
+        f'rx="{RADIUS}" fill="#080a10" opacity="0.72"/>'
         f'<circle cx="{target_x + PIECE}" cy="{target_y + PIECE // 2}" r="{KNOB}" '
-        f'fill="none" stroke="#ffffff" stroke-opacity="0.4"/>'
-        f"</svg>"
+        f'fill="#080a10" opacity="0.72"/>'
+        f'<rect x="{target_x}" y="{target_y}" width="{PIECE}" height="{PIECE}" '
+        f'rx="{RADIUS}" fill="none" stroke="#ffffff" stroke-opacity="0.55"/>'
+        f'<circle cx="{target_x + PIECE}" cy="{target_y + PIECE // 2}" r="{KNOB}" '
+        f'fill="none" stroke="#ffffff" stroke-opacity="0.55"/>'
+        "</svg>"
     )
 
+    piece_content = (
+        f'<image href="{LOGO_IMAGE}" x="4" y="4" width="{PIECE - 8}" height="{PIECE - 8}" preserveAspectRatio="xMidYMid meet"/>' if LOGO_IMAGE else '<rect width="48" height="48" fill="#4f6bff"/>'
+    )
     piece_svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{PIECE_WIDTH}" height="{PIECE}" '
         f'viewBox="0 0 {PIECE_WIDTH} {PIECE}">'
         "<defs>"
-        '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">'
-        '<stop offset="0" stop-color="#1B2140"/>'
-        '<stop offset="0.55" stop-color="#2A1F45"/>'
-        '<stop offset="1" stop-color="#0E2233"/>'
-        "</linearGradient>"
         '<clipPath id="piece">'
         f'<rect width="{PIECE}" height="{PIECE}" rx="{RADIUS}"/>'
         f'<circle cx="{PIECE}" cy="{PIECE // 2}" r="{KNOB}"/>'
         "</clipPath>"
         "</defs>"
-        f'<g clip-path="url(#piece)"><g transform="translate({-target_x} {-target_y})">'
-        f"{shapes}</g></g>"
+        '<g clip-path="url(#piece)">'
+        '<rect width="48" height="48" fill="#141824"/>'
+        f"{piece_content}"
+        "</g>"
         f'<rect x="0.5" y="0.5" width="{PIECE - 1}" height="{PIECE - 1}" rx="{RADIUS}" '
-        f'fill="none" stroke="#ffffff" stroke-opacity="0.85"/>'
+        'fill="none" stroke="#ffffff" stroke-opacity="0.85"/>'
         f'<circle cx="{PIECE}" cy="{PIECE // 2}" r="{KNOB}" fill="none" '
-        f'stroke="#ffffff" stroke-opacity="0.85"/>'
-        f"</svg>"
+        'stroke="#ffffff" stroke-opacity="0.85"/>'
+        "</svg>"
     )
 
     return {
