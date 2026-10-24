@@ -440,7 +440,7 @@ const menuDetailItems: import("@/components/display/fa-descriptions/index.vue").
     { label: "路由名称", prop: "route_name" },
     { label: "路由路径", prop: "route_path" },
     { label: "组件路径", prop: "component_path" },
-    { label: "激活菜单路径", prop: "active_path" },
+    { label: "激活路径", prop: "active_path" },
     { label: "重定向", prop: "redirect" },
     { label: "外链地址", prop: "link" },
     { label: "父级编号", prop: "parent_id" },
@@ -560,10 +560,10 @@ const menuDialogFormItems = computed<FormItem[]>(() => {
     },
     {
       key: "active_path",
-      label: "激活菜单路径",
+      label: "激活路径",
       type: "input",
       hidden: t !== MenuTypeEnum.CATALOG && t !== MenuTypeEnum.MENU,
-      props: { placeholder: "请输入激活菜单路径，用于高亮父级菜单" },
+      props: { placeholder: "请输入激活路径，用于高亮父级菜单" },
     },
     {
       key: "redirect",
