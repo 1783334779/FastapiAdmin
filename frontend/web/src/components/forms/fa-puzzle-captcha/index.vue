@@ -265,7 +265,7 @@ defineExpose({ reset });
   overflow: hidden;
   font-size: 13px;
   color: var(--el-text-color-secondary);
-  background: var(--el-border-color-light);
+  background: #f1f1f4;
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   touch-action: none;
