@@ -89,3 +89,11 @@ node scripts/sync-brand-assets.mjs
 ```
 
 不要在 `frontend/*/public`、`frontend/app/src/static` 等目录单独修改 Logo；改 `design/assets/` 后执行同步脚本。
+
+## 一致性检查
+
+```bash
+node scripts/check-brand-consistency.mjs
+```
+
+检查三端 Logo 哈希、旧品牌色、旧间距/圆角类；CI 或提交前执行。

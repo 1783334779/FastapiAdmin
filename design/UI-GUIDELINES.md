@@ -337,3 +337,11 @@
 - 主色与渐变一致；
 - 卡片/控件圆角一致；
 - 官网与小程序构建通过。
+
+### 16.7 自动检查
+
+```bash
+node scripts/check-brand-consistency.mjs
+```
+
+提交前必须通过；CI 可将其作为门禁。
