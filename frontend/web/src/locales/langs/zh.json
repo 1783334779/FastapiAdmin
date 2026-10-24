@@ -746,7 +746,9 @@
       "right": "居右"
     },
     "puzzleText": "按住滑块，拖动完成拼图",
-    "puzzleRefresh": "换一张"
+    "puzzleRefresh": "换一张",
+    "puzzleEntry": "点击完成拼图",
+    "puzzleTitle": "拖动滑块，使图块与缺口重合"
   },
   "loginForm": {
     "remember": "记住我"

@@ -81,8 +81,10 @@
               :passed="isPassing"
               :loading="codeLoading"
               :text="$t('login.puzzleText')"
+              :title-text="$t('login.puzzleTitle')"
               :success-text="$t('login.sliderSuccessText')"
               :close-text="$t('common.closeAction')"
+              :entry-text="$t('login.puzzleEntry')"
               @verify="(pos) => emit('sliderPass', pos)"
               @refresh="emit('getCaptcha')"
             />

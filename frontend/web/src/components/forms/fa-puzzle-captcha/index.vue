@@ -13,6 +13,7 @@
             >
               <FaSvgIcon icon="ri:close-line" />
             </button>
+            <p class="fa-puzzle__title">{{ titleText }}</p>
             <div ref="areaRef" class="fa-puzzle__area">
               <img v-if="bgImage" :src="bgImage" class="fa-puzzle__bg" alt="" draggable="false" />
               <img
@@ -48,12 +49,11 @@
       </Transition>
     </Teleport>
 
-    <div class="fa-puzzle__trigger" @pointerdown.prevent="openPanel" @click="openPanel">
-      <div class="fa-puzzle__handler">
-        <FaSvgIcon :icon="passed ? 'ri:check-line' : 'ri:arrow-right-line'" />
-      </div>
-      <span class="fa-puzzle__text">{{ passed ? successText : text }}</span>
-    </div>
+    <button type="button" class="fa-puzzle__entry" :disabled="loading" @click="openPanel">
+      <FaSvgIcon :icon="passed ? 'ri:check-line' : 'ri:lock-2-line'" />
+      <span>{{ passed ? successText : entryText }}</span>
+      <FaSvgIcon v-if="!passed" icon="ri:arrow-right-line" class="fa-puzzle__entry-arrow" />
+    </button>
   </div>
 </template>
 
@@ -73,8 +73,10 @@ interface Props {
   passed?: boolean;
   loading?: boolean;
   text: string;
+  titleText: string;
   successText: string;
   closeText: string;
+  entryText: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -196,21 +198,42 @@ defineExpose({ reset });
   user-select: none;
 }
 
-.fa-puzzle__trigger {
-  position: relative;
+.fa-puzzle__entry {
   display: flex;
+  gap: 8px;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 40px;
-  overflow: hidden;
   font-size: 13px;
-  color: var(--el-text-color-secondary);
-  touch-action: none;
+  color: var(--el-color-primary);
   cursor: pointer;
-  background: var(--el-fill-color-light);
-  border: 1px solid var(--el-border-color-light);
+  background: color-mix(in srgb, var(--el-color-primary) 6%, transparent);
+  border: 1px solid var(--el-color-primary-light-5);
   border-radius: 8px;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.fa-puzzle__entry:hover {
+  background: color-mix(in srgb, var(--el-color-primary) 10%, transparent);
+}
+
+.fa-puzzle__entry:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.fa-puzzle__entry-arrow {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.fa-puzzle__title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--el-text-color-primary);
 }
 
 .fa-puzzle__overlay {
@@ -360,12 +383,6 @@ defineExpose({ reset });
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   box-shadow: none;
-}
-
-.fa-puzzle__trigger .fa-puzzle__handler {
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .fa-puzzle__text {

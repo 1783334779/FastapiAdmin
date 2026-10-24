@@ -746,7 +746,9 @@
       "right": "Wide form"
     },
     "puzzleText": "Drag the slider to complete the puzzle",
-    "puzzleRefresh": "Refresh"
+    "puzzleRefresh": "Refresh",
+    "puzzleEntry": "Click to complete the puzzle",
+    "puzzleTitle": "Drag the slider to fit the piece into the gap"
   },
   "loginForm": {
     "remember": "Remember me"
