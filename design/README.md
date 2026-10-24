@@ -54,7 +54,7 @@ node scripts/design-tokens/generate.mjs
 | --- | --- | --- |
 | Web | `html.dark` | 已映射 surface / border / text / shadow |
 | 官网 | `.dark` | 已映射 `--vp-c-bg*`、divider、text |
-| 小程序 | `.wot-theme-dark` | 待下一步映射 wot 主题变量 |
+| 小程序 | `.wot-theme-dark` | 已映射 wot 背景/文字/边框/主色 |
 
 ## 与规范的关系
 

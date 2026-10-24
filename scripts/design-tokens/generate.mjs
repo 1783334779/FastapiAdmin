@@ -90,25 +90,47 @@ write(
 `
 );
 
-// ---- App ----
+// ---- App（CSS 变量，App.vue 引入一次）----
 write(
   resolve(root, "frontend/app/src/styles/brand-tokens.generated.scss"),
   `/* 由 design/tokens.json 生成，请勿手改。 */
-$fa-brand-blue: ${brand.blue};
-$fa-brand-violet: ${brand.violet};
-$fa-border: ${neutral.border};
-$fa-radius-sm: ${radius.sm}px;
-$fa-radius-md: ${radius.md}px;
-$fa-radius-lg: ${radius.lg}px;
-$fa-ink: ${neutral.ink};
-$fa-text-secondary: ${neutral.textSecondary};
-$fa-control-h-sm: ${control.sm}px;
-$fa-control-h-md: ${control.md}px;
-$fa-control-h-lg: ${control.lg}px;
-$fa-table-row-h: ${table.rowHeight}px;
-$fa-page-padding: ${layout.pagePadding}px;
-$fa-shadow-card: ${shadow.card};
-$fa-shadow-pop: ${shadow.pop};
+page {
+  --fa-brand-blue: ${brand.blue};
+  --fa-brand-violet: ${brand.violet};
+  --fa-border: ${neutral.border};
+  --fa-radius-sm: ${radius.sm}px;
+  --fa-radius-md: ${radius.md}px;
+  --fa-radius-lg: ${radius.lg}px;
+  --fa-ink: ${neutral.ink};
+  --fa-text-secondary: ${neutral.textSecondary};
+  --fa-control-h-sm: ${control.sm}px;
+  --fa-control-h-md: ${control.md}px;
+  --fa-control-h-lg: ${control.lg}px;
+  --fa-table-row-h: ${table.rowHeight}px;
+  --fa-page-padding: ${layout.pagePadding}px;
+  --fa-shadow-card: ${shadow.card};
+  --fa-shadow-pop: ${shadow.pop};
+}
+`
+);
+
+// ---- App dark（wot 主题变量覆写，单独引入一次）----
+write(
+  resolve(root, "frontend/app/src/styles/brand-dark.generated.scss"),
+  `/* 由 design/tokens.json 生成，请勿手改。 */
+.wot-theme-dark {
+  --wot-filled-content: ${neutral.darkSurface1};
+  --wot-filled-bottom: #101216;
+  --wot-border-main: ${neutral.darkBorder};
+  --wot-border-light: #20242C;
+  --wot-text-main: ${neutral.darkText1};
+  --wot-text-secondary: ${neutral.darkText2};
+  --wot-text-auxiliary: ${neutral.darkText3};
+  --wot-icon-main: ${neutral.darkText1};
+  --wot-icon-secondary: ${neutral.darkText2};
+  --wot-primary-5: ${brand.blue};
+  --wot-primary-6: ${brand.blue};
+}
 `
 );
 
