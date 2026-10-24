@@ -300,7 +300,32 @@
     "send": "Send",
     "noOutputHint": "(Double-click a host, or select one and click Open terminal)",
     "cmdPlaceholder": "Type a command and press Enter (↑/↓ history)",
-    "commonCommands": "Common commands"
+    "commonCommands": "Common commands",
+    "db": {
+      "databaseConnections": "Database connections",
+      "noConnection": "No connections",
+      "noConnectionDesc": "Add a database connection",
+      "dbTables": "Databases / Tables",
+      "selectConnectionFirst": "Select a connection first",
+      "schemaLabel": "Database / schema",
+      "tablesLabel": "Tables",
+      "selectDbHint": "Select a database to load tables (click a table to fill the query)",
+      "sqlConsole": "SQL console",
+      "noConnectionSelected": "No connection selected",
+      "allowWrite": "Allow writes",
+      "history": "History",
+      "execute": "Run",
+      "clear": "Clear",
+      "sqlPlaceholder": "select * from ... (read-only is validated; enable Allow writes for writes)",
+      "ctrlEnter": "Ctrl + Enter to run",
+      "readOnlyQuery": "Read-only query",
+      "writeOperation": "Write operation",
+      "masked": "Masked",
+      "truncatedRows": "Truncated to 200 rows",
+      "exportCsv": "Export CSV",
+      "noResult": "Run SQL to see results",
+      "lastRun": "Last run"
+    }
   },
   "search": {
     "placeholder": "Search page",

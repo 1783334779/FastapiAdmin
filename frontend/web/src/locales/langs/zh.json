@@ -300,7 +300,32 @@
     "send": "发送",
     "noOutputHint": "（双击左侧主机，或选择主机后点「打开终端」）",
     "cmdPlaceholder": "输入命令后回车（↑/↓ 翻历史）",
-    "commonCommands": "常用命令"
+    "commonCommands": "常用命令",
+    "db": {
+      "databaseConnections": "数据库连接",
+      "noConnection": "暂无连接",
+      "noConnectionDesc": "新增一个数据库连接",
+      "dbTables": "库 / 表",
+      "selectConnectionFirst": "先选择一个连接",
+      "schemaLabel": "库 / schema",
+      "tablesLabel": "表",
+      "selectDbHint": "选择库后加载表（点击表名自动填入查询）",
+      "sqlConsole": "SQL 控制台",
+      "noConnectionSelected": "未选择连接",
+      "allowWrite": "允许写操作",
+      "history": "历史",
+      "execute": "执行",
+      "clear": "清空",
+      "sqlPlaceholder": "select * from ...（只读语句自动校验；写语句需先开启「允许写操作」）",
+      "ctrlEnter": "Ctrl + Enter 执行",
+      "readOnlyQuery": "只读查询",
+      "writeOperation": "写操作",
+      "masked": "已脱敏",
+      "truncatedRows": "已截断 200 行",
+      "exportCsv": "导出 CSV",
+      "noResult": "执行 SQL 后在此显示结果",
+      "lastRun": "上次执行"
+    }
   },
   "search": {
     "placeholder": "搜索页面",

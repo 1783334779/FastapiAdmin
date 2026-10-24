@@ -4,7 +4,7 @@
     <FaWorkbench :side-width="280">
       <template #side>
         <!-- 左：连接 + 库表 -->
-        <FaSidePanel title="数据库连接" class="db-side-panel">
+        <FaSidePanel :title="$t('common.db.databaseConnections')" class="db-side-panel">
           <template #actions>
             <ElButton
               v-hasPerm="['module_dbconsole:conn:create']"
@@ -13,7 +13,8 @@
               :loading="createLoading"
               @click="handleAdd"
             >
-              <ElIcon class="mr-1"><FaSvgIcon icon="ri:add-line" /></ElIcon>新增
+              <ElIcon class="mr-1"><FaSvgIcon icon="ri:add-line" /></ElIcon
+              >{{ $t("common.addNew") }}
             </ElButton>
           </template>
 
@@ -46,9 +47,13 @@
                 <ElIcon class="fa-list-item__action"><FaSvgIcon icon="ri:more-2-fill" /></ElIcon>
                 <template #dropdown>
                   <ElDropdownMenu>
-                    <ElDropdownItem command="test">测试连接</ElDropdownItem>
-                    <ElDropdownItem command="edit">编辑</ElDropdownItem>
-                    <ElDropdownItem command="delete" divided>删除</ElDropdownItem>
+                    <ElDropdownItem command="test">{{
+                      $t("common.testConnection")
+                    }}</ElDropdownItem>
+                    <ElDropdownItem command="edit">{{ $t("common.edit") }}</ElDropdownItem>
+                    <ElDropdownItem command="delete" divided>{{
+                      $t("common.delete")
+                    }}</ElDropdownItem>
                   </ElDropdownMenu>
                 </template>
               </ElDropdown>
@@ -56,17 +61,19 @@
             <FaEmptyState
               v-if="!connections.length"
               icon="ri:database-2-line"
-              title="暂无连接"
-              description="新增一个数据库连接"
+              :title="$t('common.db.noConnection')"
+              :description="$t('common.db.noConnectionDesc')"
               compact
             />
           </div>
 
-          <div class="fa-panel-sep fa-hint">库 / 表</div>
+          <div class="fa-panel-sep fa-hint">{{ $t("common.db.dbTables") }}</div>
           <div class="px-1 pb-2">
-            <div v-if="!currentId" class="fa-hint p-2">先选择一个连接</div>
+            <div v-if="!currentId" class="fa-hint p-2">
+              {{ $t("common.db.selectConnectionFirst") }}
+            </div>
             <template v-else>
-              <div class="fa-hint">库 / schema</div>
+              <div class="fa-hint">{{ $t("common.db.schemaLabel") }}</div>
               <div
                 v-for="db in databases"
                 :key="`db-${db.name}`"
@@ -76,7 +83,7 @@
               >
                 <span class="fa-list-item__title">{{ db.name }}</span>
               </div>
-              <div class="fa-hint mt-2">表</div>
+              <div class="fa-hint mt-2">{{ $t("common.db.tablesLabel") }}</div>
               <div
                 v-for="table in tables"
                 :key="`t-${table.name}`"
@@ -86,7 +93,7 @@
                 <span class="fa-list-item__title">{{ table.name }}</span>
               </div>
               <div v-if="!tables.length" class="fa-hint p-2">
-                选择库后加载表（点击表名自动填入查询）
+                {{ $t("common.db.selectDbHint") }}
               </div>
             </template>
           </div>
@@ -100,13 +107,13 @@
       >
         <div class="flex h-full min-h-0 flex-col">
           <div class="fa-panel-header">
-            <span class="fa-panel-title">SQL 控制台</span>
+            <span class="fa-panel-title">{{ $t("common.db.sqlConsole") }}</span>
             <ElTag v-if="currentConnection" size="small" type="info">
               {{ currentConnection.name }}
             </ElTag>
-            <span v-else class="fa-hint">未选择连接</span>
+            <span v-else class="fa-hint">{{ $t("common.db.noConnectionSelected") }}</span>
             <div class="ml-auto flex flex-wrap items-center justify-end gap-2">
-              <span class="fa-hint">允许写操作</span>
+              <span class="fa-hint">{{ $t("common.db.allowWrite") }}</span>
               <ElSwitch v-model="confirmed" size="small" />
               <ElDropdown trigger="click" :disabled="!history.length" @command="applyHistory">
                 <ElButton :disabled="!history.length">
@@ -127,9 +134,9 @@
                 :disabled="!currentId"
                 @click="runQuery"
               >
-                执行
+                {{ $t("common.db.execute") }}
               </ElButton>
-              <ElButton :disabled="!sql" @click="clearEditor">清空</ElButton>
+              <ElButton :disabled="!sql" @click="clearEditor">{{ $t("common.db.clear") }}</ElButton>
             </div>
           </div>
 
@@ -137,14 +144,14 @@
             <ElInput
               v-model="sql"
               type="textarea"
-              aria-label="SQL 编辑器"
+              :aria-label="$t('common.db.sqlConsole')"
               :rows="8"
               resize="vertical"
               class="fa-mono-textarea"
-              placeholder="select * from ...（只读语句自动校验；写语句需先开启「允许写操作」）"
+              :placeholder="$t('common.db.sqlPlaceholder')"
               @keydown.ctrl.enter.prevent="runQuery"
             />
-            <div class="fa-hint mt-1 text-right">Ctrl + Enter 执行</div>
+            <div class="fa-hint mt-1 text-right">{{ $t("common.db.ctrlEnter") }}</div>
           </div>
 
           <div class="flex min-h-0 flex-1 flex-col px-3 pb-3">
@@ -158,14 +165,22 @@
             <template v-if="result">
               <div class="fa-hint mb-2 flex flex-wrap items-center gap-2">
                 <ElTag size="small" :type="result.read_only ? 'info' : 'warning'">
-                  {{ result.read_only ? "只读查询" : "写操作" }}
+                  {{
+                    result.read_only
+                      ? "$t('common.db.readOnlyQuery')"
+                      : "$t('common.db.writeOperation')"
+                  }}
                 </ElTag>
                 <span class="fa-hint">{{ result.rowcount }} 行 · {{ result.elapsed_ms }} ms</span>
                 <ElTag v-if="result.masked_columns.length" size="small" type="warning">
-                  已脱敏：{{ result.masked_columns.join("、") }}
+                  {{ $t("common.db.masked") }}：{{ result.masked_columns.join("、") }}
                 </ElTag>
-                <ElTag v-if="result.truncated" size="small" type="info">已截断 200 行</ElTag>
-                <ElButton class="ml-auto" size="small" @click="exportCsv">导出 CSV</ElButton>
+                <ElTag v-if="result.truncated" size="small" type="info">{{
+                  $t("common.db.truncatedRows")
+                }}</ElTag>
+                <ElButton class="ml-auto" size="small" @click="exportCsv">{{
+                  $t("common.db.exportCsv")
+                }}</ElButton>
               </div>
               <FaTable
                 :data="resultRows"
@@ -175,7 +190,7 @@
                 class="min-h-0 flex-1"
               />
             </template>
-            <FaEmptyState icon="ri:inbox-line" title="执行 SQL 后在此显示结果" compact />
+            <FaEmptyState icon="ri:inbox-line" :title="$t('common.db.noResult')" compact />
           </div>
 
           <div class="fa-panel-sep fa-hint flex items-center gap-2">
@@ -183,12 +198,12 @@
               {{
                 currentConnection
                   ? `${currentConnection.name} · ${currentConnection.db_type}`
-                  : "未选择连接"
+                  : $t("common.db.noConnectionSelected")
               }}
             </span>
             <span v-if="currentDatabase">· {{ currentDatabase }}</span>
             <span v-if="lastRun" class="ml-auto">
-              上次执行 {{ lastRun.rows }} 行 · {{ lastRun.ms }} ms
+              {{ $t("common.db.lastRun") }} {{ lastRun.rows }} · {{ lastRun.ms }} ms
             </span>
           </div>
         </div>
