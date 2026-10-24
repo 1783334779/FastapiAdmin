@@ -89,7 +89,7 @@
           </div>
           <p
             class="absolute top-0 z-1 mt-2 px-px text-xs text-[#f56c6c] transition duration-300"
-            :class="{ 'translate-y-10': !isPassing && isClickPass }"
+            :class="{ 'opacity-0': !isClickPass, 'translate-y-10': !isPassing && isClickPass }"
           >
             {{ $t("login.placeholder.slider") }}
           </p>

@@ -1,27 +1,31 @@
 <!-- 滑块拼图验证码：拖动图块补齐背景缺口，位置由服务端校验 -->
 <template>
   <div class="fa-puzzle" :class="{ 'is-passed': passed, 'is-loading': loading }">
-    <div ref="areaRef" class="fa-puzzle__area">
-      <img v-if="bgImage" :src="bgImage" class="fa-puzzle__bg" alt="" draggable="false" />
-      <img
-        v-if="pieceImage"
-        :src="pieceImage"
-        class="fa-puzzle__piece"
-        alt=""
-        draggable="false"
-        :style="{ left: `${leftPx}px`, top: `${topPx}px`, width: `${pieceWidthPx}px` }"
-      />
-      <button
-        v-if="!loading"
-        type="button"
-        class="fa-puzzle__refresh"
-        :aria-label="refreshText"
-        @click="$emit('refresh')"
-      >
-        <FaSvgIcon icon="ri:refresh-line" />
-      </button>
-      <div v-if="loading" class="fa-puzzle__mask">
-        <FaSvgIcon icon="ri:loader-4-line" class="animate-spin" />
+    <div class="fa-puzzle__reveal" :class="{ 'is-open': showImage }">
+      <div class="fa-puzzle__reveal-inner">
+        <div ref="areaRef" class="fa-puzzle__area">
+          <img v-if="bgImage" :src="bgImage" class="fa-puzzle__bg" alt="" draggable="false" />
+          <img
+            v-if="pieceImage"
+            :src="pieceImage"
+            class="fa-puzzle__piece"
+            alt=""
+            draggable="false"
+            :style="{ left: `${leftPx}px`, top: `${topPx}px`, width: `${pieceWidthPx}px` }"
+          />
+          <button
+            v-if="!loading"
+            type="button"
+            class="fa-puzzle__refresh"
+            :aria-label="refreshText"
+            @click="$emit('refresh')"
+          >
+            <FaSvgIcon icon="ri:refresh-line" />
+          </button>
+          <div v-if="loading" class="fa-puzzle__mask">
+            <FaSvgIcon icon="ri:loader-4-line" class="animate-spin" />
+          </div>
+        </div>
       </div>
     </div>
 
@@ -81,17 +85,20 @@ const { width: areaWidth, height: areaHeight } = useElementSize(areaRef);
 const { width: trackWidth } = useElementSize(trackRef);
 
 const progress = ref(0);
+const dragging = ref(false);
+const showImage = ref(false);
+let hideTimer: number | undefined;
+const startX = ref(0);
+const startProgress = ref(0);
 
 watch(
   () => props.bgImage,
   () => {
     progress.value = 0;
     dragging.value = false;
+    showImage.value = false;
   }
 );
-const dragging = ref(false);
-const startX = ref(0);
-const startProgress = ref(0);
 
 const HANDLER = 40;
 
@@ -115,6 +122,8 @@ function clampProgress(value: number): number {
 function onPointerDown(event: PointerEvent): void {
   if (props.passed || props.loading) return;
   dragging.value = true;
+  showImage.value = true;
+  if (hideTimer) window.clearTimeout(hideTimer);
   startX.value = event.clientX;
   startProgress.value = progress.value;
   (event.target as HTMLElement | null)?.setPointerCapture?.(event.pointerId);
@@ -135,16 +144,26 @@ function onPointerUp(): void {
   dragging.value = false;
   if (progress.value <= 0.03) {
     progress.value = 0;
+    showImage.value = false;
     return;
   }
   const max = Math.max(0, props.bgWidth - props.pieceWidth);
   emit("verify", Math.round(progress.value * max));
+  if (hideTimer) window.clearTimeout(hideTimer);
+  hideTimer = window.setTimeout(() => {
+    if (!dragging.value) showImage.value = false;
+  }, 1200);
 }
 
 function reset(): void {
   progress.value = 0;
   dragging.value = false;
+  showImage.value = false;
 }
+
+onBeforeUnmount(() => {
+  if (hideTimer) window.clearTimeout(hideTimer);
+});
 
 defineExpose({ reset });
 </script>
@@ -156,6 +175,26 @@ defineExpose({ reset });
   gap: 10px;
   width: 100%;
   user-select: none;
+}
+
+.fa-puzzle__reveal {
+  order: 2;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+}
+
+.fa-puzzle__reveal.is-open {
+  grid-template-rows: 1fr;
+}
+
+.fa-puzzle__reveal-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fa-puzzle__reveal.is-open .fa-puzzle__reveal-inner {
+  padding-bottom: 10px;
 }
 
 .fa-puzzle__area {
@@ -216,6 +255,7 @@ defineExpose({ reset });
 }
 
 .fa-puzzle__track {
+  order: 1;
   position: relative;
   display: flex;
   align-items: center;
