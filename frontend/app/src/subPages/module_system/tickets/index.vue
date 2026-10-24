@@ -202,7 +202,7 @@ onLoad(() => loadData())
         </wd-search>
       </wd-col>
       <wd-col :span="24">
-        <wd-tabs v-model="activeTab" line-theme="text" sticky :offset-top="0" @change="handleTabChange">
+        <wd-tabs v-model="activeTab" line-theme="text" sticky :offset-top="0" class="ticket-tabs" @change="handleTabChange">
           <wd-tab v-for="opt in TAB_OPTIONS" :key="opt.titleKey" :title="t(opt.titleKey)" />
         </wd-tabs>
       </wd-col>
@@ -290,3 +290,11 @@ onLoad(() => loadData())
     </wd-popup>
   </view>
 </template>
+
+<style lang="scss">
+/* 工单状态页签：5 个状态在 375px 下保持单行可读 */
+.ticket-tabs {
+  --wot-tabs-nav-item-font-size: 13px;
+  --wot-tabs-nav-item-padding: 5px 6px;
+}
+</style>
