@@ -197,3 +197,10 @@ const PresetBanners = {
   },
 } as const;
 </script>
+
+<style scoped>
+:deep(.basic-banner__title) {
+  font-size: 22px;
+  line-height: 1.4;
+}
+</style>
