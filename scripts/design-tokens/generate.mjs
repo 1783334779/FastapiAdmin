@@ -76,6 +76,17 @@ write(
   --fa-border: ${neutral.border};
   --fa-shadow-card: ${shadow.card};
 }
+
+.dark {
+  --vp-c-bg: ${neutral.darkSurface1};
+  --vp-c-bg-alt: ${neutral.darkSurface2};
+  --vp-c-bg-soft: ${neutral.darkSurface2};
+  --vp-c-divider: ${neutral.darkBorder};
+  --vp-c-border: ${neutral.darkBorder};
+  --vp-c-text-1: ${neutral.darkText1};
+  --vp-c-text-2: ${neutral.darkText2};
+  --vp-c-text-3: ${neutral.darkText3};
+}
 `
 );
 

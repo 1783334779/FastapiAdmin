@@ -48,6 +48,14 @@ node scripts/design-tokens/generate.mjs
 4. 生成文件顶部有「请勿手改」注释；提交前跑一次生成，保证三端一致。
 5. Brand 专属资产（Logo、单色版）仍以 `docs/brand/` 与 `docs/BRAND-SPEC.md` 为准。
 
+## 暗色模式现状
+
+| 端 | 选择器 | 状态 |
+| --- | --- | --- |
+| Web | `html.dark` | 已映射 surface / border / text / shadow |
+| 官网 | `.dark` | 已映射 `--vp-c-bg*`、divider、text |
+| 小程序 | `.wot-theme-dark` | 待下一步映射 wot 主题变量 |
+
 ## 与规范的关系
 
 - 界面规范：[`docs/UI-SPEC.md`](../docs/UI-SPEC.md)
