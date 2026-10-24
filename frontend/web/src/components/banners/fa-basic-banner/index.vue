@@ -238,14 +238,14 @@ function generateMeteors(count: number): Meteor[] {
   @media (width <= 640px) {
     &__title {
       margin-bottom: 0.375rem;
-      font-size: 1.125rem;
-      line-height: 1.5;
+      font-size: 1.125rem !important;
+      line-height: 1.5 !important;
     }
 
     &__subtitle {
       margin-bottom: 0.75rem;
-      font-size: 12px;
-      line-height: 1.5;
+      font-size: 12px !important;
+      line-height: 1.5 !important;
     }
   }
 
