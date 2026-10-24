@@ -129,3 +129,18 @@
   --drop-base-e: #FCEEEF;
   --drop-base-f: #FFFCFC;
 }
+
+
+/* 可选主题统一中性画布：只改变主色/光晕，不再改变页面底色；与 Web 主题色行为一致 */
+.theme-orange,
+.theme-green,
+.theme-pink,
+.theme-purple {
+  --drop-base-a: #F5F6F8;
+  --drop-base-b: #F5F6F8;
+  --drop-base-c: #F5F6F8;
+  --drop-base-d: #F5F6F8;
+  --drop-base-e: #F5F6F8;
+  --drop-base-f: #F7F8FA;
+  --wot-tabbar-bg: #FFFFFF;
+}
