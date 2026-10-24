@@ -124,13 +124,13 @@
         </ElCol>
 
         <ElCol :xs="24" :md="8" class="flex flex-col gap-4">
+          <QuickLinks class="mb-4" />
           <FaTimelineListCard
             class="mb-4"
             :list="timelineData"
             title="最近交易"
             subtitle="2024年12月20日"
           />
-          <QuickLinks class="mb-4" />
           <FaDataListCard
             class="mb-4"
             :max-count="2"
