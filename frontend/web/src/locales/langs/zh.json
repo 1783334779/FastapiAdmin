@@ -651,7 +651,8 @@
       "fullscreen": "全屏",
       "exitFullscreen": "退出全屏",
       "columns": "列设置",
-      "reset": "重置"
+      "reset": "重置",
+      "settings": "表格设置"
     }
   },
   "navbar": {

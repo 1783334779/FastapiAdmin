@@ -651,7 +651,8 @@
       "fullscreen": "Fullscreen",
       "exitFullscreen": "Exit fullscreen",
       "columns": "Columns",
-      "reset": "Reset"
+      "reset": "Reset",
+      "settings": "Table settings"
     }
   },
   "navbar": {

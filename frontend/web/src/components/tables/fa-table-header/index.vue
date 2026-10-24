@@ -124,6 +124,7 @@
           </div>
         </template>
         <div class="flex min-w-50 flex-col gap-2">
+          <span class="text-xs font-medium text-g-600">{{ t("table.toolbar.settings") }}</span>
           <ElCheckbox v-model="isZebra" :value="true">
             {{ t("table.zebra") }}
           </ElCheckbox>
@@ -243,12 +244,9 @@ watch(
 
 function resetColumns(): void {
   if (!initialColumnState.value.length) return;
-  const current = new Map(columns.value.map((col) => [col.prop || col.type || "", col]));
-  const restored = initialColumnState.value
-    .map((state) => current.get(state.key))
-    .filter((col): col is ColumnOption => !!col);
 
-  restored.forEach((col) => {
+  // 只恢复显隐，不改动当前顺序：避免与拖拽排序互相干扰
+  columns.value.forEach((col) => {
     const initial = initialColumnState.value.find(
       (state) => state.key === (col.prop || col.type || "")
     );
@@ -256,8 +254,6 @@ function resetColumns(): void {
     col.visible = visible;
     col.checked = visible;
   });
-
-  columns.value = restored;
 }
 
 /** 表格大小选项配置 */
