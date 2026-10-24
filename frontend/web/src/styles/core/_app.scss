@@ -449,3 +449,25 @@ body {
     font-size: 13px;
   }
 }
+
+/* 移动端表格工具栏：按自然宽度换行，避免按钮被裁切 */
+@media (width <= 800px) {
+  .data-table__toolbar--left {
+    display: flex !important;
+    width: 100%;
+    flex-wrap: wrap !important;
+  }
+
+  .data-table__toolbar--left .el-space {
+    display: flex !important;
+    width: 100%;
+    flex-wrap: wrap !important;
+    gap: 8px;
+  }
+
+  .data-table__toolbar--left .el-button {
+    flex: 0 0 auto;
+    width: auto;
+    margin-left: 0 !important;
+  }
+}

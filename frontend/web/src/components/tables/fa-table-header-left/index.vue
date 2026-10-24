@@ -1,6 +1,6 @@
 <!-- 列表页左侧工具栏：perm 预设「新增/导入/导出/批删/更多」，默认插槽可整块替换 -->
 <template>
-  <div class="data-table__toolbar--left inline-flex flex-wrap items-center gap-2">
+  <div class="data-table__toolbar--left inline-flex max-w-full flex-wrap items-center gap-2">
     <slot>
       <!-- 默认插槽回退内容：预设按钮 -->
       <ElSpace>
