@@ -7,25 +7,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { translateStatusText } from "@utils/table/columnLabelI18n";
 
 defineOptions({ name: "FaStatusTag" });
 
 const { t, te } = useI18n();
-
-const STATUS_KEYS: Record<string, string> = {
-  启用: "common.enabled",
-  停用: "common.disabled",
-  成功: "common.success",
-  失败: "common.failed",
-  是: "common.yes",
-  否: "common.no",
-  男: "common.male",
-  女: "common.female",
-  草稿: "common.draft",
-  已发布: "common.published",
-  已回滚: "common.rolledBack",
-  未知: "common.unknown",
-};
 
 interface Props {
   /** 显示文本 */
@@ -56,7 +42,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const displayLabel = computed(() => {
   const text = String(props.label ?? "");
-  const key = STATUS_KEYS[text];
-  return key && te(key) ? t(key) : text;
+  return translateStatusText(text, (key) => (te(key) ? t(key) : text));
 });
 </script>
