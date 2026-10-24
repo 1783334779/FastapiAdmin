@@ -682,6 +682,11 @@ html.dark .el-card {
 
   // 表头样式
   .el-table__header-wrapper {
+    /* 表头文字不换行，避免窄列（如「序号」）竖排断字 */
+    th.el-table__cell > .cell {
+      white-space: nowrap;
+    }
+
     th.el-table__cell {
       font-weight: 600;
       color: var(--fa-gray-700);
