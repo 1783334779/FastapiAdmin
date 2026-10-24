@@ -194,7 +194,7 @@ onLoad(() => loadData())
           @search="onSearch"
           @clear="onReset"
         >
-          <template #suffix>
+          <template #default>
             <wd-drop-menu custom-class="inline-block! w-auto!" :z-index="20">
               <wd-drop-menu-item v-model="typeFilter" :options="TYPE_FILTER_OPTIONS" :title="t('tickets.typeFilter')" @change="handleTypeFilter" />
             </wd-drop-menu>
