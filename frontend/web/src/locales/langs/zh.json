@@ -124,6 +124,7 @@
     "exitKeydown": "关闭"
   },
   "setting": {
+    "title": "界面设置",
     "menuType": {
       "title": "菜单布局",
       "list": ["垂直", "水平", "混合", "双列"]

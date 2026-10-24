@@ -124,6 +124,7 @@
     "exitKeydown": "Close"
   },
   "setting": {
+    "title": "Interface settings",
     "menuType": {
       "title": "Menu Layout",
       "list": ["Vertical", "Horizontal", "Mixed", "Dual"]
