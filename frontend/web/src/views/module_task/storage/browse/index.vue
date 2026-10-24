@@ -158,7 +158,12 @@
                   >
                 </div>
                 <el-tooltip content="刷新" placement="top">
-                  <el-button size="small" :loading="activeTab.loading" @click="load">
+                  <el-button
+                    class="path-refresh-btn"
+                    size="small"
+                    :loading="activeTab.loading"
+                    @click="load"
+                  >
                     <el-icon><FaSvgIcon icon="ri:refresh-line" /></el-icon>
                   </el-button>
                 </el-tooltip>
@@ -1855,6 +1860,10 @@ onMounted(async () => {
 
   /* 窄屏路径栏空间有限，隐藏“存储路径”快捷按钮 */
   .path-root-btn {
+    display: none;
+  }
+
+  .path-refresh-btn {
     display: none;
   }
 
