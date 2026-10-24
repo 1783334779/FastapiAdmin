@@ -146,7 +146,12 @@
 import { useCrudForm } from "@/hooks/core/useCrudForm";
 import { confirmToggleStatus } from "@/hooks/core/useConfirm";
 import NoticeAPI, { type NoticeForm, type NoticeTable } from "@/api/module_system/notice";
-import { renderTableOperationCell, resolveStatusColumns, type TableOperationAction } from "@utils";
+import {
+  formatToDateTime,
+  renderTableOperationCell,
+  resolveStatusColumns,
+  type TableOperationAction,
+} from "@utils";
 import { useDictStore, useNoticeStore } from "@stores";
 import type { SearchFormItem } from "@/components/forms/fa-search-bar/index.vue";
 import FaSearchBar from "@/components/forms/fa-search-bar/index.vue";
@@ -427,33 +432,35 @@ const {
       {
         prop: "created_time",
         label: "创建时间",
-        width: 168,
+        width: 150,
         sortable: true,
         showOverflowTooltip: true,
+        formatter: (row: NoticeTable) => formatToDateTime(row.created_time, "YYYY-MM-DD HH:mm"),
       },
       {
         prop: "updated_time",
         label: "更新时间",
-        width: 168,
+        width: 150,
         sortable: true,
         showOverflowTooltip: true,
+        formatter: (row: NoticeTable) => formatToDateTime(row.updated_time, "YYYY-MM-DD HH:mm"),
       },
       {
         prop: "created_id",
         label: "创建人",
-        minWidth: 100,
+        minWidth: 90,
         formatter: (row: NoticeTable) => row.created_by?.name ?? "—",
       },
       {
         prop: "updated_id",
         label: "更新人",
-        minWidth: 100,
+        minWidth: 90,
         formatter: (row: NoticeTable) => row.updated_by?.name ?? "—",
       },
       {
         prop: "operation",
         label: "操作",
-        width: 220,
+        width: 200,
         fixed: "right",
         align: "center",
         formatter: (row: NoticeTable) => formatNoticeOperationCell(row),
