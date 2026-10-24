@@ -235,6 +235,20 @@ function generateMeteors(count: number): Meteor[] {
     opacity: 0.9;
   }
 
+  @media (width <= 640px) {
+    &__title {
+      margin-bottom: 0.375rem;
+      font-size: 1.125rem;
+      line-height: 1.5;
+    }
+
+    &__subtitle {
+      margin-bottom: 0.75rem;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  }
+
   &__button {
     box-sizing: border-box;
     display: inline-block;
