@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <ElScrollbar class="h-[calc(100%-40px)]" view-style="padding-right: 16px">
+    <ElScrollbar class="h-[calc(100%-40px)]" view-style="padding-right: 16px; padding-bottom: 16px">
       <div
         class="flex items-center justify-between h-17.5 border-b border-line text-sm last:border-b-0"
         v-for="item in list"
