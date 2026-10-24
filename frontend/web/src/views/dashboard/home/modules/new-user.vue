@@ -35,9 +35,11 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="价格" prop="price">
+        <ElTableColumn label="价格" prop="price" width="100">
           <template #default="scope">
-            <span class="font-semibold">¥{{ scope.row.price.toLocaleString() }}</span>
+            <span class="font-semibold whitespace-nowrap"
+              >¥{{ scope.row.price.toLocaleString() }}</span
+            >
           </template>
         </ElTableColumn>
 

@@ -3,19 +3,19 @@
     <FaDashboardSkeleton v-if="loading" />
     <template v-else>
       <!-- 左列：主内容区 | 右列：侧边栏 -->
-      <ElRow :gutter="20">
-        <ElCol :xs="24" :md="18">
-          <Banner class="mb-5" />
+      <ElRow :gutter="16">
+        <ElCol :xs="24" :md="16">
+          <Banner class="mb-4" />
 
-          <ElRow :gutter="20">
-            <ElCol :xs="24" :md="16">
-              <ElRow :gutter="20">
+          <ElRow :gutter="16">
+            <ElCol :xs="24" :md="24">
+              <ElRow :gutter="16">
                 <ElCol :xs="24" :sm="24" :md="24">
                   <CardList />
                 </ElCol>
               </ElRow>
-              <ElRow :gutter="20">
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+              <ElRow :gutter="16">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaStatsCard
                     :icon="'ri:money-cny-box-line'"
                     :iconStyle="'bg-theme'"
@@ -30,25 +30,25 @@
                     customIconStyle="'text-theme! text-3xl!''"
                   />
                 </ElCol>
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaProgressCard
                     :percentage="65"
                     :title="'任务进度'"
                     :color="'var(--theme-color)'"
                   />
                 </ElCol>
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaProgressCard
                     :percentage="80"
-                    :title="'任务进度'"
+                    :title="'项目进度'"
                     :color="'var(--theme-color)'"
                     :icon="'ri:twitch-line'"
                     :iconStyle="'bg-theme/12 text-theme'"
                   />
                 </ElCol>
               </ElRow>
-              <ElRow :gutter="20">
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+              <ElRow :gutter="16">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaBarChartCard
                     :isMiniChart="true"
                     :value="15480"
@@ -60,7 +60,7 @@
                     :chartData="[120, 100, 150, 140, 90, 120, 130]"
                   />
                 </ElCol>
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaLineChartCard
                     :isMiniChart="true"
                     :value="2545"
@@ -72,7 +72,7 @@
                     :chartData="[150, 180, 160, 200, 180, 220, 240]"
                   />
                 </ElCol>
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaDonutChartCard
                     :value="36358"
                     title="粉丝量"
@@ -87,13 +87,10 @@
                 </ElCol>
               </ElRow>
             </ElCol>
-            <ElCol :xs="24" :md="8" class="mb-5">
-              <FaTimelineListCard :list="timelineData" title="最近交易" subtitle="2024年12月20日" />
-            </ElCol>
           </ElRow>
 
-          <ElRow :gutter="20">
-            <ElCol :xs="24" :sm="12" :md="12" class="mb-5">
+          <ElRow :gutter="16">
+            <ElCol :xs="24" :sm="12" :md="12" class="mb-4">
               <ElCard
                 shadow="hover"
                 class="fa-card overflow-hidden border border-(--el-border-color-lighter) rounded-xl flex flex-col h-138"
@@ -120,35 +117,42 @@
                 </div>
               </ElCard>
             </ElCol>
-            <ElCol :xs="24" :sm="12" :md="12" class="mb-5">
+            <ElCol :xs="24" :sm="12" :md="12" class="mb-4">
               <NewUser />
             </ElCol>
           </ElRow>
         </ElCol>
 
-        <ElCol :xs="24" :md="6" class="flex flex-col gap-5">
-          <QuickLinks class="mb-5" />
+        <ElCol :xs="24" :md="8" class="flex flex-col gap-4">
+          <FaTimelineListCard
+            class="mb-4"
+            :list="timelineData"
+            title="最近交易"
+            subtitle="2024年12月20日"
+          />
+          <QuickLinks class="mb-4" />
           <FaDataListCard
-            class="mb-5"
-            :maxCount="4"
+            class="mb-4"
+            :max-count="2"
+            auto-height
             :list="healthList"
             title="系统健康"
             subtitle="实时 · 30s"
             :showMoreButton="true"
             @more="handleMore"
           />
-          <TodoList class="mb-5" />
+          <TodoList class="mb-4" />
         </ElCol>
       </ElRow>
 
-      <ElRow :gutter="20">
-        <ElCol :xs="24" :sm="6" :md="6" class="mb-5">
+      <ElRow :gutter="16">
+        <ElCol :xs="24" :sm="6" :md="6" class="mb-4">
           <ImageCards />
         </ElCol>
-        <ElCol :xs="24" :sm="6" :md="6" class="mb-5">
+        <ElCol :xs="24" :sm="6" :md="6" class="mb-4">
           <ItBanners />
         </ElCol>
-        <ElCol :xs="24" :sm="12" :md="12" class="mb-5">
+        <ElCol :xs="24" :sm="12" :md="12" class="mb-4">
           <AboutProject />
         </ElCol>
       </ElRow>
