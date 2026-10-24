@@ -1,22 +1,21 @@
 <!-- 文件浏览：多节点标签 + 上传/下载/新建目录/复制/移动/重命名/分享/删除（源项目风格，对接 /storage/browse） -->
 <template>
-  <div class="flex h-full gap-3">
-    <!-- 左：节点栏（参考 FastHub：节点列表在左，工作区标签在右） -->
-    <aside class="browse-node-sidebar fa-card flex min-h-0 shrink-0 flex-col">
-      <div class="browse-node-header">
-        <span class="fa-panel-title">节点</span>
-        <ElTooltip content="打开节点" placement="top">
-          <button
-            type="button"
-            class="browse-node-add"
-            aria-label="打开节点"
-            @click="openAddDialog"
-          >
-            <ElIcon><Plus /></ElIcon>
-          </button>
-        </ElTooltip>
-      </div>
-      <ElScrollbar class="min-h-0 flex-1">
+  <FaWorkbench :side-width="216">
+    <template #side>
+      <!-- 左：节点栏（参考 FastHub：节点列表在左，工作区标签在右） -->
+      <FaSidePanel title="节点" class="browse-node-sidebar">
+        <template #actions>
+          <ElTooltip content="打开节点" placement="top">
+            <button
+              type="button"
+              class="browse-node-add"
+              aria-label="打开节点"
+              @click="openAddDialog"
+            >
+              <ElIcon><Plus /></ElIcon>
+            </button>
+          </ElTooltip>
+        </template>
         <div v-if="!nodes.length" class="browse-node-empty">暂无节点</div>
         <button
           v-for="node in nodes"
@@ -42,8 +41,8 @@
             <ElIcon><Close /></ElIcon>
           </span>
         </button>
-      </ElScrollbar>
-    </aside>
+      </FaSidePanel>
+    </template>
 
     <el-card shadow="hover" class="fa-card browse-card flex min-h-0 flex-1 flex-col">
       <!-- 右侧工作区：已打开节点用顶部标签切换（节点入口在左侧栏） -->
@@ -632,7 +631,7 @@
         </div>
       </el-scrollbar>
     </el-card>
-  </div>
+  </FaWorkbench>
 </template>
 
 <script setup lang="ts">
@@ -1800,21 +1799,14 @@ onMounted(async () => {
 
 /* 左侧节点栏 */
 .browse-node-sidebar {
-  width: 216px;
-  padding: 10px 8px;
+  width: 100%;
+  height: 100%;
 }
 
 @media (width <= 800px) {
   .browse-node-sidebar {
     display: none;
   }
-}
-
-.browse-node-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 4px 8px;
 }
 
 .browse-node-add {

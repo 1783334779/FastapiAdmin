@@ -1,26 +1,19 @@
 <!-- 用户管理：左部门树 + 右 Art 表格 -->
 <template>
   <div class="fa-full-height user-manage-page">
-    <ElSplitter :style="{ flex: 1, minHeight: 0 }">
-      <ElSplitterPanel size="260px" :min="200" :max="400">
-        <div class="user-dept-panel h-full pr-2">
-          <ElCard class="tree-card fa-card-xs flex flex-col h-full mt-0" shadow="never">
-            <template #header>
-              <span class="fa-panel-title">部门</span>
-            </template>
-            <ElScrollbar class="dept-tree-scroll min-h-0 flex-1">
-              <FaDeptTree
-                v-model="deptFilterId"
-                class="dept-tree-inner"
-                @node-click="handleDeptNodeClick"
-              />
-            </ElScrollbar>
-          </ElCard>
-        </div>
-      </ElSplitterPanel>
+    <FaWorkbench :side-width="260">
+      <template #side>
+        <FaSidePanel title="部门" class="user-dept-side">
+          <FaDeptTree
+            v-model="deptFilterId"
+            class="dept-tree-inner"
+            @node-click="handleDeptNodeClick"
+          />
+        </FaSidePanel>
+      </template>
 
-      <ElSplitterPanel :min="400">
-        <div class="user-main-panel flex flex-col h-full min-w-0 min-h-0 pl-2">
+      <div class="fa-card user-main-card">
+        <div class="user-main-panel flex flex-col h-full min-w-0 min-h-0">
           <FaSearchBar
             v-show="showSearchBar"
             ref="searchBarRef"
@@ -79,8 +72,8 @@
             />
           </ElCard>
         </div>
-      </ElSplitterPanel>
-    </ElSplitter>
+      </div>
+    </FaWorkbench>
 
     <FaDrawer
       v-model="dialogVisible.visible"
@@ -957,29 +950,22 @@ async function handleMoreClick(value: "enable" | "disable") {
 </script>
 
 <style lang="scss" scoped>
-/* 左侧部门树内容区：card body 纵向 flex + 滚动条占满剩余高度（布局在 index，内边距在 DeptTree） */
-.tree-card :deep(.el-card__body) {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-  padding: 0;
+/* 左侧部门栏：与字典/浏览一致的侧栏面板 */
+.user-dept-side {
+  width: 100%;
+  height: 100%;
+}
+
+.user-main-card {
+  box-sizing: border-box;
+  height: 100%;
+  padding: 12px 16px;
 }
 
 /* 窄屏：隐藏部门栏，把宽度让给用户表格 */
 @media (width <= 800px) {
-  :deep(.el-splitter-panel:first-child),
-  :deep(.el-splitter-bar) {
+  .user-dept-side {
     display: none;
-  }
-
-  :deep(.el-splitter-panel:last-child) {
-    flex: 1 1 100% !important;
-    width: 100% !important;
-  }
-
-  .user-main-panel {
-    padding-left: 0;
   }
 }
 </style>

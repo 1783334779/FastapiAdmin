@@ -341,7 +341,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-right: 1px solid var(--el-border-color-light);
+  border-right: 1px solid var(--fa-border, #e6e8ec);
   transition: width 0.3s ease;
 
   .sidebar-header {
@@ -380,7 +380,12 @@ defineExpose({
         justify-content: center;
         width: 100%;
         border-radius: 20px;
-        transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        transition:
+          background-color 0.2s ease,
+          border-color 0.2s ease,
+          color 0.2s ease,
+          box-shadow 0.2s ease,
+          transform 0.2s ease;
 
         .btn-icon {
           font-size: 16px;
@@ -404,7 +409,12 @@ defineExpose({
         :deep(.el-input__wrapper) {
           border-radius: 20px;
           box-shadow: 0 0 0 1px var(--el-border-color) inset;
-          transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+          transition:
+            background-color 0.2s ease,
+            border-color 0.2s ease,
+            color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
 
           &:hover {
             box-shadow: 0 0 0 1px var(--el-color-primary) inset;
@@ -475,7 +485,12 @@ defineExpose({
               cursor: pointer;
               border: 1px solid transparent;
               border-radius: 14px;
-              transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+              transition:
+                background-color 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
 
               &:hover {
                 background: var(--el-fill-color-light);
@@ -521,7 +536,12 @@ defineExpose({
                 font-size: 16px;
                 border-radius: 4px;
                 opacity: 0;
-                transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+                transition:
+                  background-color 0.2s,
+                  border-color 0.2s,
+                  color 0.2s,
+                  box-shadow 0.2s,
+                  transform 0.2s;
 
                 &:hover {
                   color: var(--el-color-primary);
@@ -594,5 +614,41 @@ defineExpose({
       justify-content: center;
     }
   }
+}
+
+/* 与 FaSidePanel 工作区风格对齐：方角、紧凑行、无位移动效 */
+.sidebar .sidebar-header {
+  padding: 10px 12px 8px;
+}
+
+.sidebar .logo-section .project-name {
+  font-size: 14px;
+}
+
+.sidebar .sidebar-content .new-session-btn {
+  border-radius: var(--fa-radius-sm, 8px);
+}
+
+.sidebar .sidebar-content .new-session-btn:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.sidebar .history-section .search-section :deep(.el-input__wrapper) {
+  border-radius: var(--fa-radius-sm, 8px);
+}
+
+.sidebar .history-section .session-list .session-item {
+  padding: 7px 8px;
+  border-radius: var(--fa-radius-sm, 8px);
+}
+
+.sidebar .history-section .session-list .session-item:hover {
+  border-color: transparent;
+  transform: none;
+}
+
+.sidebar .history-section .session-list .session-item .session-title {
+  font-size: 13px;
 }
 </style>

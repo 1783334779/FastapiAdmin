@@ -421,3 +421,10 @@
 .el-statistic__number {
   font-variant-numeric: tabular-nums;
 }
+
+/* 工作区内容区：表格卡片不再叠一层“卡中卡” */
+.fa-workbench__main .el-card.fa-table-card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}

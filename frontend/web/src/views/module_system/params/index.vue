@@ -1,10 +1,25 @@
 <template>
   <div class="fa-full-height">
-    <ElCard class="fa-card" header="系统参数配置">
-      <ElTabs v-model="activeTab" tabPosition="left" class="h-full">
-        <!-- 品牌标识 -->
-        <ElTabPane label="品牌标识" name="brand">
+    <FaWorkbench :side-width="240">
+      <template #side>
+        <FaSidePanel title="参数分组" class="params-side">
+          <button
+            v-for="tab in paramTabs"
+            :key="tab.name"
+            type="button"
+            class="params-nav-item"
+            :class="{ 'is-active': activeTab === tab.name }"
+            @click="activeTab = tab.name"
+          >
+            {{ tab.label }}
+          </button>
+        </FaSidePanel>
+      </template>
+
+      <div class="fa-card params-main">
+        <div class="params-main__body">
           <ParamTabPane
+            v-if="activeTab === 'brand'"
             title="品牌标识"
             :modified="brandModified"
             @save-group="saveGroup(fieldsMap.brand)"
@@ -26,11 +41,10 @@
               />
             </ParamFieldCard>
           </ParamTabPane>
-        </ElTabPane>
 
-        <!-- 网站信息 -->
-        <ElTabPane label="网站信息" name="website">
+          <!-- 网站信息 -->
           <ParamTabPane
+            v-if="activeTab === 'website'"
             title="网站信息"
             :modified="websiteModified"
             @save-group="saveGroup(fieldsMap.website)"
@@ -51,11 +65,10 @@
               />
             </ParamFieldCard>
           </ParamTabPane>
-        </ElTabPane>
 
-        <!-- 外部链接 -->
-        <ElTabPane label="外部链接" name="security">
+          <!-- 外部链接 -->
           <ParamTabPane
+            v-if="activeTab === 'security'"
             title="外部链接"
             :modified="securityModified"
             @save-group="saveGroup(fieldsMap.security)"
@@ -76,11 +89,10 @@
               />
             </ParamFieldCard>
           </ParamTabPane>
-        </ElTabPane>
 
-        <!-- 安全访问 -->
-        <ElTabPane label="安全访问" name="access">
+          <!-- 安全访问 -->
           <ParamTabPane
+            v-if="activeTab === 'access'"
             title="安全访问"
             :modified="accessModified"
             @save-group="saveGroup(fieldsMap.access)"
@@ -152,11 +164,10 @@
               </ParamFieldCard>
             </template>
           </ParamTabPane>
-        </ElTabPane>
 
-        <!-- 演示环境 -->
-        <ElTabPane label="演示环境" name="demo">
+          <!-- 演示环境 -->
           <ParamTabPane
+            v-if="activeTab === 'demo'"
             title="演示环境"
             :modified="demoModified"
             @save-group="saveGroup(fieldsMap.demo)"
@@ -228,14 +239,14 @@
               </ParamFieldCard>
             </template>
           </ParamTabPane>
-        </ElTabPane>
-      </ElTabs>
+        </div>
 
-      <div v-if="modifiedCount > 0" class="param-save-bar">
-        <span class="param-save-bar__text">有 {{ modifiedCount }} 项修改未保存</span>
-        <ElButton type="primary" :loading="saveAllLoading" @click="saveAll">保存全部</ElButton>
+        <div v-if="modifiedCount > 0" class="param-save-bar">
+          <span class="param-save-bar__text">有 {{ modifiedCount }} 项修改未保存</span>
+          <ElButton type="primary" :loading="saveAllLoading" @click="saveAll">保存全部</ElButton>
+        </div>
       </div>
-    </ElCard>
+    </FaWorkbench>
   </div>
 </template>
 
@@ -251,6 +262,14 @@ defineOptions({ name: "Params" });
 
 const configStore = useConfigStore();
 const activeTab = ref("brand");
+
+const paramTabs = [
+  { name: "brand", label: "品牌标识" },
+  { name: "website", label: "网站信息" },
+  { name: "security", label: "外部链接" },
+  { name: "access", label: "访问控制" },
+  { name: "demo", label: "演示环境" },
+];
 
 // ─── 字段类型 ───
 
@@ -495,31 +514,47 @@ onMounted(async () => {
   background: var(--fa-surface, var(--default-box-color));
   border-top: 1px solid var(--fa-border, var(--el-border-color-lighter));
 }
+
 .param-save-bar__text {
   font-size: var(--fa-font-sm, 12px);
   color: var(--el-text-color-secondary);
 }
-:deep(.el-card) {
+
+.params-side {
+  width: 100%;
+  height: 100%;
+}
+
+.params-nav-item {
+  width: 100%;
+  padding: 8px;
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: var(--fa-radius-sm, 8px);
+}
+
+.params-nav-item:hover {
+  background: var(--el-fill-color-light);
+}
+
+.params-nav-item.is-active {
+  color: var(--el-color-primary);
+  background: var(--el-color-primary-light-9);
+}
+
+.params-main {
+  box-sizing: border-box;
   display: flex;
-  flex: 1;
   flex-direction: column;
-  min-height: 0;
+  height: 100%;
+  padding: 12px 16px;
 }
 
-:deep(.el-card__body) {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
-}
-
-:deep(.el-tabs) {
-  flex: 1;
-  min-height: 0;
-}
-
-:deep(.el-tabs__content) {
+.params-main__body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;

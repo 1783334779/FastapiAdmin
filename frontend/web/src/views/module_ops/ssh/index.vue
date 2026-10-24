@@ -1,92 +1,93 @@
 <!-- SSH 运维：左侧主机导航 + 右侧终端/批量执行/命令片段工作区 -->
 <template>
   <div class="fa-full-height">
-    <div class="flex min-h-0 flex-1 gap-3">
-      <!-- 左：主机列表 -->
-      <ElCard
-        shadow="hover"
-        class="fa-card flex shrink-0 flex-col"
-        style="width: clamp(240px, 20vw, 300px)"
-        body-class="flex min-h-0 flex-1 flex-col p-0"
-      >
-        <div class="flex h-full min-h-0 flex-col">
-          <div class="fa-panel-header justify-between">
-            <span class="fa-panel-title">SSH 主机</span>
-            <ElButton
-              v-hasPerm="['module_ops:ssh:create']"
-              type="primary"
-              size="small"
-              :loading="createLoading"
-              @click="handleAdd"
-            >
-              <ElIcon class="mr-1"><Plus /></ElIcon>新增
-            </ElButton>
-          </div>
-
-          <div class="px-2 pb-2">
-            <ElInput
-              v-model="hostKeyword"
-              size="small"
-              placeholder="搜索名称 / 地址"
-              clearable
-              aria-label="搜索名称 / 地址"
-            >
-              <template #prefix>
-                <ElIcon><Search /></ElIcon>
-              </template>
-            </ElInput>
-          </div>
-
-          <ElScrollbar class="min-h-0 flex-1 px-2">
-            <div
-              v-for="host in filteredHosts"
-              :key="host.id"
-              class="fa-list-item"
-              :class="{ 'is-active': host.id === activeHostId }"
-              @click="selectHost(host)"
-              @dblclick="openTerminalFor(host)"
-            >
-              <span
-                class="fa-status-dot"
-                :style="{
-                  background:
-                    host.status === 0 ? 'var(--el-color-success)' : 'var(--el-color-info)',
-                }"
-              />
-              <div class="min-w-0 flex-1">
-                <div class="fa-list-item__title">{{ host.name }}</div>
-                <div class="fa-list-item__meta">
-                  {{ host.username }}@{{ host.host }}:{{ host.port }}
-                </div>
-              </div>
-              <ElDropdown
-                trigger="click"
-                @command="(cmd) => handleHostCommand(String(cmd), host)"
-                @click.stop
+    <FaWorkbench :side-width="280">
+      <template #side>
+        <!-- 左：主机列表 -->
+        <ElCard
+          shadow="hover"
+          class="fa-card flex h-full w-full flex-col"
+          body-class="flex min-h-0 flex-1 flex-col p-0"
+        >
+          <div class="flex h-full min-h-0 flex-col">
+            <div class="fa-panel-header justify-between">
+              <span class="fa-panel-title">SSH 主机</span>
+              <ElButton
+                v-hasPerm="['module_ops:ssh:create']"
+                type="primary"
+                size="small"
+                :loading="createLoading"
+                @click="handleAdd"
               >
-                <ElIcon class="fa-list-item__action"><MoreFilled /></ElIcon>
-                <template #dropdown>
-                  <ElDropdownMenu>
-                    <ElDropdownItem command="terminal">打开终端</ElDropdownItem>
-                    <ElDropdownItem command="test">测试连接</ElDropdownItem>
-                    <ElDropdownItem command="edit">编辑</ElDropdownItem>
-                    <ElDropdownItem command="delete" divided>删除</ElDropdownItem>
-                  </ElDropdownMenu>
-                </template>
-              </ElDropdown>
+                <ElIcon class="mr-1"><Plus /></ElIcon>新增
+              </ElButton>
             </div>
-            <FaEmptyState
-              v-if="!filteredHosts.length"
-              icon="ri:server-line"
-              title="暂无主机"
-              description="新增 SSH 主机后开始运维"
-              compact
-            />
-          </ElScrollbar>
 
-          <div class="fa-hint px-3 py-2">双击主机直接打开终端</div>
-        </div>
-      </ElCard>
+            <div class="px-2 pb-2">
+              <ElInput
+                v-model="hostKeyword"
+                size="small"
+                placeholder="搜索名称 / 地址"
+                clearable
+                aria-label="搜索名称 / 地址"
+              >
+                <template #prefix>
+                  <ElIcon><Search /></ElIcon>
+                </template>
+              </ElInput>
+            </div>
+
+            <ElScrollbar class="min-h-0 flex-1 px-2">
+              <div
+                v-for="host in filteredHosts"
+                :key="host.id"
+                class="fa-list-item"
+                :class="{ 'is-active': host.id === activeHostId }"
+                @click="selectHost(host)"
+                @dblclick="openTerminalFor(host)"
+              >
+                <span
+                  class="fa-status-dot"
+                  :style="{
+                    background:
+                      host.status === 0 ? 'var(--el-color-success)' : 'var(--el-color-info)',
+                  }"
+                />
+                <div class="min-w-0 flex-1">
+                  <div class="fa-list-item__title">{{ host.name }}</div>
+                  <div class="fa-list-item__meta">
+                    {{ host.username }}@{{ host.host }}:{{ host.port }}
+                  </div>
+                </div>
+                <ElDropdown
+                  trigger="click"
+                  @command="(cmd) => handleHostCommand(String(cmd), host)"
+                  @click.stop
+                >
+                  <ElIcon class="fa-list-item__action"><MoreFilled /></ElIcon>
+                  <template #dropdown>
+                    <ElDropdownMenu>
+                      <ElDropdownItem command="terminal">打开终端</ElDropdownItem>
+                      <ElDropdownItem command="test">测试连接</ElDropdownItem>
+                      <ElDropdownItem command="edit">编辑</ElDropdownItem>
+                      <ElDropdownItem command="delete" divided>删除</ElDropdownItem>
+                    </ElDropdownMenu>
+                  </template>
+                </ElDropdown>
+              </div>
+              <FaEmptyState
+                v-if="!filteredHosts.length"
+                icon="ri:server-line"
+                title="暂无主机"
+                description="新增 SSH 主机后开始运维"
+                compact
+              />
+            </ElScrollbar>
+
+            <div class="fa-hint px-3 py-2">双击主机直接打开终端</div>
+          </div>
+        </ElCard>
+      </template>
 
       <!-- 右：工作区 -->
       <ElCard
@@ -318,7 +319,7 @@
           </ElTabs>
         </div>
       </ElCard>
-    </div>
+    </FaWorkbench>
 
     <!-- 主机新增/修改 -->
     <FaDialog

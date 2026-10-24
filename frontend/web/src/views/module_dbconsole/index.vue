@@ -1,16 +1,11 @@
 <!-- SQL 控制台：左侧连接/库表导航 + 右侧编辑器与结果区（外部 MySQL/PostgreSQL） -->
 <template>
   <div class="fa-full-height">
-    <div class="flex min-h-0 flex-1 gap-3">
-      <!-- 左：连接 + 库表 -->
-      <ElCard
-        shadow="hover"
-        class="fa-card flex w-[clamp(240px,20vw,300px)] shrink-0 flex-col"
-        body-class="flex min-h-0 flex-1 flex-col p-0"
-      >
-        <div class="flex h-full min-h-0 flex-col">
-          <div class="fa-panel-header justify-between">
-            <span class="fa-panel-title">数据库连接</span>
+    <FaWorkbench :side-width="280">
+      <template #side>
+        <!-- 左：连接 + 库表 -->
+        <FaSidePanel title="数据库连接" class="db-side-panel">
+          <template #actions>
             <ElButton
               v-hasPerm="['module_dbconsole:conn:create']"
               type="primary"
@@ -20,9 +15,9 @@
             >
               <ElIcon class="mr-1"><Plus /></ElIcon>新增
             </ElButton>
-          </div>
+          </template>
 
-          <ElScrollbar class="min-h-0 flex-1 px-2">
+          <div class="px-1">
             <div
               v-for="item in connections"
               :key="item.id"
@@ -65,10 +60,10 @@
               description="新增一个数据库连接"
               compact
             />
-          </ElScrollbar>
+          </div>
 
           <div class="fa-panel-sep fa-hint">库 / 表</div>
-          <ElScrollbar class="min-h-0 flex-1 px-2 pb-2">
+          <div class="px-1 pb-2">
             <div v-if="!currentId" class="fa-hint p-2">先选择一个连接</div>
             <template v-else>
               <div class="fa-hint">库 / schema</div>
@@ -94,11 +89,10 @@
                 选择库后加载表（点击表名自动填入查询）
               </div>
             </template>
-          </ElScrollbar>
-        </div>
-      </ElCard>
+          </div>
+        </FaSidePanel>
+      </template>
 
-      <!-- 右：编辑器 + 结果 -->
       <ElCard
         shadow="hover"
         class="fa-card flex min-w-0 flex-1 flex-col"
@@ -199,7 +193,7 @@
           </div>
         </div>
       </ElCard>
-    </div>
+    </FaWorkbench>
 
     <FaDialog
       v-model="dialogVisible.visible"
@@ -528,3 +522,10 @@ onMounted(() => {
   void loadConnections();
 });
 </script>
+
+<style lang="scss" scoped>
+.db-side-panel {
+  width: 100%;
+  height: 100%;
+}
+</style>

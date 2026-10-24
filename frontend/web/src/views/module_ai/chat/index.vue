@@ -1,7 +1,11 @@
 <template>
   <div class="fa-full-height">
     <ElSplitter :style="'height: 100%'">
-      <ElSplitterPanel :size="isSidebarCollapsed ? 64 : 200" :min="64" :max="400">
+      <ElSplitterPanel
+        :size="isSidebarCollapsed ? 64 : 220"
+        :min="isSidebarCollapsed ? 64 : 200"
+        :max="400"
+      >
         <div class="sidebar-container h-full" :class="{ collapsed: isSidebarCollapsed }">
           <FaSidebar
             ref="sidebarRef"
@@ -355,6 +359,23 @@ onDeactivated(disconnectWebSocket);
 </script>
 
 <style lang="scss" scoped>
+/* AI 侧栏固定宽度，不提供拖拽入口，避免被拖窄后内容错乱 */
+:deep(.el-splitter-bar) {
+  width: 0 !important;
+  pointer-events: none;
+}
+
+/* 分割线只保留侧栏的 1px border，隐藏 EP 分割条自带的线，避免叠成粗线 */
+:deep(.el-splitter-bar) {
+  background: transparent;
+}
+
+:deep(.el-splitter-bar__line),
+:deep(.el-splitter-bar__dragger::before),
+:deep(.el-splitter-bar__dragger::after) {
+  display: none;
+}
+
 /* 拆分条容器样式 */
 :deep(.el-splitter) {
   overflow: hidden;
