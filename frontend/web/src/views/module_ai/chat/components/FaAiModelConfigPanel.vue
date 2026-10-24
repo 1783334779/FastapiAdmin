@@ -311,6 +311,9 @@ import AiChatAPI, {
   type AiModelOption,
 } from "@/api/module_ai/chat";
 import FaDialog from "@/components/modal/fa-dialog/index.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const emit = defineEmits<{
   (e: "changed"): void;
@@ -354,7 +357,7 @@ const availableModels = ref<AiModelOption[]>([]);
 
 async function fetchAvailableModels() {
   if (!form.base_url || !form.api_key) {
-    ElMessage.warning("请先填写 Base URL 与 API Key");
+    ElMessage.warning(t("common.aiConfig.needBase"));
     return;
   }
   probingModels.value = true;
@@ -365,9 +368,9 @@ async function fetchAvailableModels() {
     });
     availableModels.value = res.data.data || [];
     if (availableModels.value.length) {
-      ElMessage.success(`获取到 ${availableModels.value.length} 个可用模型，点击标签即可填入`);
+      ElMessage.success(t("common.aiConfig.fetched", { n: availableModels.value.length }));
     } else {
-      ElMessage.warning("接口未返回可用模型");
+      ElMessage.warning(t("common.aiConfig.noModels"));
     }
   } catch {
     // 统一错误提示已由 http 层处理
@@ -378,7 +381,7 @@ async function fetchAvailableModels() {
 
 async function testConnection() {
   if (!form.base_url || !form.api_key || !form.model_id) {
-    ElMessage.warning("请先填写 Base URL、API Key 与模型 ID");
+    ElMessage.warning(t("common.aiConfig.needAll"));
     return;
   }
   testingConnection.value = true;
@@ -388,7 +391,7 @@ async function testConnection() {
       api_key: form.api_key,
       model_id: form.model_id,
     });
-    ElMessage.success(`连接成功，往返 ${res.data.data?.latency_ms ?? "-"} ms`);
+    ElMessage.success(t("common.aiConfig.connected", { ms: res.data.data?.latency_ms ?? "-" }));
   } catch {
     // 统一错误提示已由 http 层处理
   } finally {
@@ -398,23 +401,26 @@ async function testConnection() {
 
 // 常用 Base URL 预设 - 提升用户输入效率
 const baseUrlPresets = [
-  { label: "OpenAI 官方", url: "https://api.openai.com/v1" },
+  { label: t("common.aiConfig.presetOpenai"), url: "https://api.openai.com/v1" },
   { label: "DeepSeek", url: "https://api.deepseek.com/v1" },
-  { label: "通义千问", url: "https://dashscope.aliyuncs.com/compatible-mode/v1" },
-  { label: "月之暗面 Moonshot", url: "https://api.moonshot.cn/v1" },
-  { label: "智谱 GLM", url: "https://open.bigmodel.cn/api/paas/v4" },
-  { label: "Ollama (本地)", url: "http://localhost:11434/v1" },
+  {
+    label: t("common.aiConfig.presetQwen"),
+    url: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  },
+  { label: t("common.aiConfig.presetMoonshot"), url: "https://api.moonshot.cn/v1" },
+  { label: t("common.aiConfig.presetZhipu"), url: "https://open.bigmodel.cn/api/paas/v4" },
+  { label: t("common.aiConfig.presetOllama"), url: "http://localhost:11434/v1" },
 ];
 
 const rules: FormRules<AiModelConfigInput> = {
-  name: [{ required: true, message: "请输入配置名称", trigger: "blur" }],
+  name: [{ required: true, message: t("common.aiConfig.needName"), trigger: "blur" }],
   base_url: [
-    { required: true, message: "请输入 Base URL", trigger: "blur" },
+    { required: true, message: t("common.aiConfig.needBaseUrl"), trigger: "blur" },
     {
       validator: (_rule, value: string, callback) => {
         if (!value) return callback();
         if (!/^https?:\/\//.test(value)) {
-          callback(new Error("必须以 http:// 或 https:// 开头"));
+          callback(new Error(t("common.aiConfig.needHttp")));
         } else {
           callback();
         }
@@ -422,15 +428,15 @@ const rules: FormRules<AiModelConfigInput> = {
       trigger: "blur",
     },
   ],
-  api_key: [{ required: true, message: "请输入 API Key", trigger: "blur" }],
-  model_id: [{ required: true, message: "请输入模型 ID", trigger: "blur" }],
-  temperature: [{ required: true, message: "请设置温度", trigger: "change" }],
+  api_key: [{ required: true, message: t("common.aiConfig.needKey"), trigger: "blur" }],
+  model_id: [{ required: true, message: t("common.aiConfig.needModel"), trigger: "blur" }],
+  temperature: [{ required: true, message: t("common.aiConfig.needTemp"), trigger: "change" }],
 };
 
 const activeModelName = computed(() => {
-  if (!activeId.value) return "系统默认";
+  if (!activeId.value) return t("common.aiConfig.systemDefault");
   const item = items.value.find((i) => i.id === activeId.value);
-  return item?.name || "系统默认";
+  return item?.name || t("common.aiConfig.systemDefault");
 });
 
 const loadList = async () => {
@@ -443,7 +449,7 @@ const loadList = async () => {
       activeId.value = data.active_id;
     }
   } catch {
-    ElMessage.error("加载模型配置失败");
+    ElMessage.error(t("common.aiConfig.loadFailed"));
   } finally {
     loading.value = false;
   }
@@ -509,12 +515,12 @@ const handleSave = async () => {
       emit("changed");
       await loadList();
       if (newId) flashHighlight(newId);
-      ElMessage.success(form.id ? "已保存" : "已添加并启用");
+      ElMessage.success(form.id ? t("common.aiConfig.saved") : t("common.aiConfig.added"));
     } else {
-      ElMessage.error(res.data?.msg || "保存失败");
+      ElMessage.error(res.data?.msg || t("common.aiConfig.saveFailed"));
     }
   } catch {
-    ElMessage.error("保存失败");
+    ElMessage.error(t("common.aiConfig.saveFailed"));
   } finally {
     saving.value = false;
   }
@@ -538,10 +544,10 @@ const handleItemClick = async (item: AiModelConfigItem) => {
       activeId.value = item.id;
       emit("changed");
     } else {
-      ElMessage.error(res.data?.msg || "切换失败");
+      ElMessage.error(res.data?.msg || t("common.aiConfig.switchFailed"));
     }
   } catch {
-    ElMessage.error("切换失败");
+    ElMessage.error(t("common.aiConfig.switchFailed"));
   }
 };
 
@@ -552,32 +558,32 @@ const handleUseDefault = async () => {
       activeId.value = null;
       emit("changed");
     } else {
-      ElMessage.error(res.data?.msg || "操作失败");
+      ElMessage.error(res.data?.msg || t("common.aiConfig.opFailed"));
     }
   } catch {
-    ElMessage.error("操作失败");
+    ElMessage.error(t("common.aiConfig.opFailed"));
   }
 };
 
 const handleDelete = async (item: AiModelConfigItem) => {
   try {
-    await confirmDelete(`确认删除模型「${item.name}」？此操作不可恢复`);
+    await confirmDelete(t("common.aiConfig.deleteConfirm", { name: item.name }));
   } catch {
     return;
   }
   try {
     const res = await AiChatAPI.deleteModelConfig(item.id);
     if (res.data?.code === 0) {
-      ElMessage.success("已删除");
+      ElMessage.success(t("common.aiConfig.deleted"));
       if (form.id === item.id) dialogVisible.value = false;
       if (expandedId.value === item.id) expandedId.value = null;
       emit("changed");
       await loadList();
     } else {
-      ElMessage.error(res.data?.msg || "删除失败");
+      ElMessage.error(res.data?.msg || t("common.aiConfig.deleteFailed"));
     }
   } catch {
-    ElMessage.error("删除失败");
+    ElMessage.error(t("common.aiConfig.deleteFailed"));
   }
 };
 
@@ -590,9 +596,9 @@ const copyKey = async (key: string) => {
   if (!key) return;
   try {
     await navigator.clipboard.writeText(key);
-    ElMessage.success("已复制到剪贴板");
+    ElMessage.success(t("common.aiConfig.copied"));
   } catch {
-    ElMessage.error("复制失败");
+    ElMessage.error(t("common.aiConfig.copyFailed"));
   }
 };
 
