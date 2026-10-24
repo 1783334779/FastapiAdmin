@@ -278,7 +278,8 @@ defineExpose({ reset });
 .fa-puzzle__fill {
   position: absolute;
   inset: 0 auto 0 0;
-  background: color-mix(in srgb, var(--el-color-primary) 20%, transparent);
+  background: linear-gradient(90deg, var(--el-color-primary), var(--el-color-primary-light-3));
+  transition: width 0.3s ease;
 }
 
 .fa-puzzle__handler {
@@ -293,15 +294,29 @@ defineExpose({ reset });
   height: 100%;
   color: var(--el-color-primary);
   cursor: grab;
-  background: var(--default-box-color);
-  border: 1px solid var(--el-border-color-light);
+  background: #fff;
+  border: 1px solid var(--el-color-primary-light-5);
   border-radius: 8px;
+  box-shadow: 0 2px 8px rgb(79 107 255 / 28%);
 }
 
 .fa-puzzle__text {
   position: relative;
   z-index: 1;
+  color: transparent;
   pointer-events: none;
+  background: linear-gradient(
+    to right,
+    var(--el-text-color-secondary) 0%,
+    var(--el-text-color-secondary) 40%,
+    #fff 50%,
+    var(--el-text-color-secondary) 60%,
+    var(--el-text-color-secondary) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: puzzle-shimmer 2.2s cubic-bezier(0, 0.2, 1, 1) infinite;
 }
 
 .is-passed {
@@ -311,12 +326,30 @@ defineExpose({ reset });
   }
 
   .fa-puzzle__fill {
-    background: color-mix(in srgb, var(--el-color-success) 18%, transparent);
+    background: linear-gradient(90deg, var(--el-color-success), var(--el-color-success-light-3));
   }
 
   .fa-puzzle__handler {
     color: var(--el-color-success);
     border-color: var(--el-color-success-light-5);
+    box-shadow: 0 2px 8px rgb(34 197 94 / 25%);
+  }
+
+  .fa-puzzle__text {
+    color: var(--el-color-success);
+    background: none;
+    -webkit-text-fill-color: currentcolor;
+    animation: none;
+  }
+}
+
+@keyframes puzzle-shimmer {
+  0% {
+    background-position: 150% 0;
+  }
+
+  100% {
+    background-position: -50% 0;
   }
 }
 
