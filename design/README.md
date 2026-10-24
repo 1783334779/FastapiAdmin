@@ -76,3 +76,16 @@ node scripts/design-tokens/generate.mjs
 ## UI 规范（强制）
 
 所有 Web UI 新增与修改必须遵守 [UI-GUIDELINES.md](./UI-GUIDELINES.md)：布局、间距、断点、表格、移动卡片、弹窗、颜色语义、i18n、提交检查清单。
+
+---
+
+## 品牌素材（单一来源）
+
+- Logo / favicon 统一放在 `design/assets/`。
+- 同步到官网、Web、小程序、后端验证码：
+
+```bash
+node scripts/sync-brand-assets.mjs
+```
+
+不要在 `frontend/*/public`、`frontend/app/src/static` 等目录单独修改 Logo；改 `design/assets/` 后执行同步脚本。
