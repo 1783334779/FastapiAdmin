@@ -40,6 +40,8 @@ node scripts/design-tokens/generate.mjs
 | shadow | card / pop / modal（含深色版本） |
 | fontFamily | Inter / PingFang SC / 等宽栈 |
 | table.headerBg | 浅色 #F9FAFB / 深色 #1B1E24 |
+| component.input / dialog / popover | 浅色 #FFFFFF，深色 #1B1E24 / #23262E |
+| component.overlay | 浅色 rgba(0,0,0,.5)，深色 rgba(0,0,0,.65) |
 | dark | surface `#15181E` / `#191D24`，border `#262B34`，text `#E5E7EB / #A3AAB8 / #8B93A1` |
 
 ## 规则

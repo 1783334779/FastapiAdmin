@@ -8,7 +8,7 @@ import { dirname, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
 const tokens = JSON.parse(readFileSync(resolve(root, "design/tokens.json"), "utf8"));
-const { brand, brandRamp, neutral, radius, space, font, fontFamily, shadow, control, table, layout } = tokens;
+const { brand, brandRamp, neutral, radius, space, font, fontFamily, shadow, control, table, layout, component } = tokens;
 
 function write(path, content) {
   mkdirSync(dirname(path), { recursive: true });
@@ -50,6 +50,14 @@ ${controlVars}
   --fa-shadow-modal: ${shadow.modal};
   --fa-font-sans: ${fontFamily.sans};
   --fa-table-header-bg: ${table.headerBgLight};
+  --fa-input-bg: ${component.inputBgLight};
+  --fa-dialog-bg: ${component.dialogBgLight};
+  --fa-popover-bg: ${component.popoverBgLight};
+  --fa-overlay-bg: ${component.overlayLight};
+  --el-fill-color-blank: var(--fa-input-bg);
+  --el-dialog-bg-color: var(--fa-dialog-bg);
+  --el-bg-color-overlay: var(--fa-popover-bg);
+  --el-overlay-color-lighter: var(--fa-overlay-bg);
 }
 
 html.dark {
@@ -63,6 +71,10 @@ html.dark {
   --fa-shadow-pop: ${shadow.darkPop};
   --fa-shadow-modal: ${shadow.darkModal};
   --fa-table-header-bg: ${table.headerBgDark};
+  --fa-input-bg: ${component.inputBgDark};
+  --fa-dialog-bg: ${component.dialogBgDark};
+  --fa-popover-bg: ${component.popoverBgDark};
+  --fa-overlay-bg: ${component.overlayDark};
 }
 `
 );
