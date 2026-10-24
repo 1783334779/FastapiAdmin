@@ -131,16 +131,6 @@
             title="最近交易"
             subtitle="2024年12月20日"
           />
-          <FaDataListCard
-            class="mb-4"
-            :max-count="2"
-            auto-height
-            :list="healthList"
-            title="系统健康"
-            subtitle="实时 · 30s"
-            :showMoreButton="true"
-            @more="handleMore"
-          />
           <TodoList class="mb-4" />
         </ElCol>
       </ElRow>
@@ -163,10 +153,8 @@
 <script setup lang="ts">
 defineOptions({ name: "Home", inheritAttrs: false });
 
-import { ref, onMounted, onUnmounted, defineAsyncComponent } from "vue";
-import { ElMessage } from "element-plus";
-import DashboardAPI from "@/api/module_monitor/dashboard";
-import { getDashboardMock, type HealthItem } from "@/mock/dashboard";
+import { ref, defineAsyncComponent } from "vue";
+import { getDashboardMock } from "@/mock/dashboard";
 import ImageCards from "./modules/image_cards.vue";
 import ItBanners from "./modules/it_banners.vue";
 import Banner from "./modules/banner.vue";
@@ -178,24 +166,7 @@ import QuickLinks from "./modules/quick-links.vue";
 
 const mock = getDashboardMock();
 const loading = ref(false);
-const healthList = ref<HealthItem[]>(mock.health); // 初值 mock 兜底，健康流首帧到达即覆盖
 const timelineData = ref(mock.timeline);
-
-let unsubscribeHealth: (() => void) | null = null;
-
-onMounted(() => {
-  // 后续替换为真实接口:
-  // const { data } = await DashboardAPI.getStats();
-  // 并删除 getDashboardMock() 调用
-  unsubscribeHealth = DashboardAPI.subscribeHealthStream((items) => {
-    healthList.value = items;
-  });
-});
-
-onUnmounted(() => {
-  unsubscribeHealth?.();
-  unsubscribeHealth = null;
-});
 
 // 图表组件异步导入，减少首屏 echarts 加载
 const FaLineChartCard = defineAsyncComponent(
@@ -211,8 +182,4 @@ const FaDonutChartCard = defineAsyncComponent(
 const FaTimelineListCard = defineAsyncComponent(
   () => import("@/components/cards/fa-timeline-list-card/index.vue")
 );
-
-function handleMore() {
-  ElMessage.info("查看更多");
-}
 </script>
