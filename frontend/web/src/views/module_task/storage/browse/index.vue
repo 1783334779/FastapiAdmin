@@ -418,7 +418,7 @@
               <!-- 状态栏 + 游标分页（桶列表最外层不显示） -->
               <div
                 v-if="!activeTab?.browseBuckets"
-                class="mt-2.5 flex shrink-0 items-center gap-2 text-[13px] text-(--el-text-color-regular)"
+                class="mt-4 flex shrink-0 items-center gap-2 text-[13px] text-(--el-text-color-regular)"
               >
                 <span>当前页 {{ entries.length }} 项 · 第 {{ pageNo }} 页</span>
                 <span v-if="selectedRows.length" class="text-(--el-color-primary)"
