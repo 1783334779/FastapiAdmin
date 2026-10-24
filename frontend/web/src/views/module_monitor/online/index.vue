@@ -58,7 +58,7 @@ defineOptions({
 });
 
 import OnlineAPI, { type OnlineUserTable } from "@/api/module_monitor/online";
-import { renderTableOperationCell, type TableOperationAction } from "@utils";
+import { formatDateTime, renderTableOperationCell, type TableOperationAction } from "@utils";
 import type FaSearchBar from "@/components/forms/fa-search-bar/index.vue";
 import type { SearchFormItem } from "@/components/forms/fa-search-bar/index.vue";
 import FaCopyButton from "@/components/actions/fa-copy-button/index.vue";
@@ -223,8 +223,7 @@ const {
         label: "登录时间",
         width: 180,
         showOverflowTooltip: true,
-        formatter: (row: OnlineUserTable) =>
-          row.login_time ? String(row.login_time).slice(0, 19) : "-",
+        formatter: (row: OnlineUserTable) => formatDateTime(row.login_time),
       },
       {
         prop: "operation",
