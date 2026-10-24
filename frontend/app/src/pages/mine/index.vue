@@ -58,10 +58,10 @@ const settingsList = [
 ]
 
 const quickLinks = [
-  { titleKey: 'common.nav.notices', name: 'work-notices', icon: 'notification', color: 'var(--wot-green-6)', soft: 'wot-bg-green-1' },
-  { titleKey: 'common.nav.tickets', name: 'work-tickets', icon: 'message', color: 'var(--wot-orange-6)', soft: 'wot-bg-orange-1' },
-  { titleKey: 'common.nav.aiChat', name: 'work-chat', icon: 'interaction', color: 'var(--wot-cyan-6)', soft: 'wot-bg-cyan-1' },
-  { titleKey: 'common.nav.aiModels', name: 'work-ai-models', icon: 'robot', color: 'var(--wot-purple-6)', soft: 'wot-bg-purple-1' },
+  { titleKey: 'common.nav.notices', name: 'work-notices', icon: 'notification', color: 'var(--fa-brand-blue)', soft: 'wot-bg-primary-1' },
+  { titleKey: 'common.nav.tickets', name: 'work-tickets', icon: 'message', color: 'var(--fa-brand-violet)', soft: 'wot-bg-purple-1' },
+  { titleKey: 'common.nav.aiChat', name: 'work-chat', icon: 'interaction', color: 'var(--fa-brand-blue)', soft: 'wot-bg-primary-1' },
+  { titleKey: 'common.nav.aiModels', name: 'work-ai-models', icon: 'robot', color: 'var(--fa-brand-violet)', soft: 'wot-bg-purple-1' },
 ]
 
 /** 修改密码弹窗（内嵌于「我的」页，免跳转） */

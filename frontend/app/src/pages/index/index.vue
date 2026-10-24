@@ -88,10 +88,10 @@ onPageScroll((e) => {
 })
 
 const NAV_LIST = [
-  { icon: 'notification', titleKey: 'common.nav.notices', name: 'work-notices', color: 'var(--wot-green-6)', soft: 'wot-bg-green-1' },
-  { icon: 'message', titleKey: 'common.nav.tickets', name: 'work-tickets', color: 'var(--wot-orange-6)', soft: 'wot-bg-orange-1' },
-  { icon: 'interaction', titleKey: 'common.nav.aiChat', name: 'work-chat', color: 'var(--wot-cyan-6)', soft: 'wot-bg-cyan-1' },
-  { icon: 'robot', titleKey: 'common.nav.aiModels', name: 'work-ai-models', color: 'var(--wot-purple-6)', soft: 'wot-bg-purple-1' },
+  { icon: 'notification', titleKey: 'common.nav.notices', name: 'work-notices', color: 'var(--fa-brand-blue)', soft: 'wot-bg-primary-1' },
+  { icon: 'message', titleKey: 'common.nav.tickets', name: 'work-tickets', color: 'var(--fa-brand-violet)', soft: 'wot-bg-purple-1' },
+  { icon: 'interaction', titleKey: 'common.nav.aiChat', name: 'work-chat', color: 'var(--fa-brand-blue)', soft: 'wot-bg-primary-1' },
+  { icon: 'robot', titleKey: 'common.nav.aiModels', name: 'work-ai-models', color: 'var(--fa-brand-violet)', soft: 'wot-bg-purple-1' },
 ]
 
 /** 轮播 Banner 条目 */
