@@ -3,6 +3,7 @@
   --fa-brand-blue: #4F6BFF;
   --fa-brand-violet: #6D5BFF;
   --fa-brand-gradient: linear-gradient(135deg, #4F6BFF 0%, #6D5BFF 100%);
+  --fa-canvas: #F5F6F8;
   --fa-radius-xs: 6px;
   --fa-radius-sm: 8px;
   --fa-radius-md: 12px;
@@ -43,6 +44,7 @@
 }
 
 html.dark {
+  --fa-canvas: #15181E;
   --fa-surface: #15181E;
   --fa-surface-2: #191D24;
   --fa-border: #262B34;

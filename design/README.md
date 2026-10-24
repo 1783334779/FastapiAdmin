@@ -29,7 +29,7 @@ node scripts/design-tokens/generate.mjs
 | brand.gradient | `135deg #4F6BFF → #6D5BFF` |
 | neutral.ink | `#141824` |
 | neutral.border | `#E6E8EC` |
-| neutral.canvas | `#F5F6F8` |
+| neutral.canvas | `#F5F6F8` / 深色 `#15181E` |
 | radius | `6 / 8 / 12 / 16 / pill` |
 | space | `4 / 8 / 12 / 16 / 20 / 24` |
 | font | `12 / 13 / 14 / 16 / 20 / 24` |

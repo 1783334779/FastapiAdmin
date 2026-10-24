@@ -37,6 +37,7 @@ write(
   --fa-brand-blue: ${brand.blue};
   --fa-brand-violet: ${brand.violet};
   --fa-brand-gradient: ${brand.gradient};
+  --fa-canvas: ${neutral.canvas};
 ${radiusVars}
 ${spaceVars}
 ${fontVars}
@@ -61,6 +62,7 @@ ${controlVars}
 }
 
 html.dark {
+  --fa-canvas: ${neutral.canvasDark};
   --fa-surface: ${neutral.darkSurface1};
   --fa-surface-2: ${neutral.darkSurface2};
   --fa-border: ${neutral.darkBorder};
@@ -110,6 +112,7 @@ write(
   resolve(root, "frontend/app/src/styles/brand-tokens.generated.scss"),
   `/* 由 design/tokens.json 生成，请勿手改。 */
 page {
+  --fa-canvas: ${neutral.canvas};
   --fa-brand-blue: ${brand.blue};
   --fa-brand-violet: ${brand.violet};
   --fa-border: ${neutral.border};
