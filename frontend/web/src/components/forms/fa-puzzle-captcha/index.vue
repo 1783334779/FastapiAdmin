@@ -282,7 +282,7 @@ defineExpose({ reset });
 .fa-puzzle__fill {
   position: absolute;
   inset: 0 auto 0 0;
-  background: linear-gradient(90deg, var(--el-color-primary), var(--el-color-primary-light-3));
+  background: linear-gradient(90deg, var(--el-color-success), var(--el-color-success-light-3));
   transition: width 0.3s ease;
 }
 
