@@ -340,7 +340,10 @@
       "add": "Add",
       "ipLookupOn": "Resolve client IP location locally from the built-in database for logging",
       "ipLookupOff": "IP lookup is off; login location records intranet / unresolved only"
-    }
+    },
+    "help": "Help",
+    "privacy": "Privacy",
+    "terms": "Terms"
   },
   "search": {
     "placeholder": "Search page",

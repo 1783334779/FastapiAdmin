@@ -135,7 +135,7 @@
                 rel="noopener noreferrer"
                 class="login-page-footer__link"
               >
-                帮助
+                {{ $t("common.help") }}
               </a>
               <span class="login-page-footer__sep">|</span>
               <a
@@ -144,7 +144,7 @@
                 rel="noopener noreferrer"
                 class="login-page-footer__link"
               >
-                隐私
+                {{ $t("common.privacy") }}
               </a>
               <span class="login-page-footer__sep">|</span>
               <a
@@ -153,7 +153,7 @@
                 rel="noopener noreferrer"
                 class="login-page-footer__link"
               >
-                条款
+                {{ $t("common.terms") }}
               </a>
               <span
                 v-if="configStore.configData?.keep_record?.config_value"

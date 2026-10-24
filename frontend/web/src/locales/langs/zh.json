@@ -340,7 +340,10 @@
       "add": "添加",
       "ipLookupOn": "登录时基于内置离线库本地解析客户端 IP 归属地，用于日志记录",
       "ipLookupOff": "IP 归属地查询已关闭，登录位置只记录内网 / 未解析"
-    }
+    },
+    "help": "帮助",
+    "privacy": "隐私",
+    "terms": "条款"
   },
   "search": {
     "placeholder": "搜索页面",
