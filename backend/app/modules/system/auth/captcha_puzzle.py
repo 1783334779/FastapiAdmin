@@ -28,8 +28,51 @@ def _read_asset_data_uri(name: str, mime: str) -> str:
     return f"data:{mime};base64,{encoded}"
 
 
-BG_IMAGE = _read_asset_data_uri("page-bg.png", "image/png")
 LOGO_IMAGE = _read_asset_data_uri("logo.svg", "image/svg+xml")
+
+
+BG_PALETTES = [
+    ("#1B2140", "#2A1F45", "#0E2233", "#4F6BFF", "#6D5BFF"),
+    ("#0B1826", "#1A2036", "#08111C", "#0EA5E9", "#6D5BFF"),
+    ("#241A35", "#141B2E", "#0B0F1A", "#A855F7", "#4F6BFF"),
+    ("#11231F", "#10202B", "#0A1216", "#22C55E", "#0EA5E9"),
+]
+
+
+def _random_background(rnd: random.Random) -> str:
+    """按验证码 key 随机生成品牌化抽象背景。"""
+    base1, base2, base3, accent1, accent2 = rnd.choice(BG_PALETTES)
+    angle = rnd.choice([(0, 0, 1, 1), (0, 1, 1, 0), (0, 0, 1, 0)])
+    parts = [
+        "<defs>",
+        f'<linearGradient id="bg" x1="{angle[0]}" y1="{angle[1]}" x2="{angle[2]}" y2="{angle[3]}">'
+        f'<stop offset="0" stop-color="{base1}"/>'
+        f'<stop offset="0.55" stop-color="{base2}"/>'
+        f'<stop offset="1" stop-color="{base3}"/>'
+        "</linearGradient>",
+        '<filter id="blob"><feGaussianBlur stdDeviation="9"/></filter>',
+        "</defs>",
+        f'<rect width="{WIDTH}" height="{HEIGHT}" fill="url(#bg)"/>',
+    ]
+    for _ in range(rnd.randint(7, 11)):
+        color = rnd.choice([accent1, accent2, "#ffffff"])
+        parts.append(
+            f'<circle cx="{rnd.randint(-20, WIDTH + 20)}" cy="{rnd.randint(-20, HEIGHT + 20)}" '
+            f'r="{rnd.randint(24, 78)}" fill="{color}" '
+            f'opacity="{round(rnd.uniform(0.1, 0.3), 2)}" filter="url(#blob)"/>'
+        )
+    for _ in range(3):
+        parts.append(
+            f'<circle cx="{rnd.randint(20, WIDTH - 20)}" cy="{rnd.randint(10, HEIGHT - 10)}" '
+            f'r="{rnd.randint(22, 58)}" fill="none" stroke="#ffffff" '
+            f'stroke-opacity="{round(rnd.uniform(0.08, 0.18), 2)}"/>'
+        )
+    parts.append(
+        f'<path d="M0 {rnd.randint(40, HEIGHT - 40)} C {WIDTH // 3} {rnd.randint(0, HEIGHT)}, '
+        f'{WIDTH * 2 // 3} {rnd.randint(0, HEIGHT)}, {WIDTH} {rnd.randint(30, HEIGHT - 30)}" '
+        'fill="none" stroke="#ffffff" stroke-opacity="0.12"/>'
+    )
+    return "".join(parts)
 
 
 def _svg_data(svg: str) -> str:
@@ -46,33 +89,10 @@ def build_puzzle(key: str) -> dict:
     target_x = rnd.randint(80, WIDTH - PIECE_WIDTH - 16)
     target_y = rnd.randint(12, HEIGHT - PIECE - 12)
 
-    background = f'<image href="{BG_IMAGE}" x="0" y="0" width="{WIDTH}" height="{HEIGHT}" preserveAspectRatio="xMidYMid slice"/>' if BG_IMAGE else _fallback_background()
-
     bg_svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" '
         f'viewBox="0 0 {WIDTH} {HEIGHT}">'
-        "<defs>"
-        '<linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">'
-        '<stop offset="0" stop-color="#1B2140" stop-opacity="0.35"/>'
-        '<stop offset="0.55" stop-color="#2A1F45" stop-opacity="0.3"/>'
-        '<stop offset="1" stop-color="#0E2233" stop-opacity="0.55"/>'
-        "</linearGradient>"
-        '<radialGradient id="orb" cx="50%" cy="50%" r="50%">'
-        '<stop offset="0" stop-color="#4F6BFF" stop-opacity="0.55"/>'
-        '<stop offset="1" stop-color="#4F6BFF" stop-opacity="0"/>'
-        "</radialGradient>"
-        '<filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>'
-        "</defs>"
-        '<g filter="url(#soft)">'
-        f"{background}"
-        "</g>"
-        '<rect width="320" height="160" fill="url(#glow)"/>'
-        '<circle cx="250" cy="24" r="95" fill="url(#orb)"/>'
-        '<circle cx="58" cy="140" r="80" fill="url(#orb)"/>'
-        '<g fill="none" stroke="#8FA4FF" stroke-opacity="0.22">'
-        '<circle cx="270" cy="34" r="42"/>'
-        '<circle cx="46" cy="128" r="56"/>'
-        "</g>"
+        f"{_random_background(rnd)}"
         f'<rect x="{target_x}" y="{target_y}" width="{PIECE}" height="{PIECE}" '
         f'rx="{RADIUS}" fill="#080a10" opacity="0.55"/>'
         f'<circle cx="{target_x + PIECE}" cy="{target_y + PIECE // 2}" r="{KNOB}" '
