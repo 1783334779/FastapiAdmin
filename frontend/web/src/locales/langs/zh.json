@@ -241,7 +241,17 @@
       "ssh": "SSH 运维",
       "sql": "SQL 控制台",
       "profile": "个人中心"
-    }
+    },
+    "success": "成功",
+    "failed": "失败",
+    "yes": "是",
+    "no": "否",
+    "male": "男",
+    "female": "女",
+    "draft": "草稿",
+    "published": "已发布",
+    "rolledBack": "已回滚",
+    "unknown": "未知"
   },
   "search": {
     "placeholder": "搜索页面",

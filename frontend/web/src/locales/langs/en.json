@@ -241,7 +241,17 @@
       "ssh": "SSH",
       "sql": "SQL Console",
       "profile": "Profile"
-    }
+    },
+    "success": "Success",
+    "failed": "Failed",
+    "yes": "Yes",
+    "no": "No",
+    "male": "Male",
+    "female": "Female",
+    "draft": "Draft",
+    "published": "Published",
+    "rolledBack": "Rolled back",
+    "unknown": "Unknown"
   },
   "search": {
     "placeholder": "Search page",
