@@ -226,7 +226,8 @@ onLoad(() => loadData())
             </template>
             <wd-cell
               :title="item.title"
-              :label="typeLabel(item.ticket_type) + (item.ticket_content ? ` · ${item.ticket_content}` : '')"
+              :label="typeLabel(item.ticket_type) + (item.ticket_content ? ` · ${item.ticket_content}` : '') + (item.created_time ? ` · ${item.created_time.slice(0, 10)}` : '')"
+              :value="statusLabel(item.status)"
               is-link
               border
               @click="navigateToDetail(item.id!)"
