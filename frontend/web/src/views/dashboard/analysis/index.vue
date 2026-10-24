@@ -1,11 +1,11 @@
 <template>
   <div>
-    <ElRow :gutter="20">
+    <ElRow :gutter="16">
       <ElCol :xl="14" :lg="15" :xs="24"><TodaySales /></ElCol>
       <ElCol :xl="10" :lg="9" :xs="24"><VisitorInsights /></ElCol>
     </ElRow>
 
-    <ElRow :gutter="20">
+    <ElRow :gutter="16">
       <ElCol :xl="12" :lg="12" :xs="24" class="flex flex-col gap-5">
         <CustomerSatisfaction class="flex-1" />
         <TotalRevenue class="flex-1" />
@@ -16,10 +16,10 @@
       </ElCol>
     </ElRow>
 
-    <ElRow :gutter="20">
+    <ElRow :gutter="16">
       <ElCol :xl="8" :lg="8" :xs="24"><SalesMappingByCountry /></ElCol>
       <ElCol :xl="8" :lg="8" :xs="24"><VolumeServiceLevel /></ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">柱状图（单数据）</span></div>
           <FaBarChart
@@ -30,7 +30,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">柱状图（多组数据）</span></div>
           <FaBarChart
@@ -41,7 +41,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">柱状图（堆叠）</span></div>
           <FaBarChart
@@ -53,7 +53,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">折线图</span></div>
           <FaLineChart
@@ -64,7 +64,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">折线图（渐变）</span></div>
           <FaLineChart
@@ -74,7 +74,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">折线图（多组）</span></div>
           <FaLineChart
@@ -84,7 +84,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">柱状图（水平）</span></div>
           <FaHBarChart
@@ -93,7 +93,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">柱状图（水平多组）</span></div>
           <FaHBarChart
@@ -107,7 +107,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">柱状图（水平堆叠）</span></div>
           <FaHBarChart
@@ -122,7 +122,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">环形图</span></div>
           <FaRingChart
@@ -136,7 +136,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">环形图（中心文字）</span></div>
           <FaRingChart
@@ -155,7 +155,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">饼图</span></div>
           <FaRingChart
@@ -170,7 +170,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">散点图</span></div>
           <FaScatterChart
@@ -191,7 +191,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">雷达图</span></div>
           <FaRadarChart
@@ -209,7 +209,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">K线图</span></div>
           <FaKLineChart
@@ -224,7 +224,7 @@
           />
         </div>
       </ElCol>
-      <ElCol :xs="24" :md="12" :lg="8" class="mb-5">
+      <ElCol :xs="24" :md="12" :lg="8" class="mb-4">
         <div class="fa-card">
           <div class="pb-3.5"><span class="text-base font-medium">双向堆叠柱状图</span></div>
           <FaDualBarCompareChart
