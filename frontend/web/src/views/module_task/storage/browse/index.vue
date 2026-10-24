@@ -285,10 +285,12 @@
                   >
                   <span class="ml-auto shrink-0 text-xs text-[#909399]">点击进入</span>
                 </div>
-                <el-empty
+                <FaEmptyState
                   v-if="!activeTab.loading && !objectBuckets.length"
-                  description="账号下暂无存储桶"
-                  :image-size="60"
+                  compact
+                  icon="ri:inbox-line"
+                  title="暂无存储桶"
+                  description="账号下还没有可用的存储桶"
                 />
               </el-scrollbar>
 
@@ -421,35 +423,33 @@
                 </div>
               </div>
             </template>
-            <el-empty
+            <FaEmptyState
               v-else
+              icon="ri:folder-open-line"
+              :title="nodes.length ? '从左侧打开一个节点' : '暂无节点'"
               :description="
-                nodes.length
-                  ? '从左侧打开一个节点开始浏览（可同时打开多个节点）'
-                  : '暂无节点，请先在「存储源管理」中创建'
+                nodes.length ? '可同时打开多个节点，互不干扰' : '请先在「存储源管理」中创建存储源'
               "
-              :image-size="60"
             >
               <el-button v-if="nodes.length" type="primary" @click="openAddDialog">
                 <el-icon style="margin-right: 4px"><Plus /></el-icon>打开节点
               </el-button>
-            </el-empty>
+            </FaEmptyState>
           </div>
         </el-tab-pane>
       </el-tabs>
       <div v-else class="flex min-h-0 flex-1 items-center justify-center">
-        <el-empty
+        <FaEmptyState
+          icon="ri:folder-open-line"
+          :title="nodes.length ? '从左侧打开一个节点' : '暂无节点'"
           :description="
-            nodes.length
-              ? '从左侧打开一个节点开始浏览（可同时打开多个节点）'
-              : '暂无节点，请先在「存储源管理」中创建'
+            nodes.length ? '可同时打开多个节点，互不干扰' : '请先在「存储源管理」中创建存储源'
           "
-          :image-size="60"
         >
           <el-button v-if="nodes.length" type="primary" @click="openAddDialog">
             <el-icon style="margin-right: 4px"><Plus /></el-icon>打开节点
           </el-button>
-        </el-empty>
+        </FaEmptyState>
       </div>
 
       <!-- 打开节点对话框 -->
@@ -555,10 +555,11 @@
                 <el-icon class="shrink-0 text-[#e6a23c]"><Folder /></el-icon>
                 <span class="min-w-0 flex-1 truncate">{{ e.name }}</span>
               </div>
-              <el-empty
+              <FaEmptyState
                 v-if="!dirPicker.entries.length"
-                description="没有子目录"
-                :image-size="60"
+                compact
+                icon="ri:folder-line"
+                title="没有子目录"
               />
             </template>
           </el-scrollbar>
