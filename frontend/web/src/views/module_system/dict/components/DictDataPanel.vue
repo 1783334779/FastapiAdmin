@@ -71,7 +71,75 @@
           </template>
         </FaTableHeader>
 
+        <div v-if="isNarrow" class="flex flex-col gap-3">
+          <div v-if="!data.length" class="py-12">
+            <FaEmptyState
+              icon="ri:book-open-line"
+              title="暂无字典数据"
+              description="新增第一条字典数据后在这里展示"
+            />
+          </div>
+          <div
+            v-for="row in data"
+            :key="row.id"
+            class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
+          >
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="text-sm font-medium truncate">{{ row.dict_label }}</div>
+                <div class="mt-0.5 text-xs text-g-600">{{ row.dict_value }}</div>
+              </div>
+              <div class="flex gap-1 shrink-0">
+                <FaStatusTag v-if="row.is_default" type="success" label="默认" />
+                <ElSwitch
+                  :model-value="row.status ?? 0"
+                  :active-value="0"
+                  :inactive-value="1"
+                  :loading="statusUpdating.has(row.id!)"
+                  @update:model-value="(val) => handleStatusChange(row.id!, Number(val))"
+                />
+              </div>
+            </div>
+            <div class="mt-2 text-xs text-g-600">排序：{{ row.dict_sort ?? "—" }}</div>
+            <div class="flex justify-end gap-1 mt-3">
+              <ElButton
+                link
+                type="primary"
+                size="small"
+                @click="buildDictDataRowActions(row)[0]?.run()"
+              >
+                详情
+              </ElButton>
+              <ElButton
+                link
+                type="primary"
+                size="small"
+                @click="buildDictDataRowActions(row)[1]?.run()"
+              >
+                编辑
+              </ElButton>
+              <ElButton
+                link
+                type="danger"
+                size="small"
+                @click="buildDictDataRowActions(row)[2]?.run()"
+              >
+                删除
+              </ElButton>
+            </div>
+          </div>
+          <ElPagination
+            v-if="data.length"
+            class="justify-center mt-1"
+            layout="prev, pager, next"
+            :current-page="pagination.current"
+            :page-size="pagination.size"
+            :total="pagination.total"
+            @current-change="handleCurrentChange"
+          />
+        </div>
         <FaTable
+          v-else
           ref="faTableRef"
           :loading="loading"
           :data="data"
@@ -196,6 +264,7 @@
 </template>
 
 <script setup lang="ts">
+import { useWindowSize } from "@vueuse/core";
 import DictAPI, {
   type DictDataForm,
   type DictDataPageQuery,
@@ -588,6 +657,9 @@ async function handleAdd() {
     dict_type_id: props.dictTypeId,
   });
 }
+
+const { width: viewportWidth } = useWindowSize();
+const isNarrow = computed(() => viewportWidth.value < 800);
 
 function buildDictDataRowActions(row: DictDataTable): TableOperationAction[] {
   const all: TableOperationAction[] = [
