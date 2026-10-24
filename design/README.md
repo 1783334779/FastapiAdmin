@@ -1,0 +1,49 @@
+# 跨端设计 Token
+
+一份源，三端消费：**官网（VitePress）/ Web（Vue3 + Element Plus）/ 小程序（uni-app）**。
+
+## 唯一来源
+
+`design/tokens.json` 是颜色、圆角、间距、字号、断点的唯一来源。**不要直接改生成文件。**
+
+## 生成
+
+```bash
+node scripts/design-tokens/generate.mjs
+```
+
+生成结果：
+
+| 端 | 文件 | 形式 |
+| --- | --- | --- |
+| Web | `frontend/web/src/styles/core/_brand-tokens.generated.scss` | CSS 变量 `--fa-*` |
+| 官网 | `frontend/docs/.vitepress/theme/styles/brand-tokens.generated.css` | CSS 变量 `--fa-*` / `--vp-brand-gradient` |
+| 小程序 | `frontend/app/src/styles/brand-tokens.generated.scss` | SCSS 变量 `$fa-*` |
+
+## 当前 Token
+
+| 组 | 值 |
+| --- | --- |
+| brand.blue | `#4F6BFF` |
+| brand.violet | `#6D5BFF` |
+| brand.gradient | `135deg #4F6BFF → #6D5BFF` |
+| neutral.ink | `#141824` |
+| neutral.border | `#E6E8EC` |
+| neutral.canvas | `#F5F6F8` |
+| radius | `6 / 8 / 12 / 16 / pill` |
+| space | `4 / 8 / 12 / 16 / 20 / 24` |
+| font | `12 / 13 / 14 / 16 / 20 / 24` |
+| breakpoint | `800 / 992 / 1280` |
+
+## 规则
+
+1. 新增颜色/圆角/间距，先改 `tokens.json`，再运行生成脚本。
+2. 页面与组件不写十六进制颜色，不写魔法圆角/间距。
+3. Web 的 `--fa-*` 继续作为全站变量名；官网映射到 `--vp-brand-gradient`；小程序使用 `$fa-*`。
+4. 生成文件顶部有「请勿手改」注释；提交前跑一次生成，保证三端一致。
+5. Brand 专属资产（Logo、单色版）仍以 `docs/brand/` 与 `docs/BRAND-SPEC.md` 为准。
+
+## 与规范的关系
+
+- 界面规范：[`docs/UI-SPEC.md`](../docs/UI-SPEC.md)
+- 品牌规范：[`docs/BRAND-SPEC.md`](../docs/BRAND-SPEC.md)

@@ -1,0 +1,28 @@
+// 由 design/tokens.json 生成，请勿手改。
+:root {
+  --fa-brand-blue: #4F6BFF;
+  --fa-brand-violet: #6D5BFF;
+  --fa-brand-gradient: linear-gradient(135deg, #4F6BFF 0%, #6D5BFF 100%);
+
+  --fa-radius-xs: 6px;
+  --fa-radius-sm: 8px;
+  --fa-radius-md: 12px;
+  --fa-radius-lg: 16px;
+  --fa-radius-pill: 999px;
+  --fa-space-1: 4px;
+  --fa-space-2: 8px;
+  --fa-space-3: 12px;
+  --fa-space-4: 16px;
+  --fa-space-5: 20px;
+  --fa-space-6: 24px;
+  --fa-font-xs: 12px;
+  --fa-font-sm: 13px;
+  --fa-font-md: 14px;
+  --fa-font-lg: 16px;
+  --fa-font-xl: 20px;
+  --fa-font-xxl: 24px;
+}
+
+.dark {
+  --fa-brand-ink: #AEB6C6;
+}
