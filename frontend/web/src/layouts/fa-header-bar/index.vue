@@ -108,6 +108,7 @@
 
         <!-- 国际化按钮 -->
         <ElDropdown
+          trigger="click"
           @command="changeLanguage"
           popper-class="langDropDownStyle"
           v-if="shouldShowLanguage"
@@ -115,7 +116,7 @@
           <FaIconButton
             icon="ri:translate-2"
             class="language-btn text-[19px]"
-            aria-label="切换语言"
+            :aria-label="$t('common.switchLanguage')"
           />
           <template #dropdown>
             <ElDropdownMenu>

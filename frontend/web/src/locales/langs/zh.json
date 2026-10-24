@@ -402,7 +402,8 @@
       "presetMoonshot": "月之暗面 Moonshot",
       "presetZhipu": "智谱 GLM",
       "presetOllama": "Ollama (本地)"
-    }
+    },
+    "switchLanguage": "切换语言"
   },
   "search": {
     "placeholder": "搜索页面",

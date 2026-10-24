@@ -402,7 +402,8 @@
       "presetMoonshot": "Moonshot",
       "presetZhipu": "Zhipu GLM",
       "presetOllama": "Ollama (local)"
-    }
+    },
+    "switchLanguage": "Switch language"
   },
   "search": {
     "placeholder": "Search page",
