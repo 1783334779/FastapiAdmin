@@ -59,7 +59,77 @@
               </template>
             </FaTableHeader>
 
+            <div v-if="isNarrow" class="flex flex-col gap-3">
+              <div
+                v-for="row in data"
+                :key="row.id"
+                class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
+              >
+                <div class="flex items-center gap-3">
+                  <ElAvatar :size="40" :src="row.avatar || undefined" />
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                      <span class="font-medium truncate">{{ row.name || row.username }}</span>
+                      <FaStatusTag
+                        :type="row.status === 0 ? 'success' : 'danger'"
+                        :label="row.status === 0 ? '启用' : '停用'"
+                      />
+                    </div>
+                    <div class="mt-0.5 text-xs text-g-600">{{ row.username }}</div>
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-3 text-xs text-g-600">
+                  <span class="col-span-2">部门：{{ row.dept_name || "—" }}</span>
+                  <span class="col-span-2 truncate">
+                    角色：{{ resolveLabels(row.role_ids, roleOptions) || "—" }}
+                  </span>
+                  <span>性别：{{ row.gender === "1" ? "女" : "男" }}</span>
+                  <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
+                </div>
+                <div class="flex justify-end gap-1 mt-3">
+                  <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
+                    详情
+                  </ElButton>
+                  <ElButton
+                    link
+                    type="primary"
+                    size="small"
+                    :disabled="row.is_superuser === true"
+                    @click="opCtx.onEdit(row.id!)"
+                  >
+                    编辑
+                  </ElButton>
+                  <ElButton
+                    link
+                    type="primary"
+                    size="small"
+                    :disabled="row.is_superuser === true"
+                    @click="opCtx.onResetPwd(row)"
+                  >
+                    重置密码
+                  </ElButton>
+                  <ElButton
+                    link
+                    type="danger"
+                    size="small"
+                    :disabled="row.is_superuser === true"
+                    @click="opCtx.onDelete(row.id!, row.name ?? row.username ?? '')"
+                  >
+                    删除
+                  </ElButton>
+                </div>
+              </div>
+              <ElPagination
+                class="justify-center mt-1"
+                layout="prev, pager, next"
+                :current-page="pagination.current"
+                :page-size="pagination.size"
+                :total="pagination.total"
+                @current-change="handleCurrentChange"
+              />
+            </div>
             <FaTable
+              v-else
               ref="faTableRef"
               row-key="id"
               :loading="loading"
@@ -193,6 +263,7 @@ defineOptions({
 
 import { UserFilled } from "@element-plus/icons-vue";
 
+import { useWindowSize } from "@vueuse/core";
 import { useAppStore } from "@stores";
 import { DeviceEnum } from "@/enums/settings/device.enum";
 import { confirmToggleStatus } from "@/hooks/core/useConfirm";
@@ -203,6 +274,7 @@ import UserAPI, {
   type UserPageQuery,
 } from "@/api/module_system/user";
 import {
+  formatDateTime,
   formatTree,
   renderTableOperationCell,
   resolveStatusColumns,
@@ -338,6 +410,9 @@ const moreLoading = ref(false);
 const deptFilterId = ref<string | number | undefined>(undefined);
 
 const appStore = useAppStore();
+const { width: viewportWidth } = useWindowSize();
+const isNarrow = computed(() => viewportWidth.value < 800);
+
 const drawerSize = computed(() => (appStore.device === DeviceEnum.DESKTOP ? "450px" : "90%"));
 const deptOptions = ref<OptionType[]>();
 const roleOptions = ref<Array<{ value: number; label: string; disabled?: boolean }>>();
@@ -635,9 +710,9 @@ const {
       {
         prop: "created_time",
         label: "创建时间",
-        width: 120,
+        width: 190,
         formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-          row.created_time ? row.created_time.slice(0, 10) : "—",
+          formatDateTime(row.created_time),
         sortable: true,
         showOverflowTooltip: true,
       },
@@ -960,6 +1035,11 @@ async function handleMoreClick(value: "enable" | "disable") {
 /* 窄屏：隐藏部门栏，把宽度让给用户表格 */
 @media (width <= 800px) {
   .user-dept-side {
+    display: none;
+  }
+
+  /* 部门栏隐藏后，工作区左槽位也要收起，避免留下 320px 空白 */
+  :deep(.fa-workbench__side) {
     display: none;
   }
 }
