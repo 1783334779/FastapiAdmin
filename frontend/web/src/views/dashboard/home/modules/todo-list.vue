@@ -1,5 +1,5 @@
 <template>
-  <div class="fa-card p-5 h-[586px] overflow-hidden">
+  <div class="fa-card p-5 h-138 overflow-hidden">
     <div class="fa-card-header">
       <div class="title">
         <h4>待办事项</h4>
@@ -10,23 +10,25 @@
       </div>
     </div>
 
-    <ElScrollbar class="h-[490px]" view-style="padding-right: 16px">
-      <div
-        class="flex items-center justify-between h-17.5 border-b border-line text-sm last:border-b-0"
-        v-for="item in list"
-        :key="item.target"
-      >
-        <div>
-          <p class="text-sm">
-            <span class="text-g-800 font-medium">{{ item.username }}</span>
-            <span class="mx-2 text-g-600">{{ item.type }}</span>
-            <span class="text-theme">{{ item.target }}</span>
-          </p>
-          <p class="text-g-500 mt-1">{{ item.date }}</p>
+    <div class="h-[434px]">
+      <ElScrollbar class="h-full" view-style="padding-right: 16px">
+        <div
+          class="flex items-center justify-between h-[62px] border-b border-line text-sm last:border-b-0"
+          v-for="item in list"
+          :key="item.target"
+        >
+          <div>
+            <p class="text-sm">
+              <span class="text-g-800 font-medium">{{ item.username }}</span>
+              <span class="mx-2 text-g-600">{{ item.type }}</span>
+              <span class="text-theme">{{ item.target }}</span>
+            </p>
+            <p class="text-g-500 mt-1">{{ item.date }}</p>
+          </div>
+          <ElCheckbox v-model="item.complate" />
         </div>
-        <ElCheckbox v-model="item.complate" />
-      </div>
-    </ElScrollbar>
+      </ElScrollbar>
+    </div>
   </div>
 </template>
 
