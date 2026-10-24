@@ -51,16 +51,36 @@ def build_puzzle(key: str) -> dict:
     bg_svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{HEIGHT}" '
         f'viewBox="0 0 {WIDTH} {HEIGHT}">'
+        "<defs>"
+        '<linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">'
+        '<stop offset="0" stop-color="#1B2140" stop-opacity="0.35"/>'
+        '<stop offset="0.55" stop-color="#2A1F45" stop-opacity="0.3"/>'
+        '<stop offset="1" stop-color="#0E2233" stop-opacity="0.55"/>'
+        "</linearGradient>"
+        '<radialGradient id="orb" cx="50%" cy="50%" r="50%">'
+        '<stop offset="0" stop-color="#4F6BFF" stop-opacity="0.55"/>'
+        '<stop offset="1" stop-color="#4F6BFF" stop-opacity="0"/>'
+        "</radialGradient>"
+        '<filter id="soft"><feGaussianBlur stdDeviation="5"/></filter>'
+        "</defs>"
+        '<g filter="url(#soft)">'
         f"{background}"
-        '<rect width="320" height="160" fill="#0b0d12" opacity="0.28"/>'
+        "</g>"
+        '<rect width="320" height="160" fill="url(#glow)"/>'
+        '<circle cx="250" cy="24" r="95" fill="url(#orb)"/>'
+        '<circle cx="58" cy="140" r="80" fill="url(#orb)"/>'
+        '<g fill="none" stroke="#8FA4FF" stroke-opacity="0.22">'
+        '<circle cx="270" cy="34" r="42"/>'
+        '<circle cx="46" cy="128" r="56"/>'
+        "</g>"
         f'<rect x="{target_x}" y="{target_y}" width="{PIECE}" height="{PIECE}" '
-        f'rx="{RADIUS}" fill="#080a10" opacity="0.72"/>'
+        f'rx="{RADIUS}" fill="#080a10" opacity="0.55"/>'
         f'<circle cx="{target_x + PIECE}" cy="{target_y + PIECE // 2}" r="{KNOB}" '
-        f'fill="#080a10" opacity="0.72"/>'
+        f'fill="#080a10" opacity="0.55"/>'
         f'<rect x="{target_x}" y="{target_y}" width="{PIECE}" height="{PIECE}" '
-        f'rx="{RADIUS}" fill="none" stroke="#ffffff" stroke-opacity="0.55"/>'
+        f'rx="{RADIUS}" fill="none" stroke="#ffffff" stroke-opacity="0.6"/>'
         f'<circle cx="{target_x + PIECE}" cy="{target_y + PIECE // 2}" r="{KNOB}" '
-        f'fill="none" stroke="#ffffff" stroke-opacity="0.55"/>'
+        f'fill="none" stroke="#ffffff" stroke-opacity="0.6"/>'
         "</svg>"
     )
 

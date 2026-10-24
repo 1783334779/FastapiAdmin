@@ -216,6 +216,19 @@ defineExpose({ reset });
     border-color 0.2s ease;
 }
 
+@media (width < 768px) {
+  .fa-puzzle__entry {
+    gap: 4px;
+    height: 24px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .fa-puzzle__entry-arrow {
+    font-size: 11px;
+  }
+}
+
 .fa-puzzle__entry:hover {
   background: color-mix(in srgb, var(--el-color-primary) 10%, transparent);
 }
