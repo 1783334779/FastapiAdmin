@@ -428,3 +428,9 @@
   border: 0;
   box-shadow: none;
 }
+
+/* 防止 1px 级横向溢出在视口底部生成浏览器横向滚动条 */
+html,
+body {
+  overflow-x: clip;
+}
