@@ -43,7 +43,63 @@
         </template>
       </FaTableHeader>
 
+      <div v-if="isNarrow" class="flex flex-col gap-3">
+        <div
+          v-for="row in data"
+          :key="row.id"
+          class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <div class="text-sm font-medium truncate">{{ row.name }}</div>
+              <div class="mt-0.5 text-xs text-g-600">{{ row.code }}</div>
+            </div>
+            <FaStatusTag
+              :type="row.status === 0 ? 'success' : 'danger'"
+              :label="row.status === 0 ? '启用' : '停用'"
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-3 text-xs text-g-600">
+            <span class="truncate">数据权限：{{ scopeText(row.data_scope) }}</span>
+            <span>排序：{{ row.order }}</span>
+            <span class="col-span-2 truncate">所属部门：{{ deptText(row) }}</span>
+            <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
+          </div>
+          <div class="flex justify-end gap-1 mt-3">
+            <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
+              详情
+            </ElButton>
+            <ElButton
+              link
+              type="primary"
+              size="small"
+              :disabled="row.id === 1"
+              @click="opCtx.onEdit(row.id!)"
+            >
+              编辑
+            </ElButton>
+            <ElButton
+              link
+              type="danger"
+              size="small"
+              :disabled="row.id === 1"
+              @click="opCtx.onDelete(row.id!, row.name ?? '')"
+            >
+              删除
+            </ElButton>
+          </div>
+        </div>
+        <ElPagination
+          class="justify-center mt-1"
+          layout="prev, pager, next"
+          :current-page="pagination.current"
+          :page-size="pagination.size"
+          :total="pagination.total"
+          @current-change="handleCurrentChange"
+        />
+      </div>
       <FaTable
+        v-else
         ref="faTableRef"
         :loading="loading"
         :data="data"
@@ -143,7 +199,8 @@
 </template>
 
 <script setup lang="ts">
-import { h } from "vue";
+import { computed, h } from "vue";
+import { useWindowSize } from "@vueuse/core";
 import { useCrudForm } from "@/hooks/core/useCrudForm";
 import { confirmToggleStatus } from "@/hooks/core/useConfirm";
 
@@ -466,6 +523,20 @@ async function handleAdd() {
   } finally {
     createLoading.value = false;
   }
+}
+
+const { width: viewportWidth } = useWindowSize();
+const isNarrow = computed(() => viewportWidth.value < 800);
+
+function scopeText(scope?: number | null) {
+  return (
+    ({ 1: "仅本人", 2: "本部门及以下", 3: "全部" } as Record<number, string>)[Number(scope)] ?? "—"
+  );
+}
+
+function deptText(row: RoleTable) {
+  const names = (row.depts ?? []).map((d) => d.name).filter(Boolean);
+  return names.length ? names.join("、") : "—";
 }
 
 const opCtx = {
