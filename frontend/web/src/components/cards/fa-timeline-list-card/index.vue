@@ -31,7 +31,7 @@
 defineOptions({ name: "FaTimelineListCard" });
 
 // 常量配置
-const ITEM_HEIGHT = 65;
+const ITEM_HEIGHT = 64;
 const TIMELINE_PLACEMENT = "top";
 const DEFAULT_MAX_COUNT = 5;
 
