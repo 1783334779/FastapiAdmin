@@ -30,7 +30,61 @@
         </template>
       </FaTableHeader>
 
+      <div v-if="isNarrow" class="flex flex-col gap-3">
+        <div v-if="!data.length" class="py-12">
+          <FaEmptyState
+            icon="ri:git-branch-line"
+            title="暂无版本"
+            description="发布第一个版本后在这里展示"
+          />
+        </div>
+        <div
+          v-for="row in data"
+          :key="row.id"
+          class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="text-sm font-medium truncate">{{ row.title }}</div>
+              <div class="mt-0.5 text-xs text-g-600">{{ row.version }}</div>
+            </div>
+            <FaStatusTag
+              :type="row.status === 1 ? 'success' : row.status === 2 ? 'warning' : 'info'"
+              :label="row.status === 1 ? '已发布' : row.status === 2 ? '已回滚' : '草稿'"
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-3 text-xs text-g-600">
+            <span>发布日期：{{ row.date || "—" }}</span>
+            <span>排序：{{ row.sort ?? "—" }}</span>
+            <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
+          </div>
+          <div class="flex justify-end gap-1 mt-3">
+            <ElButton link type="primary" size="small" @click="openDetailDialog(row)">
+              详情
+            </ElButton>
+            <ElButton link type="primary" size="small" @click="openEditDialog('edit', row)">
+              编辑
+            </ElButton>
+            <ElButton link type="primary" size="small" @click="handleChangeStatus(row)">
+              变更状态
+            </ElButton>
+            <ElButton link type="danger" size="small" @click="deleteVersionRow(row)">
+              删除
+            </ElButton>
+          </div>
+        </div>
+        <ElPagination
+          v-if="data.length"
+          class="justify-center mt-1"
+          layout="prev, pager, next"
+          :current-page="pagination.current"
+          :page-size="pagination.size"
+          :total="pagination.total"
+          @current-change="handleCurrentChange"
+        />
+      </div>
       <FaTable
+        v-else
         ref="faTableRef"
         :loading="loading"
         :data="data"
@@ -137,6 +191,7 @@
 </template>
 
 <script setup lang="ts">
+import { useWindowSize } from "@vueuse/core";
 import {
   formatDateTime,
   renderTableOperationCell,
@@ -282,6 +337,9 @@ const {
 });
 
 const faTableRef = ref<{ elTableRef?: { clearSelection: () => void } } | null>(null);
+
+const { width: viewportWidth } = useWindowSize();
+const isNarrow = computed(() => viewportWidth.value < 800);
 
 function buildVersionRowActions(row: VersionTable): TableOperationAction[] {
   return [
