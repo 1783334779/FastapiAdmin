@@ -93,7 +93,11 @@
                   <span class="col-span-2 truncate">
                     {{ $t("common.role") }}：{{ resolveLabels(row.role_ids, roleOptions) || "—" }}
                   </span>
-                  <span>{{ $t("common.gender") }}：{{ row.gender === "1" ? "女" : "男" }}</span>
+                  <span
+                    >{{ $t("common.gender") }}：{{
+                      row.gender === "1" ? $t("common.female") : $t("common.male")
+                    }}</span
+                  >
                   <span class="col-span-2"
                     >{{ $t("common.create") }}：{{ formatDateTime(row.created_time) }}</span
                   >
