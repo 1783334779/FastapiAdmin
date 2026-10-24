@@ -176,3 +176,28 @@
 - 首页：`src/views/dashboard/home/index.vue`
 - 表格示例：用户、角色、菜单、公告、日志、代码生成
 - 全局样式：`src/styles/core/_app.scss`、`_reset.scss`、`tailwind.css`
+
+## 11. 三端验收（Web / 官网 / 小程序）
+
+验收图：
+
+- 三端浅色 / 深色：[`brand/acceptance.png`](./brand/acceptance.png)
+- 三端暗色：[`brand/dark-consistency.png`](./brand/dark-consistency.png)
+
+### 检查清单
+
+- [ ] 三端颜色、圆角、间距、字号全部来自 `design/tokens.json`
+- [ ] Logo 使用 v2 燕尾 F，品牌名统一 `FastapiAdmin`
+- [ ] 主色阶一致（Web 主题色 / 官网渐变 / 小程序 wot-primary）
+- [ ] 浅色表面 `#FFF` / `#F5F6F8`，深色表面 `#15181E` / `#191D24`
+- [ ] 深色边框 `#262B34`，文字 `#E5E7EB / #A3AAB8 / #8B93A1`
+- [ ] 输入框、弹窗、浮层、遮罩使用组件表面 token
+- [ ] 表格表头浅色 `#F9FAFB`、深色 `#1B1E24`
+- [ ] 1200 / 800 断点下无横向溢出
+- [ ] 三端 favicon / 小程序头像为新标识
+
+### 结果
+
+- Web：主表、仪表盘、工作区无横向溢出；深色组件验证通过。
+- 官网：VitePress 构建通过，深浅色首页正常。
+- 小程序：H5 编译通过，登录页深浅色与新品牌色一致。

@@ -64,6 +64,7 @@ node scripts/design-tokens/generate.mjs
 
 - 三端浅色/深色对比：[`docs/brand/three-platform.png`](../docs/brand/three-platform.png)
 - 三端暗色对比：[`docs/brand/dark-consistency.png`](../docs/brand/dark-consistency.png)
+- 三端浅/深验收：[`docs/brand/acceptance.png`](../docs/brand/acceptance.png)
 
 ## 与规范的关系
 
