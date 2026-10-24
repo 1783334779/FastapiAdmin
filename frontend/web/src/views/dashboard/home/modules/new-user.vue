@@ -23,8 +23,8 @@
       :header-cell-style="{ background: 'transparent' }"
     >
       <template #default>
-        <ElTableColumn type="index" label="序号" width="60" />
-        <ElTableColumn label="头像" prop="avatar" width="140px">
+        <ElTableColumn type="index" label="序号" width="50" />
+        <ElTableColumn label="头像" prop="avatar" width="90px">
           <template #default="scope">
             <div class="flex items-center">
               <img class="size-9 rounded-lg" :src="scope.row.avatar" alt="avatar" loading="eager" />
@@ -35,7 +35,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="价格" prop="price" width="100">
+        <ElTableColumn label="价格" prop="price" width="80">
           <template #default="scope">
             <span class="font-semibold whitespace-nowrap"
               >¥{{ scope.row.price.toLocaleString() }}</span
@@ -43,7 +43,7 @@
           </template>
         </ElTableColumn>
 
-        <ElTableColumn label="库存" prop="stock" width="90px">
+        <ElTableColumn label="库存" prop="stock" width="70px">
           <template #default="scope">
             <div
               class="inline-block px-2 py-1 text-xs font-medium rounded"
@@ -53,7 +53,7 @@
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="进度" width="180">
+        <ElTableColumn label="进度" width="100">
           <template #default="scope">
             <ElProgress
               :percentage="scope.row.pro"

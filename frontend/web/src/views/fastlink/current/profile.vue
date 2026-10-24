@@ -253,23 +253,30 @@
             暂无活跃会话
           </div>
 
-          <ElTable v-else :data="currentSessions" stripe class="p-4" size="small">
+          <ElTable
+            v-else
+            :data="currentSessions"
+            stripe
+            table-layout="fixed"
+            class="p-4"
+            size="small"
+          >
             <ElTableColumn type="index" label="#" width="50" />
-            <ElTableColumn label="浏览器" min-width="110">
+            <ElTableColumn label="浏览器" min-width="90">
               <template #default="{ row }">
                 <FaSvgIcon :icon="getBrowserIcon(row.browser)" class="mr-1" />{{
                   row.browser || "—"
                 }}
               </template>
             </ElTableColumn>
-            <ElTableColumn label="操作系统" min-width="110">
+            <ElTableColumn label="操作系统" min-width="90">
               <template #default="{ row }">
                 <FaSvgIcon :icon="getOsIcon(row.os)" class="mr-1" />{{ row.os || "—" }}
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="ipaddr" label="IP 地址" min-width="130" />
-            <ElTableColumn prop="login_location" label="登录位置" min-width="120" />
-            <ElTableColumn label="登录时间" min-width="160">
+            <ElTableColumn prop="ipaddr" label="IP 地址" min-width="100" />
+            <ElTableColumn prop="login_location" label="登录位置" min-width="95" />
+            <ElTableColumn label="登录时间" min-width="150">
               <template #default="{ row }">
                 {{ row.login_time ? formatDate(row.login_time) : "—" }}
               </template>
