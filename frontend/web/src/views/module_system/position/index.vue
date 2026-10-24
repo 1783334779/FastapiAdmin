@@ -44,6 +44,16 @@
       </FaTableHeader>
 
       <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
+        <div v-if="data.length" class="flex items-center gap-2 px-1">
+          <ElCheckbox
+            :model-value="allCardsSelected"
+            :indeterminate="selectedRows.length > 0 && !allCardsSelected"
+            @change="toggleAllCards"
+          >
+            {{ $t("common.selectAll") }}
+          </ElCheckbox>
+        </div>
+
         <div v-if="!data.length" class="py-12">
           <FaEmptyState
             icon="ri:briefcase-line"
@@ -58,7 +68,12 @@
           class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
         >
           <div class="flex items-start justify-between gap-2">
-            <div class="min-w-0">
+            <ElCheckbox
+              class="mt-0.5 shrink-0"
+              :model-value="isCardSelected(row)"
+              @change="(val) => toggleCardRow(row, val)"
+            />
+            <div class="min-w-0 flex-1">
               <div class="text-sm font-medium truncate">{{ row.name }}</div>
               <div class="mt-0.5 text-xs text-g-600">
                 {{ $t("common.sort") }}：{{ row.order ?? "—" }}
@@ -315,6 +330,26 @@ const createLoading = ref(false);
 const moreLoading = ref(false);
 
 const { width: viewportWidth } = useWindowSize();
+
+const allCardsSelected = computed(
+  () => data.value.length > 0 && selectedRows.value.length === data.value.length
+);
+
+function isCardSelected(row: PositionTable) {
+  return selectedRows.value.some((item) => item.id === row.id);
+}
+
+function toggleCardRow(row: PositionTable, checked: boolean | string | number) {
+  const next = checked
+    ? [...selectedRows.value.filter((item) => item.id !== row.id), row]
+    : selectedRows.value.filter((item) => item.id !== row.id);
+  onTableSelectionChange(next);
+}
+
+function toggleAllCards(checked: boolean | string | number) {
+  onTableSelectionChange(checked ? [...data.value] : []);
+}
+
 const isNarrow = computed(() => viewportWidth.value < 1025);
 
 const opCtx = {

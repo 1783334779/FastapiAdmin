@@ -60,6 +60,16 @@
             </FaTableHeader>
 
             <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
+              <div v-if="data.length" class="flex items-center gap-2 px-1">
+                <ElCheckbox
+                  :model-value="allCardsSelected"
+                  :indeterminate="selectedRows.length > 0 && !allCardsSelected"
+                  @change="toggleAllCards"
+                >
+                  {{ $t("common.selectAll") }}
+                </ElCheckbox>
+              </div>
+
               <div v-if="!data.length" class="py-12">
                 <FaEmptyState
                   icon="ri:user-3-line"
@@ -74,6 +84,11 @@
                 class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
               >
                 <div class="flex items-center gap-3">
+                  <ElCheckbox
+                    class="shrink-0"
+                    :model-value="isCardSelected(row)"
+                    @change="(val) => toggleCardRow(row, val)"
+                  />
                   <ElAvatar :size="40" :src="row.avatar || undefined" />
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-2">
@@ -427,6 +442,26 @@ const deptFilterId = ref<string | number | undefined>(undefined);
 
 const appStore = useAppStore();
 const { width: viewportWidth } = useWindowSize();
+
+const allCardsSelected = computed(
+  () => data.value.length > 0 && selectedRows.value.length === data.value.length
+);
+
+function isCardSelected(row: UserInfo) {
+  return selectedRows.value.some((item) => item.id === row.id);
+}
+
+function toggleCardRow(row: UserInfo, checked: boolean | string | number) {
+  const next = checked
+    ? [...selectedRows.value.filter((item) => item.id !== row.id), row]
+    : selectedRows.value.filter((item) => item.id !== row.id);
+  onTableSelectionChange(next);
+}
+
+function toggleAllCards(checked: boolean | string | number) {
+  onTableSelectionChange(checked ? [...data.value] : []);
+}
+
 const isNarrow = computed(() => viewportWidth.value < 1025);
 
 const drawerSize = computed(() => (appStore.device === DeviceEnum.DESKTOP ? "450px" : "90%"));
