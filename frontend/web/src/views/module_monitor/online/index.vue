@@ -223,6 +223,8 @@ const {
         label: "登录时间",
         width: 180,
         showOverflowTooltip: true,
+        formatter: (row: OnlineUserTable) =>
+          row.login_time ? String(row.login_time).slice(0, 19) : "-",
       },
       {
         prop: "operation",
