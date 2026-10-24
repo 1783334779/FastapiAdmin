@@ -166,7 +166,13 @@
       "gender": "请选择性别",
       "dept": "请选择上级部门",
       "role": "请选择角色",
-      "position": "请选择岗位"
+      "position": "请选择岗位",
+      "roleName": "请输入角色名称",
+      "positionName": "请输入岗位名称",
+      "menuName": "请输入菜单名称",
+      "deptName": "请输入部门名称",
+      "noticeTitle": "请输入通知标题",
+      "requestPath": "请输入请求路径"
     },
     "col": {
       "roleName": "角色名称",

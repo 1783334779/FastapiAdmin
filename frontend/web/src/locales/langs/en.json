@@ -166,7 +166,13 @@
       "gender": "Select gender",
       "dept": "Select department",
       "role": "Select role",
-      "position": "Select position"
+      "position": "Select position",
+      "roleName": "Enter role name",
+      "positionName": "Enter position name",
+      "menuName": "Enter menu name",
+      "deptName": "Enter department name",
+      "noticeTitle": "Enter notice title",
+      "requestPath": "Enter request path"
     },
     "col": {
       "roleName": "Role name",

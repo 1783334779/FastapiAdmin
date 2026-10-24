@@ -160,6 +160,7 @@
 import { ArrowUpBold, ArrowDownBold } from "@element-plus/icons-vue";
 import { useWindowSize, onKeyStroke } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
+import { translateFormLabels } from "@utils/table/columnLabelI18n";
 import { useRoute } from "vue-router";
 import { type Component } from "vue";
 import FaDatePicker from "@/components/forms/fa-search-bar/FaDatePicker.vue";
@@ -435,10 +436,10 @@ const visibleFormItems = computed(() => {
   if (shouldShowLess) {
     // 收起时：只显示非 expandOnly 的字段，且不超过最大数量
     const nonExpandOnlyItems = filteredItems.filter((item) => !item.expandOnly);
-    return nonExpandOnlyItems.slice(0, maxItemsPerRow.value);
+    return translateFormLabels(nonExpandOnlyItems.slice(0, maxItemsPerRow.value), t);
   }
   // 展开时：显示所有字段
-  return filteredItems;
+  return translateFormLabels(filteredItems, t);
 });
 
 /**
