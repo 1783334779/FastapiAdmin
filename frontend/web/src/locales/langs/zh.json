@@ -136,7 +136,19 @@
     "batchDelete": "批量删除",
     "batchEnable": "批量启用",
     "batchDisable": "批量停用",
-    "more": "更多"
+    "more": "更多",
+    "table": {
+      "index": "序号",
+      "operation": "操作",
+      "createdAt": "创建时间",
+      "updatedAt": "更新时间",
+      "status": "状态",
+      "description": "描述",
+      "sort": "排序",
+      "name": "名称",
+      "code": "编码",
+      "remark": "备注"
+    }
   },
   "search": {
     "placeholder": "搜索页面",

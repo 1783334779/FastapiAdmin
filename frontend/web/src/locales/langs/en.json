@@ -136,7 +136,19 @@
     "batchDelete": "Batch delete",
     "batchEnable": "Batch enable",
     "batchDisable": "Batch disable",
-    "more": "More"
+    "more": "More",
+    "table": {
+      "index": "No.",
+      "operation": "Actions",
+      "createdAt": "Created",
+      "updatedAt": "Updated",
+      "status": "Status",
+      "description": "Description",
+      "sort": "Sort",
+      "name": "Name",
+      "code": "Code",
+      "remark": "Remark"
+    }
   },
   "search": {
     "placeholder": "Search page",

@@ -51,7 +51,7 @@
             @selection-change="(val: any[]) => emit('selection-change', val)"
             v-bind="mergedTableProps"
           >
-            <template v-for="col in columns" :key="col.prop || col.type">
+            <template v-for="col in displayColumns" :key="col.prop || col.type">
               <ElTableColumn v-if="col.type === 'globalIndex'" v-bind="{ ...col }">
                 <template #default="{ $index }">
                   <span>{{ getGlobalIndex($index) }}</span>
@@ -134,6 +134,8 @@ import {
   defineComponent,
   type PropType,
 } from "vue";
+import { useI18n } from "vue-i18n";
+import { translateColumnLabels } from "@utils/table/columnLabelI18n";
 import type { ElTable, TableInstance, TableProps } from "element-plus";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
@@ -342,6 +344,8 @@ const border = computed(() => props.border ?? isBorder.value);
 const stripe = computed(() => props.stripe ?? isZebra.value);
 // 表格尺寸
 const size = computed(() => props.size ?? tableSize.value);
+const { t: translate } = useI18n();
+const displayColumns = computed(() => translateColumnLabels(props.columns ?? [], translate));
 // 数据是否为空
 const isEmpty = computed(() => props.data?.length === 0);
 
