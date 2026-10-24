@@ -1739,8 +1739,32 @@ onMounted(async () => {
 
 /* 左侧节点标签固定宽度：避免节点名长短变化时挤动右侧文件区 */
 .browse-card :deep(.el-tabs--left > .el-tabs__header.is-left) {
-  width: 190px;
   flex-shrink: 0;
+  width: 190px;
+}
+
+/* 节点标签内容左对齐：状态点 + 文字靠左，关闭按钮仍靠右 */
+.browse-card :deep(.el-tabs--left .el-tabs__item) {
+  justify-content: flex-start;
+  padding-right: 8px;
+  padding-left: 12px;
+}
+.browse-card :deep(.el-tabs--left .el-tabs__header.is-left) {
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.browse-card :deep(.el-tabs--left .el-tabs__nav) {
+  width: 100%;
+}
+
+.browse-card :deep(.el-tabs--left .el-tabs__item) {
+  width: 100%;
+}
+
+.browse-card :deep(.el-tabs--left .el-tabs__item > span) {
+  flex: 1;
+  min-width: 0;
 }
 
 .browse-card :deep(.el-tabs--left .el-tabs__content) {
