@@ -622,10 +622,12 @@ function statusLabel(s: number) {
 function typeTag(t: string): any {
   return { suggestion: "success", bug: "danger", optimize: "warning", other: "info" }[t] || "info";
 }
-function statusTagType(s: string): "warning" | "info" | "success" | "danger" | undefined {
-  const map: Record<number, "warning" | "info" | "success" | "danger"> = {
+function statusTagType(
+  s: string
+): "primary" | "warning" | "info" | "success" | "danger" | undefined {
+  const map: Record<number, "primary" | "warning" | "info" | "success" | "danger"> = {
     0: "warning",
-    1: "info",
+    1: "primary",
     2: "success",
     3: "info",
   };

@@ -241,7 +241,7 @@ const {
         status: {
           0: { type: "info", text: "草稿" },
           1: { type: "success", text: "已发布" },
-          2: { type: "danger", text: "已回滚" },
+          2: { type: "warning", text: "已回滚" },
         },
       },
       { prop: "date", label: "发布日期", width: 120, showOverflowTooltip: true },
