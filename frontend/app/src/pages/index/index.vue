@@ -343,13 +343,13 @@ function getGreeting() {
       type="info"
       prefix="notification"
       custom-class="home-notice"
-      class="mb-3"
+      class="mb-4"
       :style="noticeBarStyle"
       @click="navigateTo('work-notices')"
     />
 
     <!-- 轮播 Banner -->
-    <view class="mx-3 mb-3">
+    <view class="mx-4 mb-4">
       <wd-swiper
         :list="banners"
         height="120"
@@ -401,7 +401,7 @@ function getGreeting() {
     </view>
 
     <!-- 快捷入口 -->
-    <view class="wot-bg-filled-oppo mx-3 mb-3 rounded-2 p-2">
+    <view class="wot-bg-filled-oppo mx-4 mb-4 rounded-3 p-2">
       <wd-grid :column="4" :border="false" clickable>
         <wd-grid-item
           v-for="item in NAV_LIST"
@@ -429,7 +429,7 @@ function getGreeting() {
       <wd-text class="wot-text-text-main text-3.5" :text="t('index.opsOverview')" bold />
     </view>
     <SkeletonPage v-if="loading && !dashboardStats" :rows="3" />
-    <view v-else class="mx-3">
+    <view v-else class="mx-4">
       <wd-row :gutter="12">
         <wd-col :span="8">
           <view class="stat-card wot-bg-filled-oppo">
@@ -493,7 +493,7 @@ function getGreeting() {
       </view>
 
       <!-- 登录趋势折线图 -->
-      <view class="wot-bg-filled-oppo mx-3 mb-3 rounded-2 p-4">
+      <view class="wot-bg-filled-oppo mx-4 mb-4 rounded-3 p-4">
         <view class="mb-4 flex items-center gap-2">
           <wd-text class="wot-text-text-main text-3.5" :text="t('index.loginTrend')" bold />
         </view>
@@ -509,8 +509,8 @@ function getGreeting() {
       </view>
       <wd-text class="text-3" :text="t('common.all')" type="primary" @click="navigateTo('work-notices')" />
     </view>
-    <view v-if="recentNotices.length > 0" class="mx-3">
-      <wd-cell-group border custom-class="rounded-2! overflow-hidden">
+    <view v-if="recentNotices.length > 0" class="mx-4">
+      <wd-cell-group border custom-class="rounded-3! overflow-hidden">
         <wd-cell
           v-for="item in recentNotices"
           :key="item.id"
@@ -537,7 +537,7 @@ function getGreeting() {
   flex-direction: column;
   align-items: flex-start;
   padding: 24rpx;
-  border-radius: 20rpx;
+  border-radius: var(--fa-radius-md, 24rpx);
   overflow: hidden;
 
   /* 图标徽章 */

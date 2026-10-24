@@ -126,7 +126,7 @@ async function handleSubmitPassword() {
 <template>
   <view class="tabbar-wraper py-3">
     <!-- 用户信息卡（品牌渐变 + 极光装饰圆环，与工作台一致） -->
-    <view class="user-info-card mx-3 mb-3 flex items-center gap-4 rounded-3 px-5 py-6">
+    <view class="user-info-card mx-4 mb-4 flex items-center gap-4 rounded-3 px-5 py-6">
       <wd-badge is-dot>
         <wd-avatar
           size="64px"
@@ -154,10 +154,10 @@ async function handleSubmitPassword() {
     </view>
 
     <!-- 工单统计 -->
-    <view class="mx-3 mb-3">
+    <view class="mx-4 mb-4">
       <wd-row :gutter="12">
         <wd-col :span="8">
-          <view class="wot-bg-filled-oppo rounded-2 p-4 text-center active:opacity-70" @click="navigateTo('work-tickets')">
+          <view class="wot-bg-filled-oppo rounded-3 p-4 text-center active:opacity-70" @click="navigateTo('work-tickets')">
             <view class="wot-text-warning-main text-5 font-bold">
               {{ pendingTickets ?? '-' }}
             </view>
@@ -167,7 +167,7 @@ async function handleSubmitPassword() {
           </view>
         </wd-col>
         <wd-col :span="8">
-          <view class="wot-bg-filled-oppo rounded-2 p-4 text-center active:opacity-70" @click="navigateTo('work-tickets')">
+          <view class="wot-bg-filled-oppo rounded-3 p-4 text-center active:opacity-70" @click="navigateTo('work-tickets')">
             <view class="wot-text-primary-6 text-5 font-bold">
               {{ processingTickets ?? '-' }}
             </view>
@@ -177,7 +177,7 @@ async function handleSubmitPassword() {
           </view>
         </wd-col>
         <wd-col :span="8">
-          <view class="wot-bg-filled-oppo rounded-2 p-4 text-center active:opacity-70" @click="navigateTo('work-tickets')">
+          <view class="wot-bg-filled-oppo rounded-3 p-4 text-center active:opacity-70" @click="navigateTo('work-tickets')">
             <view class="wot-text-success-main text-5 font-bold">
               {{ doneTickets ?? '-' }}
             </view>
@@ -190,7 +190,7 @@ async function handleSubmitPassword() {
     </view>
 
     <!-- 快捷入口 -->
-    <view class="wot-bg-filled-oppo mx-3 mb-3 rounded-2 p-2">
+    <view class="wot-bg-filled-oppo mx-4 mb-4 rounded-3 p-2">
       <wd-grid :column="4" :border="false" clickable>
         <wd-grid-item
           v-for="item in quickLinks"
@@ -211,12 +211,12 @@ async function handleSubmitPassword() {
     </view>
 
     <!-- 设置列表 -->
-    <view class="mx-3 mb-3">
+    <view class="mx-4 mb-4">
       <view class="mb-2 mt-1 flex items-center gap-2 px-3">
         <view class="wot-bg-primary-6 h-3.5 w-1 rounded-full" />
         <wd-text class="wot-text-text-main text-3.5" :text="t('common.settings')" bold />
       </view>
-      <wd-cell-group border custom-class="rounded-2! overflow-hidden">
+      <wd-cell-group border custom-class="rounded-3! overflow-hidden">
         <wd-cell
           v-for="item in settingsList"
           :key="item.name"
@@ -228,7 +228,7 @@ async function handleSubmitPassword() {
     </view>
 
     <!-- 退出登录 -->
-    <view class="mx-3">
+    <view class="mx-4">
       <wd-button type="danger" plain round block @click="handleLogout">
         {{ t('mine.logout') }}
       </wd-button>
