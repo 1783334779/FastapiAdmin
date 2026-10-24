@@ -45,6 +45,15 @@
       </FaTableHeader>
 
       <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
+        <div v-if="mobileDeptRows.length" class="flex items-center gap-2 px-1">
+          <ElCheckbox
+            :model-value="allCardsSelected"
+            :indeterminate="selectedRows.length > 0 && !allCardsSelected"
+            @change="toggleAllCards"
+          >
+            {{ $t("common.selectAll") }}
+          </ElCheckbox>
+        </div>
         <div v-if="!mobileDeptRows.length" class="py-12">
           <FaEmptyState
             icon="ri:node-tree"
@@ -60,6 +69,11 @@
         >
           <div class="flex items-start justify-between gap-2">
             <div class="flex items-center gap-1 min-w-0">
+              <ElCheckbox
+                class="shrink-0"
+                :model-value="isCardSelected(row)"
+                @change="(val) => toggleCardRow(row, val)"
+              />
               <button
                 v-if="row.children?.length"
                 type="button"
@@ -457,6 +471,30 @@ async function handleOpenDeptDetail(id: number) {
 }
 
 const { width: viewportWidth } = useWindowSize();
+
+const visibleMobileRows = computed(() => mobileDeptRows.value.map((item) => item.row));
+
+const allCardsSelected = computed(
+  () =>
+    visibleMobileRows.value.length > 0 &&
+    visibleMobileRows.value.every((row) => selectedRows.value.some((item) => item.id === row.id))
+);
+
+function isCardSelected(row: DeptTable) {
+  return selectedRows.value.some((item) => item.id === row.id);
+}
+
+function toggleCardRow(row: DeptTable, checked: boolean | string | number) {
+  const next = checked
+    ? [...selectedRows.value.filter((item) => item.id !== row.id), row]
+    : selectedRows.value.filter((item) => item.id !== row.id);
+  onTableSelectionChange(next);
+}
+
+function toggleAllCards(checked: boolean | string | number) {
+  onTableSelectionChange(checked ? [...visibleMobileRows.value] : []);
+}
+
 const isNarrow = computed(() => viewportWidth.value < 1025);
 
 const expandedDeptIds = ref<Set<number>>(new Set());
