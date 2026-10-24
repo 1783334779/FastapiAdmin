@@ -44,7 +44,11 @@
       </FaSidePanel>
     </template>
 
-    <el-card shadow="hover" class="fa-card browse-card flex min-h-0 flex-1 flex-col">
+    <el-card
+      ref="browseCardRef"
+      shadow="hover"
+      class="fa-card browse-card flex min-h-0 flex-1 flex-col"
+    >
       <!-- 右侧工作区：已打开节点用顶部标签切换（节点入口在左侧栏） -->
       <el-tabs
         v-if="tabs.length"
@@ -306,7 +310,7 @@
                 <FaTable
                   :loading="activeTab.loading"
                   :data="entries"
-                  :columns="browseColumns"
+                  :columns="compactBrowseColumns"
                   :empty-text="activeTab.error ? '加载失败' : '该目录下没有内容'"
                   @selection-change="onSelectionChange"
                   @sort-change="onSortChange"
@@ -761,6 +765,19 @@ const browseColumns: ColumnOption[] = [
     useSlot: true,
   },
 ];
+
+const browseCardRef = ref();
+const browseCardEl = computed(
+  () => (browseCardRef.value as { $el?: HTMLElement } | undefined)?.$el
+);
+const { width: browseCardWidth } = useElementSize(browseCardEl);
+
+/** 右侧面板较窄时隐藏「大小 / 修改时间」，避免横向溢出或滚动条 */
+const compactBrowseColumns = computed<ColumnOption[]>(() =>
+  browseCardWidth.value > 0 && browseCardWidth.value < 820
+    ? browseColumns.filter((col) => col.prop !== "size" && col.prop !== "modified_time")
+    : browseColumns
+);
 
 function onSortChange({ prop, order }: { prop: string | null; order: string | null }) {
   if (!order || !prop) {
@@ -1775,6 +1792,11 @@ onMounted(async () => {
 }
 
 /* 高度链闭合：左侧标签布局下内容区撑满，使表格独立滚动、状态栏/分页固定底部 */
+.browse-card {
+  min-width: 0;
+  overflow: hidden;
+}
+
 .browse-card :deep(.el-tabs__new-tab) {
   display: none !important;
 }
@@ -1789,8 +1811,8 @@ onMounted(async () => {
 
 /* 顶部工作区标签 */
 .browse-card :deep(.el-tabs__header) {
-  margin: 0 0 6px;
   padding: 0 4px;
+  margin: 0 0 6px;
 }
 
 .browse-card :deep(.el-tabs__content) {
