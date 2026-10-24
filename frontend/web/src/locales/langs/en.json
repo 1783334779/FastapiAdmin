@@ -114,7 +114,11 @@
     "isEqual": "The two inputs are inconsistent",
     "setting": "Settings",
     "copySuccess": "Copy successfully",
-    "copyFailed": "Copy failed"
+    "copyFailed": "Copy failed",
+    "detail": "Details",
+    "resetPassword": "Reset password",
+    "addChild": "Add child",
+    "changeStatus": "Change status"
   },
   "search": {
     "placeholder": "Search page",

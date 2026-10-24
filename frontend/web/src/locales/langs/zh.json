@@ -114,7 +114,11 @@
     "isEqual": "两次输入不一致",
     "setting": "设置",
     "copySuccess": "复制成功",
-    "copyFailed": "复制失败"
+    "copyFailed": "复制失败",
+    "detail": "详情",
+    "resetPassword": "重置密码",
+    "addChild": "新增子级",
+    "changeStatus": "变更状态"
   },
   "search": {
     "placeholder": "搜索页面",

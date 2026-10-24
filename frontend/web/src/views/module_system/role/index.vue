@@ -75,7 +75,7 @@
           </div>
           <div class="mobile-card-actions">
             <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
-              详情
+              {{ $t("common.detail") }}
             </ElButton>
             <ElButton
               link
@@ -84,7 +84,7 @@
               :disabled="row.id === 1"
               @click="opCtx.onEdit(row.id!)"
             >
-              编辑
+              {{ $t("common.edit") }}
             </ElButton>
             <ElButton
               link
@@ -93,7 +93,7 @@
               :disabled="row.id === 1"
               @click="opCtx.onDelete(row.id!, row.name ?? '')"
             >
-              删除
+              {{ $t("common.delete") }}
             </ElButton>
           </div>
         </div>
