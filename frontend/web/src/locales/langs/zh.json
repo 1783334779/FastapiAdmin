@@ -325,6 +325,21 @@
       "exportCsv": "导出 CSV",
       "noResult": "执行 SQL 后在此显示结果",
       "lastRun": "上次执行"
+    },
+    "params": {
+      "groupTitle": "参数分组",
+      "brand": "品牌标识",
+      "siteInfo": "网站信息",
+      "externalLinks": "外部链接",
+      "security": "安全访问",
+      "demoEnv": "演示环境",
+      "enable": "开启",
+      "disable": "关闭",
+      "noIp": "暂无 IP",
+      "ipPlaceholder": "输入 IP 地址",
+      "add": "添加",
+      "ipLookupOn": "登录时基于内置离线库本地解析客户端 IP 归属地，用于日志记录",
+      "ipLookupOff": "IP 归属地查询已关闭，登录位置只记录内网 / 未解析"
     }
   },
   "search": {

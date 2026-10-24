@@ -2,7 +2,7 @@
   <div class="fa-full-height">
     <FaWorkbench :side-width="240">
       <template #side>
-        <FaSidePanel title="参数分组" class="params-side">
+        <FaSidePanel :title="$t('common.params.groupTitle')" class="params-side">
           <button
             v-for="tab in paramTabs"
             :key="tab.name"
@@ -20,7 +20,7 @@
         <div class="params-main__body">
           <ParamTabPane
             v-if="activeTab === 'brand'"
-            title="品牌标识"
+            :title="$t('common.params.brand')"
             :modified="brandModified"
             @save-group="saveGroup(fieldsMap.brand)"
           >
@@ -45,7 +45,7 @@
           <!-- 网站信息 -->
           <ParamTabPane
             v-if="activeTab === 'website'"
-            title="网站信息"
+            :title="$t('common.params.siteInfo')"
             :modified="websiteModified"
             @save-group="saveGroup(fieldsMap.website)"
           >
@@ -69,7 +69,7 @@
           <!-- 外部链接 -->
           <ParamTabPane
             v-if="activeTab === 'security'"
-            title="外部链接"
+            :title="$t('common.params.externalLinks')"
             :modified="securityModified"
             @save-group="saveGroup(fieldsMap.security)"
           >
@@ -93,7 +93,7 @@
           <!-- 安全访问 -->
           <ParamTabPane
             v-if="activeTab === 'access'"
-            title="安全访问"
+            :title="$t('common.params.security')"
             :modified="accessModified"
             @save-group="saveGroup(fieldsMap.access)"
           >
@@ -107,15 +107,15 @@
                 <div class="flex items-center gap-3">
                   <ElSwitch
                     :model-value="fieldsMap.access[0]!.localValue === 'on'"
-                    active-text="开启"
-                    inactive-text="关闭"
+                    :active-text="$t('common.params.enable')"
+                    :inactive-text="$t('common.params.disable')"
                     @change="(val: string | number | boolean) => onLocationChange(val === true)"
                   />
                   <span class="text-xs text-(--el-text-color-secondary)">
                     {{
                       fieldsMap.access[0]!.localValue === "on"
-                        ? "登录时基于内置离线库本地解析客户端 IP 归属地，用于日志记录"
-                        : "IP 归属地查询已关闭，登录位置只记录内网 / 未解析"
+                        ? $t("common.params.ipLookupOn")
+                        : $t("common.params.ipLookupOff")
                     }}
                   </span>
                 </div>
@@ -141,24 +141,24 @@
                   <span
                     v-if="fieldsMap.access[1]!.ipList.length === 0"
                     class="text-xs text-(--el-text-color-placeholder) leading-8"
-                    >暂无 IP</span
+                    >{{ $t("common.params.noIp") }}</span
                   >
                 </div>
                 <div class="flex gap-2">
                   <ElInput
                     v-model="fieldsMap.access[1]!.newIp"
-                    placeholder="输入 IP 地址"
+                    :placeholder="$t('common.params.ipPlaceholder')"
                     size="small"
                     class="w-48!"
                     @keyup.enter="addIp(fieldsMap.access[1]!)"
-                    aria-label="输入 IP 地址"
+                    :aria-label="$t('common.params.ipPlaceholder')"
                   />
                   <ElButton
                     size="small"
                     type="primary"
                     :disabled="!fieldsMap.access[1]!.newIp.trim()"
                     @click="addIp(fieldsMap.access[1]!)"
-                    >添加</ElButton
+                    >{{ $t("common.params.add") }}</ElButton
                   >
                 </div>
               </ParamFieldCard>
@@ -168,7 +168,7 @@
           <!-- 演示环境 -->
           <ParamTabPane
             v-if="activeTab === 'demo'"
-            title="演示环境"
+            :title="$t('common.params.demoEnv')"
             :modified="demoModified"
             @save-group="saveGroup(fieldsMap.demo)"
           >
@@ -182,8 +182,8 @@
                 <div class="flex items-center gap-3">
                   <ElSwitch
                     :model-value="fieldsMap.demo[0]!.localValue === 'on'"
-                    active-text="开启"
-                    inactive-text="关闭"
+                    :active-text="$t('common.params.enable')"
+                    :inactive-text="$t('common.params.disable')"
                     @change="(val: string | number | boolean) => onDemoChange(val === true)"
                   />
                   <span class="text-xs text-(--el-text-color-secondary)">
@@ -216,24 +216,24 @@
                   <span
                     v-if="fieldsMap.demo[1]!.ipList.length === 0"
                     class="text-xs text-(--el-text-color-placeholder) leading-8"
-                    >暂无 IP</span
+                    >{{ $t("common.params.noIp") }}</span
                   >
                 </div>
                 <div class="flex gap-2">
                   <ElInput
                     v-model="fieldsMap.demo[1]!.newIp"
-                    placeholder="输入 IP 地址"
+                    :placeholder="$t('common.params.ipPlaceholder')"
                     size="small"
                     class="w-48!"
                     @keyup.enter="addIp(fieldsMap.demo[1]!)"
-                    aria-label="输入 IP 地址"
+                    :aria-label="$t('common.params.ipPlaceholder')"
                   />
                   <ElButton
                     size="small"
                     type="primary"
                     :disabled="!fieldsMap.demo[1]!.newIp.trim()"
                     @click="addIp(fieldsMap.demo[1]!)"
-                    >添加</ElButton
+                    >{{ $t("common.params.add") }}</ElButton
                   >
                 </div>
               </ParamFieldCard>

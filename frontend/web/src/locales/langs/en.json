@@ -325,6 +325,21 @@
       "exportCsv": "Export CSV",
       "noResult": "Run SQL to see results",
       "lastRun": "Last run"
+    },
+    "params": {
+      "groupTitle": "Parameter groups",
+      "brand": "Branding",
+      "siteInfo": "Site info",
+      "externalLinks": "External links",
+      "security": "Access security",
+      "demoEnv": "Demo environment",
+      "enable": "Enabled",
+      "disable": "Disabled",
+      "noIp": "No IPs",
+      "ipPlaceholder": "Enter an IP address",
+      "add": "Add",
+      "ipLookupOn": "Resolve client IP location locally from the built-in database for logging",
+      "ipLookupOff": "IP lookup is off; login location records intranet / unresolved only"
     }
   },
   "search": {
