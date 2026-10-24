@@ -85,7 +85,7 @@
             <span class="col-span-2 truncate">上级：{{ row.parent_name || "—" }}</span>
             <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
           </div>
-          <div class="flex justify-end gap-1 mt-2">
+          <div class="mobile-card-actions">
             <ElButton link type="primary" size="small" @click="opCtx.onAddChild(row.id!)">
               新增子级
             </ElButton>

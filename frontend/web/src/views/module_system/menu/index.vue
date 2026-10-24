@@ -96,7 +96,7 @@
           <div class="mt-1 text-xs text-g-600 truncate">
             {{ row.route_path || row.component_path || "—" }}
           </div>
-          <div class="flex justify-end gap-1 mt-2">
+          <div class="mobile-card-actions">
             <ElButton
               v-if="row.type === 1 || row.type === 2"
               link
