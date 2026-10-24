@@ -160,7 +160,7 @@ import FaGenCodeDrawer from "./components/FaGenCodeDrawer.vue";
 import FaImportDbTableDialog from "./components/FaImportDbTableDialog.vue";
 import FaCreateTableDialog from "./components/FaCreateTableDialog.vue";
 import { GENCODE_BASIC_FORM_KEY, GENCODE_CM_KEY } from "./gencodeInjectionKeys";
-import { renderTableOperationCell, type TableOperationAction } from "@utils";
+import { formatToDateTime, renderTableOperationCell, type TableOperationAction } from "@utils";
 import type { TreeNode } from "./types";
 import type { ColumnOption } from "@/types/component";
 import FaTableHeader from "@/components/tables/fa-table-header/index.vue";
@@ -831,6 +831,8 @@ const useTableResult = useTable({
         width: 168,
         sortable: true,
         showOverflowTooltip: true,
+        formatter: (row: { created_time?: string }) =>
+          formatToDateTime(row.created_time, "YYYY-MM-DD HH:mm"),
       },
       {
         prop: "updated_time",
@@ -838,6 +840,8 @@ const useTableResult = useTable({
         width: 168,
         sortable: true,
         showOverflowTooltip: true,
+        formatter: (row: { updated_time?: string }) =>
+          formatToDateTime(row.updated_time, "YYYY-MM-DD HH:mm"),
       },
       {
         prop: "operation",
