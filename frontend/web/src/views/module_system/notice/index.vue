@@ -50,7 +50,66 @@
         </template>
       </FaTableHeader>
 
+      <div v-if="isNarrow" class="flex flex-col gap-3">
+        <div v-if="!data.length" class="py-12">
+          <FaEmptyState
+            icon="ri:notification-3-line"
+            title="暂无公告"
+            description="发布第一条系统公告，通知到所有用户"
+          />
+        </div>
+        <div
+          v-for="row in data"
+          :key="row.id"
+          class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="text-sm font-medium min-w-0 truncate">{{ row.notice_title }}</div>
+            <div class="flex gap-1 shrink-0">
+              <FaStatusTag
+                :type="row.notice_type === '2' ? 'warning' : 'primary'"
+                :label="row.notice_type === '2' ? '公告' : '通知'"
+              />
+              <FaStatusTag
+                :type="row.status === 0 ? 'success' : 'danger'"
+                :label="row.status === 0 ? '启用' : '停用'"
+              />
+            </div>
+          </div>
+          <div class="mt-2 text-xs text-g-600 line-clamp-3">
+            {{ row.description || "暂无描述" }}
+          </div>
+          <div class="mt-2 text-xs text-g-600">创建：{{ formatDateTime(row.created_time) }}</div>
+          <div class="mt-1 text-xs text-g-600">更新：{{ formatDateTime(row.updated_time) }}</div>
+          <div class="flex justify-end gap-1 mt-3">
+            <ElButton link type="primary" size="small" @click="handleOpenDialog('detail', row.id!)">
+              详情
+            </ElButton>
+            <ElButton link type="primary" size="small" @click="handleOpenDialog('update', row.id!)">
+              编辑
+            </ElButton>
+            <ElButton
+              link
+              type="danger"
+              size="small"
+              @click="deleteNoticeRow(row.id!, row.notice_title ?? '')"
+            >
+              删除
+            </ElButton>
+          </div>
+        </div>
+        <ElPagination
+          v-if="data.length"
+          class="justify-center mt-1"
+          layout="prev, pager, next"
+          :current-page="pagination.current"
+          :page-size="pagination.size"
+          :total="pagination.total"
+          @current-change="handleCurrentChange"
+        />
+      </div>
       <FaTable
+        v-else
         ref="faTableRef"
         :loading="loading"
         :data="data"
@@ -143,6 +202,7 @@
 </template>
 
 <script setup lang="ts">
+import { useWindowSize } from "@vueuse/core";
 import { useCrudForm } from "@/hooks/core/useCrudForm";
 import { confirmToggleStatus } from "@/hooks/core/useConfirm";
 import NoticeAPI, { type NoticeForm, type NoticeTable } from "@/api/module_system/notice";
@@ -524,6 +584,9 @@ async function deleteNoticeRow(id: number, name: string) {
     // 用户取消
   }
 }
+
+const { width: viewportWidth } = useWindowSize();
+const isNarrow = computed(() => viewportWidth.value < 800);
 
 function buildNoticeRowActions(row: NoticeTable): TableOperationAction[] {
   const all: TableOperationAction[] = [
