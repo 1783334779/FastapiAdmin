@@ -296,12 +296,12 @@ defineExpose({ reset });
   justify-content: center;
   width: 40px;
   height: 100%;
-  color: var(--el-color-primary);
+  color: var(--el-text-color-secondary);
   cursor: grab;
-  background: #fff;
-  border: 1px solid var(--el-color-primary-light-5);
+  background: var(--default-box-color);
+  border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgb(79 107 255 / 28%);
+  box-shadow: none;
 }
 
 .fa-puzzle__text {
@@ -336,7 +336,6 @@ defineExpose({ reset });
   .fa-puzzle__handler {
     color: var(--el-color-success);
     border-color: var(--el-color-success-light-5);
-    box-shadow: 0 2px 8px rgb(34 197 94 / 25%);
   }
 
   .fa-puzzle__text {
