@@ -126,7 +126,7 @@
         <ElCol :xs="24" :md="8" class="flex flex-col gap-4">
           <QuickLinks class="mb-4" />
           <FaTimelineListCard
-            class="mb-4"
+            class="mb-4 home-timeline"
             :list="timelineData"
             title="最近交易"
             subtitle="2024年12月20日"
@@ -183,3 +183,8 @@ const FaTimelineListCard = defineAsyncComponent(
   () => import("@/components/cards/fa-timeline-list-card/index.vue")
 );
 </script>
+<style scoped>
+.home-timeline {
+  height: 436px;
+}
+</style>
