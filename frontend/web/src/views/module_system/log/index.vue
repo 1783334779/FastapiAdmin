@@ -72,10 +72,10 @@
                   size="small"
                   @click="buildOpRowActions(row)[0]?.run()"
                 >
-                  详情
+                  {{ $t("common.detail") }}
                 </ElButton>
                 <ElButton link type="danger" size="small" @click="buildOpRowActions(row)[1]?.run()">
-                  删除
+                  {{ $t("common.delete") }}
                 </ElButton>
               </div>
             </div>
@@ -221,7 +221,7 @@
                   size="small"
                   @click="buildLoginRowActions(row)[0]?.run()"
                 >
-                  详情
+                  {{ $t("common.detail") }}
                 </ElButton>
                 <ElButton
                   link
@@ -229,7 +229,7 @@
                   size="small"
                   @click="buildLoginRowActions(row)[1]?.run()"
                 >
-                  删除
+                  {{ $t("common.delete") }}
                 </ElButton>
               </div>
             </div>

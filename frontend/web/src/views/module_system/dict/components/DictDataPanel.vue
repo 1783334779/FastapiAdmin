@@ -108,7 +108,7 @@
                 size="small"
                 @click="buildDictDataRowActions(row)[0]?.run()"
               >
-                详情
+                {{ $t("common.detail") }}
               </ElButton>
               <ElButton
                 link
@@ -116,7 +116,7 @@
                 size="small"
                 @click="buildDictDataRowActions(row)[1]?.run()"
               >
-                编辑
+                {{ $t("common.edit") }}
               </ElButton>
               <ElButton
                 link
@@ -124,7 +124,7 @@
                 size="small"
                 @click="buildDictDataRowActions(row)[2]?.run()"
               >
-                删除
+                {{ $t("common.delete") }}
               </ElButton>
             </div>
           </div>

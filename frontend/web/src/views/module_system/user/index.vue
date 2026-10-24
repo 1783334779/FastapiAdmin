@@ -96,7 +96,7 @@
                 </div>
                 <div class="mobile-card-actions">
                   <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
-                    详情
+                    {{ $t("common.detail") }}
                   </ElButton>
                   <ElButton
                     link
@@ -105,7 +105,7 @@
                     :disabled="row.is_superuser === true"
                     @click="opCtx.onEdit(row.id!)"
                   >
-                    编辑
+                    {{ $t("common.edit") }}
                   </ElButton>
                   <ElButton
                     link
@@ -114,7 +114,7 @@
                     :disabled="row.is_superuser === true"
                     @click="opCtx.onResetPwd(row)"
                   >
-                    重置密码
+                    {{ $t("common.resetPassword") }}
                   </ElButton>
                   <ElButton
                     link
@@ -123,7 +123,7 @@
                     :disabled="row.is_superuser === true"
                     @click="opCtx.onDelete(row.id!, row.name ?? row.username ?? '')"
                   >
-                    删除
+                    {{ $t("common.delete") }}
                   </ElButton>
                 </div>
               </div>

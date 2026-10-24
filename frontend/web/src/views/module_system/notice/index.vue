@@ -83,10 +83,10 @@
           <div class="mt-1 text-xs text-g-600">更新：{{ formatDateTime(row.updated_time) }}</div>
           <div class="mobile-card-actions">
             <ElButton link type="primary" size="small" @click="handleOpenDialog('detail', row.id!)">
-              详情
+              {{ $t("common.detail") }}
             </ElButton>
             <ElButton link type="primary" size="small" @click="handleOpenDialog('update', row.id!)">
-              编辑
+              {{ $t("common.edit") }}
             </ElButton>
             <ElButton
               link
@@ -94,7 +94,7 @@
               size="small"
               @click="deleteNoticeRow(row.id!, row.notice_title ?? '')"
             >
-              删除
+              {{ $t("common.delete") }}
             </ElButton>
           </div>
         </div>

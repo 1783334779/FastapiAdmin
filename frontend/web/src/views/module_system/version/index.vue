@@ -61,16 +61,16 @@
           </div>
           <div class="mobile-card-actions">
             <ElButton link type="primary" size="small" @click="openDetailDialog(row)">
-              详情
+              {{ $t("common.detail") }}
             </ElButton>
             <ElButton link type="primary" size="small" @click="openEditDialog('edit', row)">
-              编辑
+              {{ $t("common.edit") }}
             </ElButton>
             <ElButton link type="primary" size="small" @click="handleChangeStatus(row)">
-              变更状态
+              {{ $t("common.changeStatus") }}
             </ElButton>
             <ElButton link type="danger" size="small" @click="deleteVersionRow(row)">
-              删除
+              {{ $t("common.delete") }}
             </ElButton>
           </div>
         </div>
