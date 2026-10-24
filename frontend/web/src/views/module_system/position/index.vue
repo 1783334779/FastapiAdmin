@@ -43,7 +43,52 @@
         </template>
       </FaTableHeader>
 
+      <div v-if="isNarrow" class="flex flex-col gap-3">
+        <div
+          v-for="row in data"
+          :key="row.id"
+          class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="text-sm font-medium truncate">{{ row.name }}</div>
+              <div class="mt-0.5 text-xs text-g-600">排序：{{ row.order ?? "—" }}</div>
+            </div>
+            <FaStatusTag
+              :type="row.status === 0 ? 'success' : 'danger'"
+              :label="row.status === 0 ? '启用' : '停用'"
+            />
+          </div>
+          <div class="mt-3 text-xs text-g-600 line-clamp-2">{{ row.description || "—" }}</div>
+          <div class="mt-1 text-xs text-g-600">创建：{{ formatDateTime(row.created_time) }}</div>
+          <div class="flex justify-end gap-1 mt-3">
+            <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
+              详情
+            </ElButton>
+            <ElButton link type="primary" size="small" @click="opCtx.onEdit(row.id!)">
+              编辑
+            </ElButton>
+            <ElButton
+              link
+              type="danger"
+              size="small"
+              @click="opCtx.onDelete(row.id!, row.name ?? '')"
+            >
+              删除
+            </ElButton>
+          </div>
+        </div>
+        <ElPagination
+          class="justify-center mt-1"
+          layout="prev, pager, next"
+          :current-page="pagination.current"
+          :page-size="pagination.size"
+          :total="pagination.total"
+          @current-change="handleCurrentChange"
+        />
+      </div>
       <FaTable
+        v-else
         ref="faTableRef"
         :loading="loading"
         :data="data"
@@ -108,6 +153,7 @@
 </template>
 
 <script setup lang="ts">
+import { useWindowSize } from "@vueuse/core";
 import PositionAPI, {
   type PositionForm,
   type PositionPageQuery,
@@ -254,6 +300,9 @@ const { selectedRows, selectedIds, batchDeleting, onTableSelectionChange } =
 
 const createLoading = ref(false);
 const moreLoading = ref(false);
+
+const { width: viewportWidth } = useWindowSize();
+const isNarrow = computed(() => viewportWidth.value < 800);
 
 const opCtx = {
   onDetail: (id: number) => void handleOpenDialog("detail", id),
