@@ -170,7 +170,7 @@ const {
       {
         prop: "session_id",
         label: "会话编号",
-        minWidth: 250,
+        minWidth: 200,
         showOverflowTooltip: true,
       },
       {
@@ -209,7 +209,7 @@ const {
       {
         prop: "login_location",
         label: "登录位置",
-        minWidth: 220,
+        minWidth: 200,
         showOverflowTooltip: true,
       },
       {

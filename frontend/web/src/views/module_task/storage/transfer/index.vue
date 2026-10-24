@@ -488,8 +488,8 @@ const columnChecks = ref<ColumnOption[]>([
   { prop: "source", label: "来源", minWidth: 180, showOverflowTooltip: true, useSlot: true },
   { prop: "target", label: "目标", minWidth: 190, useSlot: true },
   { prop: "status", label: "状态", width: 92, useSlot: true },
-  { prop: "progress", label: "进度", minWidth: 240, useSlot: true },
-  { prop: "info", label: "信息", minWidth: 180, useSlot: true },
+  { prop: "progress", label: "进度", minWidth: 200, useSlot: true },
+  { prop: "info", label: "信息", minWidth: 160, useSlot: true },
   {
     prop: "actions",
     label: "操作",

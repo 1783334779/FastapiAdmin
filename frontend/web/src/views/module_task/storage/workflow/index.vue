@@ -613,7 +613,7 @@ const {
       {
         prop: "sources",
         label: "源节点",
-        minWidth: 180,
+        minWidth: 150,
         formatter: (row: FlowTable) => {
           const sources = row.sources || [];
           if (sources.length === 0) return "—";
@@ -659,7 +659,7 @@ const {
       {
         prop: "task_type",
         label: "类型",
-        width: 120,
+        width: 90,
         formatter: (row: FlowTable) =>
           h(
             ElTag,
@@ -674,7 +674,7 @@ const {
       {
         prop: "targets",
         label: "目标节点",
-        minWidth: 220,
+        minWidth: 170,
         formatter: (row: FlowTable) => {
           const targets = row.targets || [];
           if (targets.length === 0) return "—";
@@ -739,18 +739,18 @@ const {
           1: { type: "danger", text: "停用" },
         },
       },
-      { prop: "description", label: "备注", minWidth: 120, showOverflowTooltip: true },
+      { prop: "description", label: "备注", minWidth: 100, showOverflowTooltip: true },
       {
         prop: "created_time",
         label: "创建时间",
-        width: 168,
+        width: 150,
         sortable: true,
         showOverflowTooltip: true,
       },
       {
         prop: "operation",
         label: "操作",
-        width: 230,
+        width: 180,
         fixed: "right",
         align: "center",
         formatter: (row: FlowTable) => formatFlowOperationCell(row, opCtx),
