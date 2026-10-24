@@ -8,14 +8,15 @@
           <span class="text-success">+20%</span>
         </p>
       </div>
-      <ElRadioGroup v-model="radio2">
+      <ElRadioGroup v-model="radio2" size="small">
         <ElRadioButton value="本月" label="本月"></ElRadioButton>
         <ElRadioButton value="上月" label="上月"></ElRadioButton>
         <ElRadioButton value="今年" label="今年"></ElRadioButton>
       </ElRadioGroup>
     </div>
     <FaTable
-      class="w-full"
+      class="new-user-table w-full"
+      height="432px"
       :data="tableData"
       size="large"
       :border="false"
@@ -23,42 +24,38 @@
       :header-cell-style="{ background: 'transparent' }"
     >
       <template #default>
-        <ElTableColumn type="index" label="序号" width="60" />
-        <ElTableColumn label="头像" prop="avatar" width="140px">
+        <ElTableColumn type="index" label="序号" width="64" />
+        <ElTableColumn label="用户" min-width="100">
           <template #default="scope">
-            <div class="flex items-center">
-              <img class="size-9 rounded-lg" :src="scope.row.avatar" alt="avatar" loading="eager" />
-              <div class="flex flex-col ml-3">
-                <div class="font-medium">{{ scope.row.username }}</div>
-                <div class="text-xs text-slate-500">{{ scope.row.province }}</div>
+            <div class="flex min-w-0 items-center">
+              <img
+                class="size-8 shrink-0 rounded-lg"
+                :src="scope.row.avatar"
+                alt="avatar"
+                loading="eager"
+              />
+              <div class="ml-2 flex min-w-0 flex-col">
+                <div class="truncate font-medium">{{ scope.row.username }}</div>
+                <div class="truncate text-xs text-slate-500">{{ scope.row.province }}</div>
               </div>
             </div>
           </template>
         </ElTableColumn>
-        <ElTableColumn label="价格" prop="price">
+        <ElTableColumn label="价格" prop="price" width="76">
           <template #default="scope">
-            <span class="font-semibold">¥{{ scope.row.price.toLocaleString() }}</span>
+            <span class="font-semibold whitespace-nowrap"
+              >¥{{ scope.row.price.toLocaleString() }}</span
+            >
           </template>
         </ElTableColumn>
-
-        <ElTableColumn label="库存" prop="stock" width="90px">
+        <ElTableColumn label="库存" prop="stock" width="72px">
           <template #default="scope">
             <div
-              class="inline-block px-2 py-1 text-xs font-medium rounded"
+              class="inline-block px-2 py-1 text-xs font-medium whitespace-nowrap rounded"
               :class="getStockClass(scope.row.stock)"
             >
               {{ getStockStatus(scope.row.stock) }}
             </div>
-          </template>
-        </ElTableColumn>
-        <ElTableColumn label="进度" width="180">
-          <template #default="scope">
-            <ElProgress
-              :percentage="scope.row.pro"
-              :color="scope.row.color"
-              :stroke-width="4"
-              :aria-label="`${scope.row.username}的完成进度: ${scope.row.pro}%`"
-            />
           </template>
         </ElTableColumn>
       </template>
@@ -249,6 +246,31 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.new-user-table {
+  :deep(.el-table .cell) {
+    padding: 0 6px;
+  }
+
+  /* 去掉 Element Plus 表格底部的 1px 边框线（卡片内无需外框） */
+  :deep(.el-table__inner-wrapper::before) {
+    display: none;
+  }
+
+  /* 第 7 行是卡片内最后一条可见行，去掉分隔线避免底部悬空横线 */
+  :deep(.el-table__body tr:nth-child(7) td.el-table__cell) {
+    border-bottom: 0;
+  }
+}
+
+.fa-card-header :deep(.el-radio-group) {
+  flex-wrap: nowrap;
+}
+
+.fa-card-header :deep(.el-radio-button__inner) {
+  padding: 5px 6px;
+  font-size: 12px;
+}
+
 .fa-card {
   :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
     color: var(--el-color-primary) !important;

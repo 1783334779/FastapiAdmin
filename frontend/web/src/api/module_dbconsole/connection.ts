@@ -24,6 +24,7 @@ export interface DbConnectionForm {
   password?: string;
   database?: string | null;
   description?: string | null;
+  status?: number;
 }
 
 export interface DbQueryResult {

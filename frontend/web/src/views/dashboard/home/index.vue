@@ -3,19 +3,19 @@
     <FaDashboardSkeleton v-if="loading" />
     <template v-else>
       <!-- 左列：主内容区 | 右列：侧边栏 -->
-      <ElRow :gutter="20">
-        <ElCol :xs="24" :md="18">
-          <Banner class="mb-5" />
+      <ElRow :gutter="16">
+        <ElCol :xs="24" :md="16">
+          <Banner class="mb-4" />
 
-          <ElRow :gutter="20">
-            <ElCol :xs="24" :md="16">
-              <ElRow :gutter="20">
+          <ElRow :gutter="16">
+            <ElCol :xs="24" :md="24">
+              <ElRow :gutter="16">
                 <ElCol :xs="24" :sm="24" :md="24">
                   <CardList />
                 </ElCol>
               </ElRow>
-              <ElRow :gutter="20">
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+              <ElRow :gutter="16">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaStatsCard
                     :icon="'ri:money-cny-box-line'"
                     :iconStyle="'bg-theme'"
@@ -30,25 +30,25 @@
                     customIconStyle="'text-theme! text-3xl!''"
                   />
                 </ElCol>
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaProgressCard
                     :percentage="65"
                     :title="'任务进度'"
                     :color="'var(--theme-color)'"
                   />
                 </ElCol>
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaProgressCard
                     :percentage="80"
-                    :title="'任务进度'"
+                    :title="'项目进度'"
                     :color="'var(--theme-color)'"
                     :icon="'ri:twitch-line'"
                     :iconStyle="'bg-theme/12 text-theme'"
                   />
                 </ElCol>
               </ElRow>
-              <ElRow :gutter="20">
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+              <ElRow :gutter="16">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaBarChartCard
                     :isMiniChart="true"
                     :value="15480"
@@ -60,7 +60,7 @@
                     :chartData="[120, 100, 150, 140, 90, 120, 130]"
                   />
                 </ElCol>
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaLineChartCard
                     :isMiniChart="true"
                     :value="2545"
@@ -72,7 +72,7 @@
                     :chartData="[150, 180, 160, 200, 180, 220, 240]"
                   />
                 </ElCol>
-                <ElCol :xs="24" :sm="8" :md="8" class="mb-5">
+                <ElCol :xs="24" :sm="8" :md="8" class="mb-4">
                   <FaDonutChartCard
                     :value="36358"
                     title="粉丝量"
@@ -87,13 +87,10 @@
                 </ElCol>
               </ElRow>
             </ElCol>
-            <ElCol :xs="24" :md="8" class="mb-5">
-              <FaTimelineListCard :list="timelineData" title="最近交易" subtitle="2024年12月20日" />
-            </ElCol>
           </ElRow>
 
-          <ElRow :gutter="20">
-            <ElCol :xs="24" :sm="12" :md="12" class="mb-5">
+          <div class="home-pair">
+            <div>
               <ElCard
                 shadow="hover"
                 class="fa-card overflow-hidden border border-(--el-border-color-lighter) rounded-xl flex flex-col h-138"
@@ -119,36 +116,33 @@
                   <FaCalendar />
                 </div>
               </ElCard>
-            </ElCol>
-            <ElCol :xs="24" :sm="12" :md="12" class="mb-5">
+            </div>
+            <div>
               <NewUser />
-            </ElCol>
-          </ElRow>
+            </div>
+          </div>
         </ElCol>
 
-        <ElCol :xs="24" :md="6" class="flex flex-col gap-5">
-          <QuickLinks class="mb-5" />
-          <FaDataListCard
-            class="mb-5"
-            :maxCount="4"
-            :list="healthList"
-            title="系统健康"
-            subtitle="实时 · 30s"
-            :showMoreButton="true"
-            @more="handleMore"
+        <ElCol :xs="24" :md="8" class="flex flex-col gap-4">
+          <QuickLinks class="mb-4" />
+          <FaTimelineListCard
+            class="mb-4 home-timeline"
+            :list="timelineData"
+            title="最近交易"
+            subtitle="2024年12月20日"
           />
-          <TodoList class="mb-5" />
+          <TodoList class="mb-4" />
         </ElCol>
       </ElRow>
 
-      <ElRow :gutter="20">
-        <ElCol :xs="24" :sm="6" :md="6" class="mb-5">
+      <ElRow :gutter="16">
+        <ElCol :xs="24" :sm="6" :md="6" class="mb-4">
           <ImageCards />
         </ElCol>
-        <ElCol :xs="24" :sm="6" :md="6" class="mb-5">
+        <ElCol :xs="24" :sm="6" :md="6" class="mb-4">
           <ItBanners />
         </ElCol>
-        <ElCol :xs="24" :sm="12" :md="12" class="mb-5">
+        <ElCol :xs="24" :sm="12" :md="12" class="mb-4">
           <AboutProject />
         </ElCol>
       </ElRow>
@@ -159,10 +153,8 @@
 <script setup lang="ts">
 defineOptions({ name: "Home", inheritAttrs: false });
 
-import { ref, onMounted, onUnmounted, defineAsyncComponent } from "vue";
-import { ElMessage } from "element-plus";
-import DashboardAPI from "@/api/module_monitor/dashboard";
-import { getDashboardMock, type HealthItem } from "@/mock/dashboard";
+import { ref, defineAsyncComponent } from "vue";
+import { getDashboardMock } from "@/mock/dashboard";
 import ImageCards from "./modules/image_cards.vue";
 import ItBanners from "./modules/it_banners.vue";
 import Banner from "./modules/banner.vue";
@@ -174,24 +166,7 @@ import QuickLinks from "./modules/quick-links.vue";
 
 const mock = getDashboardMock();
 const loading = ref(false);
-const healthList = ref<HealthItem[]>(mock.health); // 初值 mock 兜底，健康流首帧到达即覆盖
 const timelineData = ref(mock.timeline);
-
-let unsubscribeHealth: (() => void) | null = null;
-
-onMounted(() => {
-  // 后续替换为真实接口:
-  // const { data } = await DashboardAPI.getStats();
-  // 并删除 getDashboardMock() 调用
-  unsubscribeHealth = DashboardAPI.subscribeHealthStream((items) => {
-    healthList.value = items;
-  });
-});
-
-onUnmounted(() => {
-  unsubscribeHealth?.();
-  unsubscribeHealth = null;
-});
 
 // 图表组件异步导入，减少首屏 echarts 加载
 const FaLineChartCard = defineAsyncComponent(
@@ -207,8 +182,21 @@ const FaDonutChartCard = defineAsyncComponent(
 const FaTimelineListCard = defineAsyncComponent(
   () => import("@/components/cards/fa-timeline-list-card/index.vue")
 );
-
-function handleMore() {
-  ElMessage.info("查看更多");
-}
 </script>
+<style scoped>
+.home-timeline {
+  height: 432px;
+}
+
+.home-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (width <= 1280px) {
+  .home-pair {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

@@ -52,6 +52,7 @@
 
       <FaTable
         ref="faTableRef"
+        mobile-cards
         :loading="loading"
         :data="data"
         :columns="columns"
@@ -156,6 +157,7 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import {
   renderTableOperationCell,
   resolveStatusColumns,
@@ -438,9 +440,9 @@ const {
         formatter: (row: {{ class_name }}Table) => row.updated_by?.name ?? "—",
       },
       {% elif column.column_name == "created_time" %}
-      { prop: "created_time", label: "创建时间", width: 168, sortable: true, showOverflowTooltip: true },
+      { prop: "created_time", label: "创建时间", width: 190, sortable: true, showOverflowTooltip: true },
       {% elif column.column_name == "updated_time" %}
-      { prop: "updated_time", label: "更新时间", width: 168, sortable: true, showOverflowTooltip: true },
+      { prop: "updated_time", label: "更新时间", width: 190, sortable: true, showOverflowTooltip: true },
       {% elif column.python_type == "bool" or column.html_type == "checkbox" %}
       {
         prop: "{{ column.column_name }}",
@@ -632,6 +634,8 @@ const dialogFormItems: FormItem[] = [
 const dataFormRef = ref<InstanceType<typeof FaForm> | null>(null);
 const formRenderKey = ref(0);
 
+const { t } = useI18n();
+
 const crud = useCrudForm<{{ class_name }}Form>({
   formData,
   initialFormData: createInitialFormData(),
@@ -707,14 +711,14 @@ function buildRowActions(row: {{ class_name }}Table): TableOperationAction[] {
   const all: TableOperationAction[] = [
     {
       key: "detail",
-      label: "详情",
+      label: t("common.detail"),
       artType: "view",
       perm: "{{ permission_prefix }}:detail",
       run: () => void crud.handleOpenDialog("detail", row[PK] as number),
     },
     {
       key: "edit",
-      label: "编辑",
+      label: t("common.edit"),
       artType: "edit",
       icon: "ri:edit-2-line",
       perm: "{{ permission_prefix }}:update",
@@ -722,7 +726,7 @@ function buildRowActions(row: {{ class_name }}Table): TableOperationAction[] {
     },
     {
       key: "delete",
-      label: "删除",
+      label: t("common.delete"),
       artType: "delete",
       icon: "ri:delete-bin-4-line",
       perm: "{{ permission_prefix }}:delete",

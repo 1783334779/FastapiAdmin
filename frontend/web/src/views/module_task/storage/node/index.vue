@@ -49,6 +49,7 @@
       </FaTableHeader>
 
       <FaTable
+        mobile-cards
         ref="faTableRef"
         :loading="loading"
         :data="data"
@@ -63,13 +64,13 @@
     <FaDialog
       v-model="dialogVisible.visible"
       :title="dialogVisible.title"
-      width="720px"
       dialog-class="crud-embed-dialog"
       modal-class="crud-embed-dialog"
       :form-mode="dialogVisible.type"
       :confirm-loading="submitLoading"
       @cancel="handleCloseDialog"
       @confirm="dialogVisible.type === 'detail' ? handleCloseDialog() : handleSubmit()"
+      size="lg"
     >
       <template v-if="dialogVisible.type === 'detail'">
         <FaDescriptions
@@ -138,6 +139,7 @@
                       :placeholder="`默认：${field.default ?? '-'}`"
                       clearable
                       @update:model-value="setAdvancedValue(field.key, $event)"
+                      aria-label="`默认：${field.default ?? '-'}`"
                     />
                     <ElInputNumber
                       v-else-if="field.type === 'number'"
@@ -972,9 +974,9 @@ const {
             protocolLabel(row.protocol)
           ),
       },
-      { prop: "host", label: "主机地址", minWidth: 140, showOverflowTooltip: true },
+      { prop: "host", label: "主机地址", minWidth: 120, showOverflowTooltip: true },
       { prop: "port", label: "端口", width: 80 },
-      { prop: "bucket", label: "Bucket", minWidth: 110, showOverflowTooltip: true },
+      { prop: "bucket", label: "Bucket", minWidth: 100, showOverflowTooltip: true },
       {
         prop: "is_default",
         label: "默认",
@@ -994,14 +996,14 @@ const {
       {
         prop: "created_time",
         label: "创建时间",
-        width: 168,
+        width: 150,
         sortable: true,
         showOverflowTooltip: true,
       },
       {
         prop: "operation",
         label: "操作",
-        width: 250,
+        width: 200,
         fixed: "right",
         align: "center",
         formatter: (row: SourceTable) => formatSourceOperationCell(row, opCtx),

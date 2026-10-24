@@ -173,7 +173,7 @@ onLoad(() => {
 
     <template v-else>
       <!-- 头像 + 昵称（点击头像即上传更换） -->
-      <view class="mx-3 mb-3 flex flex-col items-center gap-2 py-4">
+      <view class="mx-4 mb-4 flex flex-col items-center gap-2 py-4">
         <wd-upload
           v-model:file-list="avatarFileList"
           :upload-method="uploadAvatar"
@@ -204,8 +204,8 @@ onLoad(() => {
       </view>
 
       <!-- 资料列表 -->
-      <view class="mx-3 mb-3">
-        <wd-cell-group border custom-class="rounded-2! overflow-hidden">
+      <view class="mx-4 mb-4">
+        <wd-cell-group border custom-class="rounded-3! overflow-hidden">
           <wd-cell :title="t('profile.nickname')" is-link @click="openEdit('name')">
             <wd-text class="wot-text-text-secondary" :text="userProfile?.name || t('profile.notSet')" />
           </wd-cell>

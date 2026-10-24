@@ -17,7 +17,7 @@
 
       <div
         class="login-auth-split__col login-auth-split__col--form login-page-panel relative flex min-h-0 min-w-0 flex-col"
-        :class="panelAlign === 'center' ? 'bg-transparent' : 'bg-(--el-bg-color-page)'"
+        :class="panelAlign === 'center' ? 'bg-transparent' : 'bg-(--fa-canvas)'"
       >
         <div
           class="login-page-panel__main relative z-1 flex min-h-0 flex-1 flex-col overflow-hidden px-5 pb-2 pt-14 md:px-10 md:pt-18"
@@ -66,6 +66,8 @@
                           @forget="setAuthPanel('forget')"
                           @register="setAuthPanel('register')"
                           @oauth="handleOAuthLogin"
+                          @slider-pass="handleSliderPass"
+                          @request-puzzle="handlePuzzleRequest"
                         />
                       </template>
 
@@ -135,7 +137,7 @@
                 rel="noopener noreferrer"
                 class="login-page-footer__link"
               >
-                帮助
+                {{ $t("common.help") }}
               </a>
               <span class="login-page-footer__sep">|</span>
               <a
@@ -144,7 +146,7 @@
                 rel="noopener noreferrer"
                 class="login-page-footer__link"
               >
-                隐私
+                {{ $t("common.privacy") }}
               </a>
               <span class="login-page-footer__sep">|</span>
               <a
@@ -153,7 +155,7 @@
                 rel="noopener noreferrer"
                 class="login-page-footer__link"
               >
-                条款
+                {{ $t("common.terms") }}
               </a>
               <span
                 v-if="configStore.configData?.keep_record?.config_value"
@@ -185,7 +187,7 @@ import AuthAPI, {
 import UserAPI, { type ForgetPasswordForm, type RegisterForm } from "@/api/module_system/user";
 import { useConfigStore, useAppStore, useSettingsStore, useUserStore } from "@stores";
 import { Auth, HttpError, startOAuthLogin } from "@utils";
-import { ElMessage, ElNotification } from "element-plus";
+import { ElMessage } from "element-plus";
 import type { FormRules } from "element-plus";
 import type { Account, AccountKey } from "./types";
 import { useLoginPanelAlign } from "./components/composables/useLoginPanelAlign";
@@ -444,6 +446,12 @@ const captchaState = reactive<CaptchaInfo>({
   enable: false,
   key: "",
   img_base: "",
+  piece_base: "",
+  piece_y: 0,
+  piece_width: 55,
+  piece_height: 48,
+  bg_width: 320,
+  bg_height: 160,
 });
 
 const rules = computed<FormRules>(() => {
@@ -484,7 +492,13 @@ async function getCaptcha() {
     const response = await AuthAPI.getCaptcha();
     const data = response.data.data;
     loginForm.captcha_key = data.key;
-    captchaState.img_base = data.img_base;
+    captchaState.img_base = data.img_base ?? "";
+    captchaState.piece_base = data.piece_base ?? "";
+    captchaState.piece_y = data.piece_y ?? 0;
+    captchaState.piece_width = data.piece_width ?? 55;
+    captchaState.piece_height = data.piece_height ?? 48;
+    captchaState.bg_width = data.bg_width ?? 320;
+    captchaState.bg_height = data.bg_height ?? 160;
     captchaState.enable = data.enable;
     // 重置滑块状态
     isPassing.value = false;
@@ -497,21 +511,24 @@ async function getCaptcha() {
   }
 }
 
-/** 滑块验证完成后通知后端标记 */
-async function handleSliderPass(passed: boolean) {
-  if (!passed || !loginForm.captcha_key) return;
+/** 每次点击入口都换一张新题，再打开弹窗 */
+async function handlePuzzleRequest() {
+  await getCaptcha();
+  accountFormRef.value?.openPuzzle?.();
+}
+
+/** 拼图滑块释放后交给后端校验位置 */
+async function handleSliderPass(position: number) {
+  if (!loginForm.captcha_key) return;
   try {
-    await AuthAPI.sliderComplete(loginForm.captcha_key);
+    await AuthAPI.sliderComplete(loginForm.captcha_key, position);
+    isPassing.value = true;
   } catch {
     isPassing.value = false;
+    accountFormRef.value?.resetDragVerify?.();
     await getCaptcha();
   }
 }
-
-/** 监听滑块通过状态 */
-watch(isPassing, (val) => {
-  handleSliderPass(val);
-});
 
 function resolveRedirectTarget(query: LocationQuery): RouteLocationRaw {
   const defaultPath = "/";
@@ -527,26 +544,6 @@ function resolveRedirectTarget(query: LocationQuery): RouteLocationRaw {
   }
 }
 
-let notificationInstance: ReturnType<typeof ElNotification> | null = null;
-
-const showVoteNotification = () => {
-  notificationInstance = ElNotification({
-    title: "⭐ FastapiAdmin 完全开源 · 期待您的 Star 支持 🙏",
-    message: `项目持续迭代中，若对您有所帮助，欢迎点亮 Star 支持！
-    <br/><a href="https://github.com/fastapiadmin/FastapiAdmin" target="_blank" style="color: var(--el-color-primary); text-decoration: none; font-weight: 500;">Github仓库 →</a>
-    <br/><a href="https://gitee.com/fastapiadmin/FastapiAdmin" target="_blank" style="color: var(--el-color-warning); text-decoration: none; font-weight: 500;">Gitee仓库 →</a>`,
-    type: "success",
-    position:
-      panelAlign.value === "right" || panelAlign.value === "center"
-        ? "bottom-left"
-        : "bottom-right",
-    duration: 0,
-    dangerouslyUseHTMLString: true,
-  });
-};
-
-let voteTimer: ReturnType<typeof setTimeout> | null = null;
-
 onMounted(async () => {
   setupAccount("super");
   await configStore.getConfig(true);
@@ -556,18 +553,11 @@ onMounted(async () => {
     return;
   }
   getCaptcha();
-  voteTimer = setTimeout(showVoteNotification, 500);
 });
 
 onActivated(() => {
   if (authPanel.value !== "login" || loginFlowMode.value !== "account") return;
   getCaptcha();
-});
-
-onBeforeUnmount(() => {
-  if (voteTimer !== null) clearTimeout(voteTimer);
-  notificationInstance?.close();
-  notificationInstance = null;
 });
 
 watch(

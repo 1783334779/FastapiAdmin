@@ -1,26 +1,26 @@
 <template>
   <div class="flex flex-col relative last:mb-0">
     <ElRow :gutter="24">
-      <ElCol :sm="12" :md="12" :lg="6" class="mb-5"><TotalOrderVolume /></ElCol>
-      <ElCol :sm="12" :md="12" :lg="6" class="mb-5"><TotalProducts /></ElCol>
-      <ElCol :sm="24" :md="12" :lg="6" class="mb-5"><ProductSales /></ElCol>
-      <ElCol :sm="24" :md="12" :lg="6" class="mb-5"><SalesGrowth /></ElCol>
+      <ElCol :sm="12" :md="12" :lg="6" class="mb-4"><TotalOrderVolume /></ElCol>
+      <ElCol :sm="12" :md="12" :lg="6" class="mb-4"><TotalProducts /></ElCol>
+      <ElCol :sm="24" :md="12" :lg="6" class="mb-4"><ProductSales /></ElCol>
+      <ElCol :sm="24" :md="12" :lg="6" class="mb-4"><SalesGrowth /></ElCol>
     </ElRow>
 
     <ElRow :gutter="24">
-      <ElCol :span="24" class="mb-5"><CartConversionRate /></ElCol>
+      <ElCol :span="24" class="mb-4"><CartConversionRate /></ElCol>
     </ElRow>
 
     <ElRow :gutter="24">
-      <ElCol :sm="12" :md="12" :lg="6" class="mb-5"><SalesTrend /></ElCol>
-      <ElCol :sm="12" :md="12" :lg="6" class="mb-5"><SalesClassification /></ElCol>
-      <ElCol :sm="24" :md="12" :lg="6" class="mb-5"><HotCommodity /></ElCol>
-      <ElCol :sm="24" :md="12" :lg="6" class="mb-5"><AnnualSales /></ElCol>
+      <ElCol :sm="12" :md="12" :lg="6" class="mb-4"><SalesTrend /></ElCol>
+      <ElCol :sm="12" :md="12" :lg="6" class="mb-4"><SalesClassification /></ElCol>
+      <ElCol :sm="24" :md="12" :lg="6" class="mb-4"><HotCommodity /></ElCol>
+      <ElCol :sm="24" :md="12" :lg="6" class="mb-4"><AnnualSales /></ElCol>
     </ElRow>
 
     <ElRow :gutter="24">
-      <ElCol :sm="24" :md="12" :lg="12" class="mb-5"><ActiveUser /></ElCol>
-      <ElCol :sm="24" :md="12" :lg="12" class="mb-5"><SalesOverview /></ElCol>
+      <ElCol :sm="24" :md="12" :lg="12" class="mb-4"><ActiveUser /></ElCol>
+      <ElCol :sm="24" :md="12" :lg="12" class="mb-4"><SalesOverview /></ElCol>
     </ElRow>
   </div>
 </template>
