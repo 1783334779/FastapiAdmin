@@ -17,7 +17,7 @@
 
       <div
         class="login-auth-split__col login-auth-split__col--form login-page-panel relative flex min-h-0 min-w-0 flex-col"
-        :class="panelAlign === 'center' ? 'bg-transparent' : 'bg-(--el-bg-color-page)'"
+        :class="panelAlign === 'center' ? 'bg-transparent' : 'bg-(--fa-canvas)'"
       >
         <div
           class="login-page-panel__main relative z-1 flex min-h-0 flex-1 flex-col overflow-hidden px-5 pb-2 pt-14 md:px-10 md:pt-18"
