@@ -16,6 +16,7 @@
     </div>
     <FaTable
       class="new-user-table w-full"
+      height="432px"
       :data="tableData"
       size="large"
       :border="false"
@@ -248,6 +249,16 @@ onMounted(() => {
 .new-user-table {
   :deep(.el-table .cell) {
     padding: 0 6px;
+  }
+
+  /* 去掉 Element Plus 表格底部的 1px 边框线（卡片内无需外框） */
+  :deep(.el-table__inner-wrapper::before) {
+    display: none;
+  }
+
+  /* 第 7 行是卡片内最后一条可见行，去掉分隔线避免底部悬空横线 */
+  :deep(.el-table__body tr:nth-child(7) td.el-table__cell) {
+    border-bottom: 0;
   }
 }
 
