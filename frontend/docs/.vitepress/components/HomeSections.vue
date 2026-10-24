@@ -40,6 +40,13 @@ useRevealOnScroll(endToEndSection)
   padding-bottom: 3rem;
 }
 
+@media (max-width: 768px) {
+  .home-sections {
+    /* 移动端底部固定 SectionNav 的高度，避免遮挡最后一块内容 */
+    padding-bottom: 5.5rem;
+  }
+}
+
 /* 分隔线:hero 与端到端区块之间的渐变强调线 */
 .section-divider {
   position: relative;
