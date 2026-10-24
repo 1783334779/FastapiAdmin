@@ -187,6 +187,7 @@ import OperationLogAPI, {
 } from "@/api/module_system/log";
 import {
   renderTableOperationCell,
+  formatToDateTime,
   resolveStatusColumns,
   stripPaginationParams,
   cleanEmptyArrayParams,
@@ -331,6 +332,8 @@ const {
         width: 168,
         sortable: true,
         showOverflowTooltip: true,
+        formatter: (row: { created_time?: string }) =>
+          formatToDateTime(row.created_time, "YYYY-MM-DD HH:mm"),
       },
       {
         prop: "operation",
