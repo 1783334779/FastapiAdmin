@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { FormSchema } from '@wot-ui/ui/components/wd-form/types'
-import type { SlideVerifyInstance } from '@wot-ui/ui/components/wd-slide-verify/types'
 import type { CaptchaInfo, LoginFormData, OAuthProvider } from '@/api/module_system/auth'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, nextTick, reactive, ref, watch } from 'vue'
@@ -17,7 +16,7 @@ useI18nNavTitle('login.navTitle')
 
 const { t } = useI18n()
 const loginFormRef = ref()
-const sliderCaptchaRef = ref<SlideVerifyInstance>()
+const sliderCaptchaRef = ref<{ reset?: () => void }>()
 const loading = ref(false)
 const userStore = useUserStore()
 const configStore = useConfigStore()
@@ -68,29 +67,17 @@ const loginFormData = reactive<LoginFormData>({
   login_type: '移动端',
 })
 
-const captchaState = reactive<CaptchaInfo>({ enable: false, key: '', img_base: '' })
-
-/**
- * wd-slide-verify 在小程序端 onMounted 时容器可能尚未完成布局，
- * getRect 测量到 0 宽高 → maxPosition=0 → 滑块无法拖动。
- * 渲染完成后延迟重试 init()，直至组件实例就绪并重新测量。
- */
-watch(() => captchaState.enable, async (enabled) => {
-  if (!enabled)
-    return
-  await nextTick()
-  retrySliderInit()
+const captchaState = reactive<CaptchaInfo>({
+  enable: false,
+  key: '',
+  img_base: '',
+  piece_base: '',
+  piece_y: 0,
+  piece_width: 55,
+  piece_height: 48,
+  bg_width: 320,
+  bg_height: 160,
 })
-
-function retrySliderInit(retry = 0) {
-  const verify = sliderCaptchaRef.value
-  if (!verify) {
-    if (retry < 5)
-      setTimeout(() => retrySliderInit(retry + 1), 120)
-    return
-  }
-  verify.init()
-}
 
 /** 滑块验证是否已通过（后端返回 verified=true 后置位） */
 const sliderPassed = ref(false)
@@ -111,6 +98,13 @@ async function getLoginCaptcha() {
       captchaState.enable = Boolean(result.enable)
       captchaState.key = result.key || ''
       captchaState.img_base = result.img_base || ''
+      captchaState.piece_base = result.piece_base || ''
+      captchaState.piece_y = result.piece_y ?? 0
+      captchaState.piece_width = result.piece_width ?? 55
+      captchaState.piece_height = result.piece_height ?? 48
+      captchaState.bg_width = result.bg_width ?? 320
+      captchaState.bg_height = result.bg_height ?? 160
+      sliderPassed.value = false
       if (captchaState.enable) {
         loginFormData.captcha_key = captchaState.key
         // 重置滑块到初始状态
@@ -131,7 +125,7 @@ async function getLoginCaptcha() {
  * wd-slide-verify 拖动到终点触发 success — 调用后端 slider_complete 接口标记验证完成
  * 后端仅标记 captcha_key 状态为 verified，不校验 x 坐标
  */
-async function handleSliderSuccess() {
+async function handleSliderSuccess(position: number) {
   if (!captchaState.key) {
     uni.showToast({ title: t('login.captchaExpired'), icon: 'none' })
     sliderCaptchaRef.value?.reset()
@@ -141,7 +135,7 @@ async function handleSliderSuccess() {
   try {
     const result = await AuthAPI.completeSliderCaptcha({
       captcha_key: captchaState.key,
-      x: 100, // 占位值，后端未使用
+      position,
     })
     if (result?.verified) {
       sliderPassed.value = true
@@ -298,12 +292,20 @@ async function handleOAuth(provider: OAuthProvider) {
 
         <!-- Slider Captcha — wd-slide-verify 滑块拖动验证（条件显示） -->
         <wd-form-item v-if="captchaState.enable" custom-style="margin-bottom: 14rpx; padding-left: 0; padding-right: 0;">
-          <wd-slide-verify
+          <FaPuzzleCaptcha
             ref="sliderCaptchaRef"
+            :bg-image="captchaState.img_base"
+            :piece-image="captchaState.piece_base"
+            :piece-y="captchaState.piece_y"
+            :piece-width="captchaState.piece_width"
+            :piece-height="captchaState.piece_height"
+            :bg-width="captchaState.bg_width"
+            :bg-height="captchaState.bg_height"
+            :passed="sliderPassed"
+            :loading="loading"
             :text="t('login.sliderText')"
             :success-text="t('login.sliderSuccessText')"
-            @success="handleSliderSuccess"
-            @fail="resetSliderCaptcha"
+            @verify="handleSliderSuccess"
           />
         </wd-form-item>
 
@@ -390,7 +392,8 @@ async function handleOAuth(provider: OAuthProvider) {
   padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
   /* 接入全局水滴渐变（--drop-bg 由 App.vue 按主题色定义，暗色回退纯色由下方规则接管） */
   background: var(--drop-bg, #F9F9F9);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   box-sizing: border-box;
 }
 

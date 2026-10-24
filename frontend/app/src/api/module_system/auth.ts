@@ -84,7 +84,7 @@ const AuthAPI = {
    * @param data.x 滑块 x 坐标（占位，后端未使用）
    * @returns 验证结果 { captcha_key, verified }
    */
-  completeSliderCaptcha(data: { captcha_key: string, x: number }): Promise<{ captcha_key: string, verified: boolean }> {
+  completeSliderCaptcha(data: { captcha_key: string, position?: number }): Promise<{ captcha_key: string, verified: boolean }> {
     return http.Post(`${AUTH_BASE_URL}/captcha/slider/complete`, data, { meta: { ignoreAuth: true, authRole: 'visitor' } })
   },
 
@@ -152,6 +152,12 @@ export interface CaptchaInfo {
   enable: boolean
   key: string
   img_base: string
+  piece_base: string
+  piece_y: number
+  piece_width: number
+  piece_height: number
+  bg_width: number
+  bg_height: number
 }
 
 /** 微信小程序登录数据 */
