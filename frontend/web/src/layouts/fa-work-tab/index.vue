@@ -907,7 +907,7 @@ html:not(.dark) .worktab-tab.worktab-tab--card.activ-tab {
   background: transparent;
   border: none;
   border-radius: 6px;
-  opacity: 0.45;
+  opacity: 0.62;
   transition:
     opacity 0.15s ease,
     color 0.15s ease,

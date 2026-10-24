@@ -1,8 +1,5 @@
 <template>
-  <div
-    v-if="quickLinks.length > 0"
-    class="fa-card p-5 pb-3 h-55 max-sm:h-55 flex flex-col relative overflow-hidden"
-  >
+  <div class="fa-card p-5 pb-3 h-55 max-sm:h-55 flex flex-col relative overflow-hidden">
     <div class="fa-card-header">
       <div class="title">
         <h4>
@@ -45,6 +42,13 @@
         </div>
       </div>
     </ElScrollbar>
+    <div
+      v-if="!quickLinks.length"
+      class="flex flex-1 items-center justify-center px-4 text-xs text-center text-(--el-text-color-placeholder)"
+    >
+      点击顶部标签左侧 ☆ 收藏常用页面
+    </div>
+
     <FaEmptyState
       v-else
       class="absolute inset-0 flex items-center justify-center"
