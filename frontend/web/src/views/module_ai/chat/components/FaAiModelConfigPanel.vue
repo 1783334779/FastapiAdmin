@@ -88,17 +88,29 @@
                     <div class="item-model">{{ item.model_id }}</div>
                   </div>
                   <div class="item-actions" @click.stop>
-                    <ElTooltip content="展开详情" placement="top" :show-after="200">
+                    <ElTooltip
+                      :content="$t('common.aiConfig.expand')"
+                      placement="top"
+                      :show-after="200"
+                    >
                       <ElButton text circle size="small" @click="toggleExpand(item.id)">
                         <ElIcon :class="{ rotated: expandedId === item.id }">
                           <ArrowDown />
                         </ElIcon>
                       </ElButton>
                     </ElTooltip>
-                    <ElTooltip content="编辑" placement="top" :show-after="200">
+                    <ElTooltip
+                      :content="$t('common.aiConfig.hintEdit')"
+                      placement="top"
+                      :show-after="200"
+                    >
                       <ElButton text circle size="small" :icon="Edit" @click="openEdit(item)" />
                     </ElTooltip>
-                    <ElTooltip content="删除" placement="top" :show-after="200">
+                    <ElTooltip
+                      :content="$t('common.aiConfig.hintDelete')"
+                      placement="top"
+                      :show-after="200"
+                    >
                       <ElButton
                         text
                         circle
@@ -146,7 +158,7 @@
                     <span class="detail-value">{{ item.temperature.toFixed(1) }}</span>
                   </div>
                   <div v-if="item.created_time" class="detail-row">
-                    <span class="detail-label">添加于</span>
+                    <span class="detail-label">{{ $t("common.aiConfig.addedAt") }}</span>
                     <span class="detail-value">{{ item.created_time }}</span>
                   </div>
                 </div>
@@ -181,7 +193,7 @@
           <ElFormItem :label="$t('common.aiConfig.configName')" prop="name">
             <ElInput
               v-model="form.name"
-              placeholder="如：日常对话 / 代码助手"
+              :placeholder="$t('common.aiConfig.namePlaceholder')"
               maxlength="50"
               show-word-limit
               clearable
@@ -193,7 +205,7 @@
               <template #append>
                 <ElDropdown trigger="click" @command="(v: string) => (form.base_url = v)">
                   <ElButton text size="small">
-                    预设
+                    {{ $t("common.aiConfig.presetLabel") }}
                     <ElIcon><ArrowDown /></ElIcon>
                   </ElButton>
                   <template #dropdown>
@@ -228,7 +240,7 @@
               <div class="flex items-center gap-2">
                 <ElInput
                   v-model="form.model_id"
-                  placeholder="如：gpt-4o-mini / deepseek-chat"
+                  :placeholder="$t('common.aiConfig.modelPlaceholder')"
                   clearable
                   class="flex-1"
                 />
@@ -261,7 +273,7 @@
               show-input
               :show-input-controls="false"
             />
-            <div class="form-tip">越高越有创造性，0 更确定</div>
+            <div class="form-tip">{{ $t("common.aiConfig.creativityTip") }}</div>
           </ElFormItem>
         </ElForm>
         <template #footer>

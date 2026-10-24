@@ -365,7 +365,15 @@
       "cancel": "取消",
       "save": "保存",
       "addAndUse": "新增并使用",
-      "preset": "预设"
+      "preset": "预设",
+      "expand": "展开详情",
+      "hintEdit": "编辑",
+      "hintDelete": "删除",
+      "addedAt": "添加于",
+      "namePlaceholder": "如：日常对话 / 代码助手",
+      "presetLabel": "预设",
+      "modelPlaceholder": "如：gpt-4o-mini / deepseek-chat",
+      "creativityTip": "越高越有创造性，0 更确定"
     }
   },
   "search": {

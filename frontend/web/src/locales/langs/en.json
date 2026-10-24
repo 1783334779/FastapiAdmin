@@ -365,7 +365,15 @@
       "cancel": "Cancel",
       "save": "Save",
       "addAndUse": "Add and use",
-      "preset": "Presets"
+      "preset": "Presets",
+      "expand": "Expand",
+      "hintEdit": "Edit",
+      "hintDelete": "Delete",
+      "addedAt": "Added",
+      "namePlaceholder": "e.g. Daily chat / Code assistant",
+      "presetLabel": "Presets",
+      "modelPlaceholder": "e.g. gpt-4o-mini / deepseek-chat",
+      "creativityTip": "Higher is more creative; 0 is more deterministic"
     }
   },
   "search": {
