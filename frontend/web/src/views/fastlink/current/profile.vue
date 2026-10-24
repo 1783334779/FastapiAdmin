@@ -262,21 +262,26 @@
             size="small"
           >
             <ElTableColumn type="index" label="#" width="50" />
-            <ElTableColumn label="浏览器" min-width="90">
+            <ElTableColumn label="浏览器" width="92" show-overflow-tooltip>
               <template #default="{ row }">
                 <FaSvgIcon :icon="getBrowserIcon(row.browser)" class="mr-1" />{{
                   row.browser || "—"
                 }}
               </template>
             </ElTableColumn>
-            <ElTableColumn label="操作系统" min-width="90">
+            <ElTableColumn label="操作系统" width="92" show-overflow-tooltip>
               <template #default="{ row }">
                 <FaSvgIcon :icon="getOsIcon(row.os)" class="mr-1" />{{ row.os || "—" }}
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="ipaddr" label="IP 地址" min-width="100" />
-            <ElTableColumn prop="login_location" label="登录位置" min-width="95" />
-            <ElTableColumn label="登录时间" min-width="150">
+            <ElTableColumn prop="ipaddr" label="IP 地址" width="110" show-overflow-tooltip />
+            <ElTableColumn
+              prop="login_location"
+              label="登录位置"
+              width="100"
+              show-overflow-tooltip
+            />
+            <ElTableColumn label="登录时间" width="150" show-overflow-tooltip>
               <template #default="{ row }">
                 {{ row.login_time ? formatDate(row.login_time) : "—" }}
               </template>

@@ -49,7 +49,7 @@
         :style="{ '--card-delay': `${idx * 0.08}s` }"
       >
         <ElCard
-          class="relative flex flex-col h-full pricing-card rounded-2xl!"
+          class="relative flex flex-col h-full pricing-card rounded-xl!"
           :class="{
             'is-current': plan.isCurrent,
             'is-recommended': plan.isRecommended,
