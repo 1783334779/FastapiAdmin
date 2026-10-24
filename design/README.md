@@ -38,6 +38,8 @@ node scripts/design-tokens/generate.mjs
 | table | 行高 40 / 表头 44 |
 | layout | 页面内边距 16 / 顶栏 56 |
 | shadow | card / pop / modal（含深色版本） |
+| fontFamily | Inter / PingFang SC / 等宽栈 |
+| table.headerBg | 浅色 #F9FAFB / 深色 #1B1E24 |
 | dark | surface `#15181E` / `#191D24`，border `#262B34`，text `#E5E7EB / #A3AAB8 / #8B93A1` |
 
 ## 规则

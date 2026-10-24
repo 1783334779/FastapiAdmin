@@ -685,7 +685,7 @@ html.dark .el-card {
     th.el-table__cell {
       font-weight: 600;
       color: var(--fa-gray-700);
-      background-color: var(--fa-gray-100);
+      background-color: var(--fa-table-header-bg, var(--fa-gray-100));
     }
   }
 

@@ -8,7 +8,7 @@ import { dirname, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
 const tokens = JSON.parse(readFileSync(resolve(root, "design/tokens.json"), "utf8"));
-const { brand, brandRamp, neutral, radius, space, font, shadow, control, table, layout } = tokens;
+const { brand, brandRamp, neutral, radius, space, font, fontFamily, shadow, control, table, layout } = tokens;
 
 function write(path, content) {
   mkdirSync(dirname(path), { recursive: true });
@@ -48,6 +48,8 @@ ${controlVars}
   --fa-shadow-card: ${shadow.card};
   --fa-shadow-pop: ${shadow.pop};
   --fa-shadow-modal: ${shadow.modal};
+  --fa-font-sans: ${fontFamily.sans};
+  --fa-table-header-bg: ${table.headerBgLight};
 }
 
 html.dark {
@@ -60,6 +62,7 @@ html.dark {
   --fa-shadow-card: ${shadow.darkCard};
   --fa-shadow-pop: ${shadow.darkPop};
   --fa-shadow-modal: ${shadow.darkModal};
+  --fa-table-header-bg: ${table.headerBgDark};
 }
 `
 );
