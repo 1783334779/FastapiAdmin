@@ -418,7 +418,7 @@ async function handleOAuth(provider: OAuthProvider) {
     font-size: var(--font-3xl, 48rpx);
     font-weight: 700;
     /* 亮色下使用主题色渐变文字，品牌识别度更高（background-clip 不生效时回退主题主色） */
-    background: linear-gradient(135deg, var(--wot-primary-5, #4480FF) 0%, var(--wot-primary-7, #164ED1) 100%);
+    background: linear-gradient(135deg, var(--fa-brand-blue, #4F6BFF) 0%, var(--fa-brand-violet, #6D5BFF) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
