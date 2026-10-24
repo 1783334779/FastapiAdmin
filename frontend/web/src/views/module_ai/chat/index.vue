@@ -1,56 +1,52 @@
 <template>
   <div class="fa-full-height">
-    <ElSplitter :style="'height: 100%'">
-      <ElSplitterPanel
-        :size="isSidebarCollapsed ? 64 : 220"
-        :min="isSidebarCollapsed ? 64 : 200"
-        :max="400"
+    <div class="chat-shell">
+      <div
+        class="sidebar-container h-full"
+        :class="{ collapsed: isSidebarCollapsed }"
+        :style="{ width: isSidebarCollapsed ? '64px' : '220px' }"
       >
-        <div class="sidebar-container h-full" :class="{ collapsed: isSidebarCollapsed }">
-          <FaSidebar
-            ref="sidebarRef"
-            :current-session-id="currentSessionId"
-            :is-collapsed="isSidebarCollapsed"
-            @select-session="handleSelectSession"
-            @new-session="handleNewSession"
-            @open-config="configDrawerVisible = true"
+        <FaSidebar
+          ref="sidebarRef"
+          :current-session-id="currentSessionId"
+          :is-collapsed="isSidebarCollapsed"
+          @select-session="handleSelectSession"
+          @new-session="handleNewSession"
+          @open-config="configDrawerVisible = true"
+        />
+      </div>
+      <div class="chat-container flex min-w-0 flex-1 flex-col overflow-hidden">
+        <div class="chat-header">
+          <FaChatNavbar
+            :connection-status="connectionStatus"
+            :is-connected="isConnected"
+            :message-count="messages.length"
+            :is-sidebar-collapsed="isSidebarCollapsed"
+            @clear-chat="handleClearChat"
+            @toggle-connection="toggleConnection"
+            @toggle-sidebar="toggleSidebar"
           />
         </div>
-      </ElSplitterPanel>
-      <ElSplitterPanel :min="300">
-        <div class="chat-container flex flex-col h-full overflow-hidden">
-          <div class="chat-header">
-            <FaChatNavbar
-              :connection-status="connectionStatus"
-              :is-connected="isConnected"
-              :message-count="messages.length"
-              :is-sidebar-collapsed="isSidebarCollapsed"
-              @clear-chat="handleClearChat"
-              @toggle-connection="toggleConnection"
-              @toggle-sidebar="toggleSidebar"
-            />
-          </div>
-          <div class="chat-main flex-1 overflow-hidden">
-            <FaChatMessages
-              ref="chatMessagesRef"
-              :messages="messages"
-              :error="error"
-              @prompt-click="handleSendMessage"
-              @error-close="error = ''"
-            />
-          </div>
-          <div class="chat-footer">
-            <FaChatInput
-              :disabled="!isConnected"
-              :sending="sending"
-              :is-connected="isConnected"
-              @send="handleSendMessage"
-              @stop="handleStopMessage"
-            />
-          </div>
+        <div class="chat-main flex-1 overflow-hidden">
+          <FaChatMessages
+            ref="chatMessagesRef"
+            :messages="messages"
+            :error="error"
+            @prompt-click="handleSendMessage"
+            @error-close="error = ''"
+          />
         </div>
-      </ElSplitterPanel>
-    </ElSplitter>
+        <div class="chat-footer">
+          <FaChatInput
+            :disabled="!isConnected"
+            :sending="sending"
+            :is-connected="isConnected"
+            @send="handleSendMessage"
+            @stop="handleStopMessage"
+          />
+        </div>
+      </div>
+    </div>
 
     <FaAiModelConfigPanel v-model="configDrawerVisible" />
   </div>
@@ -373,38 +369,20 @@ onDeactivated(disconnectWebSocket);
 </script>
 
 <style lang="scss" scoped>
-/* AI 侧栏固定宽度，不提供拖拽入口，避免被拖窄后内容错乱 */
-:deep(.el-splitter-bar) {
-  width: 0 !important;
-  pointer-events: none;
-}
-
-/* 分割线只保留侧栏的 1px border，隐藏 EP 分割条自带的线，避免叠成粗线 */
-:deep(.el-splitter-bar) {
-  background: transparent;
-}
-
-:deep(.el-splitter-bar__line),
-:deep(.el-splitter-bar__dragger::before),
-:deep(.el-splitter-bar__dragger::after) {
-  display: none;
-}
-
-/* 拆分条容器样式 */
-:deep(.el-splitter) {
+/* 固定双栏，无分割线、无拖拽 */
+.chat-shell {
+  display: flex;
+  height: 100%;
   overflow: hidden;
+  background: var(--default-box-color);
   border: 1px solid var(--el-border-color-light);
   border-radius: var(--fa-radius-md, 12px);
   box-shadow: var(--fa-shadow-card, 0 1px 2px rgb(16 24 40 / 4%));
 }
 
-:deep(.el-splitter-panel) {
-  overflow: hidden;
-  /* 与其它页面的卡片表面色一致：深色 #161618 / 浅色 #fff */
-  background: var(--default-box-color);
-}
-
 .sidebar-container {
+  flex: 0 0 auto;
+  height: 100%;
   background: transparent;
   transition: width 0.3s ease;
 }
@@ -412,7 +390,6 @@ onDeactivated(disconnectWebSocket);
 .chat-header {
   height: auto;
   padding: 0;
-  border-bottom: 1px solid var(--el-border-color-lighter);
 }
 
 .chat-main {
@@ -424,6 +401,5 @@ onDeactivated(disconnectWebSocket);
   height: auto;
   min-height: 80px;
   padding: 0;
-  border-top: 1px solid var(--el-border-color-lighter);
 }
 </style>

@@ -334,7 +334,6 @@ defineExpose({
   display: flex;
   flex-direction: column;
   height: 100%;
-  border-right: 1px solid var(--fa-border, #e6e8ec);
   transition: width 0.3s ease;
 
   .sidebar-header {

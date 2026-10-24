@@ -50,8 +50,8 @@
             </div>
 
             <!-- 主体布局：侧边导航 + 内容区 -->
-            <ElSplitter :style="'height: min(78vh, 880px)'">
-              <ElSplitterPanel size="220px" :min="180" :max="400">
+            <div class="flex h-[min(78vh,880px)] gap-4">
+              <div class="h-full w-[220px] shrink-0">
                 <aside class="manual-feature-body__aside h-full">
                   <nav v-if="filteredToc.length" class="manual-nav">
                     <div v-for="mod in filteredToc" :key="mod.anchor" class="manual-nav__module">
@@ -81,10 +81,10 @@
                     <FaEmptyState icon="ri:inbox-line" title="无匹配目录" compact />
                   </div>
                 </aside>
-              </ElSplitterPanel>
+              </div>
 
               <!-- 右侧内容区（滚动） -->
-              <ElSplitterPanel :min="300">
+              <div class="h-full min-w-0 flex-1">
                 <ElScrollbar
                   ref="scrollbarRef"
                   class="manual-feature-body__scrollbar fa-card-sm rounded-custom-sm h-full"
@@ -829,8 +829,8 @@
                     </div>
                   </div>
                 </ElScrollbar>
-              </ElSplitterPanel>
-            </ElSplitter>
+              </div>
+            </div>
           </div>
         </ElTabPane>
 

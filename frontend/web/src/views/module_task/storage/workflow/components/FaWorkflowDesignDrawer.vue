@@ -9,8 +9,8 @@
     @opened="handleDrawerOpened"
   >
     <ElContainer class="workflow-create-content flex flex-col h-full">
-      <ElSplitter direction="horizontal" :style="'height: 100%'">
-        <ElSplitterPanel size="250px" :min="200" :max="400">
+      <div class="workflow-create-split flex min-h-0 flex-1">
+        <div class="h-full w-[250px] shrink-0 overflow-hidden">
           <ElScrollbar :style="'height: 100%'">
             <div class="p-3">
               <div class="mb-3 text-sm font-bold">基础信息</div>
@@ -83,9 +83,9 @@
               </div>
             </div>
           </ElScrollbar>
-        </ElSplitterPanel>
+        </div>
 
-        <ElSplitterPanel>
+        <div class="h-full min-w-0 flex-1 overflow-hidden">
           <div class="canvas-main relative flex flex-col h-full p-0">
             <div
               v-if="canvasReady"
@@ -183,9 +183,9 @@
               </div>
             </div>
           </div>
-        </ElSplitterPanel>
+        </div>
 
-        <ElSplitterPanel v-if="updateState" size="320px" :min="280" :max="400">
+        <div v-if="updateState" class="h-full w-[320px] shrink-0 overflow-hidden">
           <FaStorageNodePanel
             v-if="updateState === 'node'"
             :node="selectedNode"
@@ -201,8 +201,8 @@
             @save="handleSaveEdge"
             @delete="handleDeleteEdge"
           />
-        </ElSplitterPanel>
-      </ElSplitter>
+        </div>
+      </div>
     </ElContainer>
 
     <FaFileBrowserDialog
@@ -846,12 +846,9 @@ const handleClose = () => {
   }
 }
 
-:deep(.el-splitter) {
+.workflow-create-split {
   flex: 1;
-}
-
-:deep(.el-splitter-panel) {
-  overflow: hidden;
+  min-height: 0;
 }
 
 .canvas-container :deep(.vue-flow) {

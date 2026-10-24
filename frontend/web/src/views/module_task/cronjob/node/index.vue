@@ -61,8 +61,8 @@
       @opened="handleDialogOpened"
       size="xl"
     >
-      <ElSplitter direction="horizontal" :style="'height: 500px'">
-        <ElSplitterPanel size="300px" :min="200" :max="400">
+      <div class="flex h-[500px] gap-4">
+        <div class="h-full w-[300px] shrink-0">
           <ElScrollbar :style="'height: 100%'">
             <FaForm
               :key="nodeFormRenderKey"
@@ -215,9 +215,9 @@
               </template>
             </FaForm>
           </ElScrollbar>
-        </ElSplitterPanel>
+        </div>
 
-        <ElSplitterPanel>
+        <div class="h-full min-w-0 flex-1">
           <div class="flex flex-col h-full pl-4">
             <div class="flex items-center justify-between py-2.5">
               <span class="text-sm font-semibold">处理器</span>
@@ -232,8 +232,8 @@
               width="100%"
             />
           </div>
-        </ElSplitterPanel>
-      </ElSplitter>
+        </div>
+      </div>
 
       <template #footer>
         <div class="dialog-footer">
