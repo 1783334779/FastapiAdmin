@@ -10,7 +10,7 @@
   >
     <ElContainer class="workflow-create-content flex flex-col h-full">
       <div class="workflow-create-split flex min-h-0 flex-1">
-        <div class="h-full w-[250px] shrink-0 overflow-hidden">
+        <div class="workflow-side-panel h-full w-[250px] shrink-0 overflow-hidden">
           <ElScrollbar :style="'height: 100%'">
             <div class="p-3">
               <div class="mb-3 text-sm font-bold">基础信息</div>
@@ -85,7 +85,7 @@
           </ElScrollbar>
         </div>
 
-        <div class="h-full min-w-0 flex-1 overflow-hidden">
+        <div class="workflow-canvas-panel h-full min-w-0 flex-1 overflow-hidden">
           <div class="canvas-main relative flex flex-col h-full p-0">
             <div
               v-if="canvasReady"
@@ -185,7 +185,10 @@
           </div>
         </div>
 
-        <div v-if="updateState" class="h-full w-[320px] shrink-0 overflow-hidden">
+        <div
+          v-if="updateState"
+          class="workflow-config-panel h-full w-[320px] shrink-0 overflow-hidden"
+        >
           <FaStorageNodePanel
             v-if="updateState === 'node'"
             :node="selectedNode"
@@ -914,5 +917,35 @@ const handleClose = () => {
 
 .workflow-base-art-form :deep(section) {
   padding: 0;
+}
+
+@media (width <= 900px) {
+  .workflow-create-split {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .workflow-side-panel {
+    width: 100%;
+    height: auto;
+    max-height: 45%;
+  }
+
+  .workflow-canvas-panel {
+    flex: 1 1 auto;
+    min-height: 420px;
+    width: 100%;
+  }
+
+  .workflow-config-panel {
+    width: 100% !important;
+    height: auto;
+    max-height: 50%;
+  }
+
+  :deep(.vue-flow__controls),
+  :deep(.vue-flow__minimap) {
+    display: none;
+  }
 }
 </style>
