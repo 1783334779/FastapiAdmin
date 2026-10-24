@@ -89,8 +89,8 @@
             </ElCol>
           </ElRow>
 
-          <ElRow :gutter="16">
-            <ElCol :xs="24" :sm="12" :md="12" class="mb-4">
+          <div class="home-pair">
+            <div>
               <ElCard
                 shadow="hover"
                 class="fa-card overflow-hidden border border-(--el-border-color-lighter) rounded-xl flex flex-col h-138"
@@ -116,11 +116,11 @@
                   <FaCalendar />
                 </div>
               </ElCard>
-            </ElCol>
-            <ElCol :xs="24" :sm="12" :md="12" class="mb-4">
+            </div>
+            <div>
               <NewUser />
-            </ElCol>
-          </ElRow>
+            </div>
+          </div>
         </ElCol>
 
         <ElCol :xs="24" :md="8" class="flex flex-col gap-4">
@@ -185,6 +185,18 @@ const FaTimelineListCard = defineAsyncComponent(
 </script>
 <style scoped>
 .home-timeline {
-  height: 436px;
+  height: 432px;
+}
+
+.home-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (width <= 1280px) {
+  .home-pair {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
