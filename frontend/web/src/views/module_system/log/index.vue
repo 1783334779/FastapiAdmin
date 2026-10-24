@@ -41,6 +41,15 @@
           </FaTableHeader>
 
           <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
+            <div v-if="opData.length" class="flex items-center gap-2 px-1">
+              <ElCheckbox
+                :model-value="opAllCardsSelected"
+                :indeterminate="opSelectedRows.length > 0 && !opAllCardsSelected"
+                @change="toggleOpAllCards"
+              >
+                {{ $t("common.selectAll") }}
+              </ElCheckbox>
+            </div>
             <div v-if="!opData.length" class="py-12">
               <FaEmptyState icon="ri:file-list-3-line" title="暂无操作日志" />
             </div>
@@ -50,7 +59,14 @@
               class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
             >
               <div class="flex items-start justify-between gap-2">
-                <div class="text-sm font-medium min-w-0 truncate">{{ row.request_path }}</div>
+                <ElCheckbox
+                  class="mt-0.5 shrink-0"
+                  :model-value="isOpCardSelected(row)"
+                  @change="(val) => toggleOpCardRow(row, val)"
+                />
+                <div class="text-sm font-medium min-w-0 flex-1 truncate">
+                  {{ row.request_path }}
+                </div>
                 <div class="flex gap-1 shrink-0">
                   <FaStatusTag type="info" :label="String(row.request_method ?? '—')" />
                   <FaStatusTag
@@ -193,6 +209,15 @@
           </FaTableHeader>
 
           <div v-if="isNarrow" class="mobile-card-list mt-4 flex flex-col gap-4">
+            <div v-if="loginData.length" class="flex items-center gap-2 px-1">
+              <ElCheckbox
+                :model-value="loginAllCardsSelected"
+                :indeterminate="loginSelectedRows.length > 0 && !loginAllCardsSelected"
+                @change="toggleLoginAllCards"
+              >
+                {{ $t("common.selectAll") }}
+              </ElCheckbox>
+            </div>
             <div v-if="!loginData.length" class="py-12">
               <FaEmptyState icon="ri:login-box-line" title="暂无登录日志" />
             </div>
@@ -202,7 +227,12 @@
               class="p-4 rounded-lg bg-(--default-box-color) border border-(--default-border)"
             >
               <div class="flex items-start justify-between gap-2">
-                <div class="min-w-0">
+                <ElCheckbox
+                  class="mt-0.5 shrink-0"
+                  :model-value="isLoginCardSelected(row)"
+                  @change="(val) => toggleLoginCardRow(row, val)"
+                />
+                <div class="min-w-0 flex-1">
                   <div class="text-sm font-medium truncate">{{ row.username }}</div>
                   <div class="mt-0.5 text-xs text-g-600">{{ row.login_ip || "—" }}</div>
                 </div>
@@ -543,6 +573,40 @@ async function deleteOpRow(id: number, name: string) {
 }
 
 const { width: viewportWidth } = useWindowSize();
+
+const opAllCardsSelected = computed(
+  () => opData.value.length > 0 && opSelectedRows.value.length === opData.value.length
+);
+const loginAllCardsSelected = computed(
+  () => loginData.value.length > 0 && loginSelectedRows.value.length === loginData.value.length
+);
+
+function isOpCardSelected(row: OperationLogTable) {
+  return opSelectedRows.value.some((item) => item.id === row.id);
+}
+function toggleOpCardRow(row: OperationLogTable, checked: boolean | string | number) {
+  const next = checked
+    ? [...opSelectedRows.value.filter((item) => item.id !== row.id), row]
+    : opSelectedRows.value.filter((item) => item.id !== row.id);
+  onOpTableSelectionChange(next);
+}
+function toggleOpAllCards(checked: boolean | string | number) {
+  onOpTableSelectionChange(checked ? [...opData.value] : []);
+}
+
+function isLoginCardSelected(row: LoginLogTable) {
+  return loginSelectedRows.value.some((item) => item.id === row.id);
+}
+function toggleLoginCardRow(row: LoginLogTable, checked: boolean | string | number) {
+  const next = checked
+    ? [...loginSelectedRows.value.filter((item) => item.id !== row.id), row]
+    : loginSelectedRows.value.filter((item) => item.id !== row.id);
+  onLoginTableSelectionChange(next);
+}
+function toggleLoginAllCards(checked: boolean | string | number) {
+  onLoginTableSelectionChange(checked ? [...loginData.value] : []);
+}
+
 const isNarrow = computed(() => viewportWidth.value < 1025);
 
 function responseTagType(code?: number | string): "success" | "warning" | "danger" | "info" {
@@ -676,6 +740,7 @@ function buildLoginReplaceParams(p: LoginSearchForm): Record<string, unknown> {
 
 const loginTableRef = ref<{ elTableRef?: { clearSelection: () => void } } | null>(null);
 const {
+  selectedRows: loginSelectedRows,
   selectedIds: loginSelectedIds,
   batchDeleting: loginBatchDeleting,
   onTableSelectionChange: onLoginTableSelectionChange,
