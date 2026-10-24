@@ -81,6 +81,12 @@ const connectionStatus = ref<"connected" | "connecting" | "disconnected">("disco
 const error = ref("");
 const currentSessionId = ref<string | null>(null);
 const isSidebarCollapsed = ref(false);
+const MOBILE_BREAKPOINT = 800;
+
+/** 窄屏默认收起会话侧栏，给聊天区留出空间 */
+function syncSidebarForViewport() {
+  if (window.innerWidth <= MOBILE_BREAKPOINT) isSidebarCollapsed.value = true;
+}
 const configDrawerVisible = ref(false);
 
 // Refs
@@ -347,7 +353,15 @@ const toggleSidebar = () => {
 };
 
 // ============ 生命周期 ============
-onMounted(connectWebSocket);
+onMounted(() => {
+  syncSidebarForViewport();
+  window.addEventListener("resize", syncSidebarForViewport);
+  connectWebSocket();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", syncSidebarForViewport);
+});
 onUnmounted(disconnectWebSocket);
 
 // KeepAlive 缓存切换：离开视图即断开，回到视图按需重连。
