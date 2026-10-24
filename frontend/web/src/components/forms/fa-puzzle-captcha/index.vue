@@ -265,7 +265,7 @@ defineExpose({ reset });
   overflow: hidden;
   font-size: 13px;
   color: var(--el-text-color-secondary);
-  background: var(--el-fill-color-light);
+  background: var(--el-border-color-light);
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
   touch-action: none;
@@ -273,6 +273,10 @@ defineExpose({ reset });
   &.is-dragging {
     cursor: grabbing;
   }
+}
+
+:global(html.dark) .fa-puzzle__track {
+  background: #26272f;
 }
 
 .fa-puzzle__fill {
