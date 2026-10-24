@@ -1,42 +1,55 @@
 <!-- 滑块拼图验证码：拖动图块补齐背景缺口，位置由服务端校验 -->
 <template>
   <div class="fa-puzzle" :class="{ 'is-passed': passed, 'is-loading': loading }">
-    <div class="fa-puzzle__reveal" :class="{ 'is-open': showImage }">
-      <div class="fa-puzzle__reveal-inner">
-        <div ref="areaRef" class="fa-puzzle__area">
-          <img v-if="bgImage" :src="bgImage" class="fa-puzzle__bg" alt="" draggable="false" />
-          <img
-            v-if="pieceImage"
-            :src="pieceImage"
-            class="fa-puzzle__piece"
-            alt=""
-            draggable="false"
-            :style="{ left: `${leftPx}px`, top: `${topPx}px`, width: `${pieceWidthPx}px` }"
-          />
-          <button
-            v-if="!loading"
-            type="button"
-            class="fa-puzzle__refresh"
-            :aria-label="refreshText"
-            @click="$emit('refresh')"
-          >
-            <FaSvgIcon icon="ri:refresh-line" />
-          </button>
-          <div v-if="loading" class="fa-puzzle__mask">
-            <FaSvgIcon icon="ri:loader-4-line" class="animate-spin" />
+    <Teleport to="body">
+      <Transition name="puzzle-pop">
+        <div v-if="panelOpen" class="fa-puzzle__overlay" @click.self="closePanel">
+          <div class="fa-puzzle__dialog" role="dialog" aria-modal="true">
+            <button
+              type="button"
+              class="fa-puzzle__close"
+              :aria-label="closeText"
+              @click="closePanel"
+            >
+              <FaSvgIcon icon="ri:close-line" />
+            </button>
+            <div ref="areaRef" class="fa-puzzle__area">
+              <img v-if="bgImage" :src="bgImage" class="fa-puzzle__bg" alt="" draggable="false" />
+              <img
+                v-if="pieceImage"
+                :src="pieceImage"
+                class="fa-puzzle__piece"
+                alt=""
+                draggable="false"
+                :style="{ left: `${leftPx}px`, top: `${topPx}px`, width: `${pieceWidthPx}px` }"
+              />
+              <div v-if="loading" class="fa-puzzle__mask">
+                <FaSvgIcon icon="ri:loader-4-line" class="animate-spin" />
+              </div>
+            </div>
+
+            <div
+              ref="trackRef"
+              class="fa-puzzle__track"
+              :class="{ 'is-dragging': dragging }"
+              @pointerdown.prevent="onPointerDown"
+            >
+              <div class="fa-puzzle__fill" :style="{ width: `${progress * 100}%` }" />
+              <div
+                class="fa-puzzle__handler"
+                :style="{ transform: `translateX(${handlerLeft}px)` }"
+              >
+                <FaSvgIcon :icon="passed ? 'ri:check-line' : 'ri:arrow-right-line'" />
+              </div>
+              <span class="fa-puzzle__text">{{ passed ? successText : text }}</span>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </Transition>
+    </Teleport>
 
-    <div
-      ref="trackRef"
-      class="fa-puzzle__track"
-      :class="{ 'is-dragging': dragging }"
-      @pointerdown.prevent="onPointerDown"
-    >
-      <div class="fa-puzzle__fill" :style="{ width: `${progress * 100}%` }" />
-      <div class="fa-puzzle__handler" :style="{ transform: `translateX(${handlerLeft}px)` }">
+    <div class="fa-puzzle__trigger" @pointerdown.prevent="openPanel" @click="openPanel">
+      <div class="fa-puzzle__handler">
         <FaSvgIcon :icon="passed ? 'ri:check-line' : 'ri:arrow-right-line'" />
       </div>
       <span class="fa-puzzle__text">{{ passed ? successText : text }}</span>
@@ -61,7 +74,7 @@ interface Props {
   loading?: boolean;
   text: string;
   successText: string;
-  refreshText: string;
+  closeText: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -86,8 +99,7 @@ const { width: trackWidth } = useElementSize(trackRef);
 
 const progress = ref(0);
 const dragging = ref(false);
-const showImage = ref(false);
-let hideTimer: number | undefined;
+const panelOpen = ref(false);
 const startX = ref(0);
 const startProgress = ref(0);
 
@@ -96,7 +108,14 @@ watch(
   () => {
     progress.value = 0;
     dragging.value = false;
-    showImage.value = false;
+    panelOpen.value = false;
+  }
+);
+
+watch(
+  () => props.passed,
+  (passed) => {
+    if (passed) window.setTimeout(closePanel, 700);
   }
 );
 
@@ -115,6 +134,17 @@ const handlerLeft = computed(
   () => progress.value * Math.max(0, (trackWidth.value || 300) - HANDLER)
 );
 
+function openPanel(): void {
+  if (props.loading) return;
+  panelOpen.value = true;
+}
+
+function closePanel(): void {
+  panelOpen.value = false;
+  progress.value = 0;
+  dragging.value = false;
+}
+
 function clampProgress(value: number): number {
   return Math.min(1, Math.max(0, value));
 }
@@ -122,8 +152,6 @@ function clampProgress(value: number): number {
 function onPointerDown(event: PointerEvent): void {
   if (props.passed || props.loading) return;
   dragging.value = true;
-  showImage.value = true;
-  if (hideTimer) window.clearTimeout(hideTimer);
   startX.value = event.clientX;
   startProgress.value = progress.value;
   (event.target as HTMLElement | null)?.setPointerCapture?.(event.pointerId);
@@ -144,26 +172,17 @@ function onPointerUp(): void {
   dragging.value = false;
   if (progress.value <= 0.03) {
     progress.value = 0;
-    showImage.value = false;
     return;
   }
   const max = Math.max(0, props.bgWidth - props.pieceWidth);
   emit("verify", Math.round(progress.value * max));
-  if (hideTimer) window.clearTimeout(hideTimer);
-  hideTimer = window.setTimeout(() => {
-    if (!dragging.value) showImage.value = false;
-  }, 1200);
 }
 
 function reset(): void {
   progress.value = 0;
   dragging.value = false;
-  showImage.value = false;
+  panelOpen.value = false;
 }
-
-onBeforeUnmount(() => {
-  if (hideTimer) window.clearTimeout(hideTimer);
-});
 
 defineExpose({ reset });
 </script>
@@ -177,24 +196,63 @@ defineExpose({ reset });
   user-select: none;
 }
 
-.fa-puzzle__reveal {
-  order: 2;
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.25s ease;
-}
-
-.fa-puzzle__reveal.is-open {
-  grid-template-rows: 1fr;
-}
-
-.fa-puzzle__reveal-inner {
-  min-height: 0;
+.fa-puzzle__trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 40px;
   overflow: hidden;
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  touch-action: none;
+  cursor: pointer;
+  background: var(--el-fill-color-light);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 8px;
 }
 
-.fa-puzzle__reveal.is-open .fa-puzzle__reveal-inner {
-  padding-bottom: 10px;
+.fa-puzzle__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(0 0 0 / 45%);
+  backdrop-filter: blur(2px);
+}
+
+.fa-puzzle__dialog {
+  position: relative;
+  width: min(92vw, 360px);
+  padding: 12px;
+  background: var(--default-box-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 12px;
+  box-shadow: var(--el-box-shadow-dark);
+}
+
+.fa-puzzle__close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  color: var(--el-text-color-secondary);
+  cursor: pointer;
+  background: rgb(0 0 0 / 28%);
+  border: 0;
+  border-radius: 6px;
+}
+
+.fa-puzzle__dialog .fa-puzzle__area {
+  margin-bottom: 10px;
 }
 
 .fa-puzzle__area {
@@ -202,24 +260,24 @@ defineExpose({ reset });
   width: 100%;
   aspect-ratio: 2 / 1;
   overflow: hidden;
+  background: var(--default-box-color);
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
-  background: var(--default-box-color);
 }
 
 .fa-puzzle__bg {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: fill;
   pointer-events: none;
+  object-fit: fill;
 }
 
 .fa-puzzle__piece {
   position: absolute;
   height: auto;
-  filter: drop-shadow(0 2px 6px rgb(0 0 0 / 45%));
   pointer-events: none;
+  filter: drop-shadow(0 2px 6px rgb(0 0 0 / 45%));
 }
 
 .fa-puzzle__refresh {
@@ -255,20 +313,20 @@ defineExpose({ reset });
 }
 
 .fa-puzzle__track {
-  order: 1;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  order: 1;
   width: 100%;
   height: 40px;
   overflow: hidden;
   font-size: 13px;
   color: var(--el-text-color-secondary);
-  background: #f1f1f4;
+  touch-action: none;
+  background: var(--el-fill-color-light);
   border: 1px solid var(--el-border-color-light);
   border-radius: 8px;
-  touch-action: none;
 
   &.is-dragging {
     cursor: grabbing;
@@ -304,6 +362,12 @@ defineExpose({ reset });
   box-shadow: none;
 }
 
+.fa-puzzle__trigger .fa-puzzle__handler {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .fa-puzzle__text {
   position: relative;
   z-index: 1;
@@ -317,10 +381,10 @@ defineExpose({ reset });
     var(--el-text-color-secondary) 60%,
     var(--el-text-color-secondary) 100%
   );
-  background-size: 200% 100%;
   background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
   animation: puzzle-shimmer 2.2s cubic-bezier(0, 0.2, 1, 1) infinite;
+  -webkit-text-fill-color: transparent;
 }
 
 .is-passed {

@@ -82,7 +82,7 @@
               :loading="codeLoading"
               :text="$t('login.puzzleText')"
               :success-text="$t('login.sliderSuccessText')"
-              :refresh-text="$t('login.puzzleRefresh')"
+              :close-text="$t('common.closeAction')"
               @verify="(pos) => emit('sliderPass', pos)"
               @refresh="emit('getCaptcha')"
             />
