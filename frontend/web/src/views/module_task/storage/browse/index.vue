@@ -1,19 +1,62 @@
 <!-- 文件浏览：多节点标签 + 上传/下载/新建目录/复制/移动/重命名/分享/删除（源项目风格，对接 /storage/browse） -->
 <template>
-  <div class="flex h-full">
+  <div class="flex h-full gap-3">
+    <!-- 左：节点栏（参考 FastHub：节点列表在左，工作区标签在右） -->
+    <aside class="browse-node-sidebar fa-card flex min-h-0 shrink-0 flex-col">
+      <div class="browse-node-header">
+        <span class="fa-panel-title">节点</span>
+        <ElTooltip content="打开节点" placement="top">
+          <button
+            type="button"
+            class="browse-node-add"
+            aria-label="打开节点"
+            @click="openAddDialog"
+          >
+            <ElIcon><Plus /></ElIcon>
+          </button>
+        </ElTooltip>
+      </div>
+      <ElScrollbar class="min-h-0 flex-1">
+        <div v-if="!nodes.length" class="browse-node-empty">暂无节点</div>
+        <button
+          v-for="node in nodes"
+          :key="node.id"
+          type="button"
+          class="browse-node-item"
+          :class="{ 'is-active': node.id === activeId, 'is-open': isTabOpen(node.id) }"
+          :title="`${node.name}（${node.protocol}）`"
+          @click="createTab(node)"
+        >
+          <span
+            class="tab-status"
+            :class="`status-${node.id === activeId ? activeTab?.status || 'ok' : 'idle'}`"
+          />
+          <span class="browse-node-name">{{ node.name }}</span>
+          <span
+            v-if="isTabOpen(node.id) && node.protocol !== 'local'"
+            class="browse-node-close"
+            role="button"
+            aria-label="关闭节点"
+            @click.stop="closeTab(node.id!)"
+          >
+            <ElIcon><Close /></ElIcon>
+          </span>
+        </button>
+      </ElScrollbar>
+    </aside>
+
     <el-card shadow="hover" class="fa-card browse-card flex min-h-0 flex-1 flex-col">
-      <!-- 多节点浏览：el-tabs 左侧标签（状态点+文字靠左、关闭按钮右端对齐，参考 data-transfer/web 已验证实现） -->
+      <!-- 右侧工作区：已打开节点用顶部标签切换（节点入口在左侧栏） -->
       <el-tabs
         v-if="tabs.length"
         :model-value="activeId ?? undefined"
-        tab-position="left"
+        tab-position="top"
         class="min-h-0 flex-1"
         :addable="true"
-        :editable="true"
+        @tab-add="openAddDialog"
         @update:model-value="(v) => (activeId = v as number)"
         @tab-change="onElTabChange"
         @tab-remove="(name) => closeTab(Number(name))"
-        @tab-add="openAddDialog"
       >
         <el-tab-pane
           v-for="tab in orderedTabs"
@@ -37,7 +80,7 @@
           <div class="flex h-full flex-col px-4 py-3">
             <template v-if="activeTab">
               <!-- 行1：后退 / 前进 / 路径地址栏 / 刷新 -->
-              <div class="mb-2 flex items-center gap-2">
+              <div class="mb-2 flex flex-wrap items-center gap-2">
                 <el-tooltip content="后退" placement="top">
                   <el-button size="small" :disabled="!canBack" @click="goBack">
                     <el-icon><ArrowLeft /></el-icon>
@@ -602,6 +645,7 @@ import {
   CopyDocument,
   Delete,
   Document,
+  Close,
   Download,
   EditPen,
   Folder,
@@ -1737,45 +1781,116 @@ onMounted(async () => {
   height: 100%;
 }
 
-/* 左侧节点标签固定宽度：避免节点名长短变化时挤动右侧文件区 */
-.browse-card :deep(.el-tabs--left > .el-tabs__header.is-left) {
-  flex-shrink: 0;
-  width: 190px;
+/* 顶部工作区标签 */
+.browse-card :deep(.el-tabs__header) {
+  margin: 0 0 6px;
+  padding: 0 4px;
 }
 
-/* 节点标签内容左对齐：状态点 + 文字靠左，关闭按钮仍靠右 */
-.browse-card :deep(.el-tabs--left .el-tabs__item) {
-  justify-content: flex-start;
-  padding-right: 8px;
-  padding-left: 12px;
-}
-.browse-card :deep(.el-tabs--left .el-tabs__header.is-left) {
-  align-items: stretch;
-  justify-content: flex-start;
-}
-
-.browse-card :deep(.el-tabs--left .el-tabs__nav) {
-  width: 100%;
-}
-
-.browse-card :deep(.el-tabs--left .el-tabs__item) {
-  width: 100%;
-}
-
-.browse-card :deep(.el-tabs--left .el-tabs__item > span) {
-  flex: 1;
-  min-width: 0;
-}
-
-.browse-card :deep(.el-tabs--left .el-tabs__content) {
+.browse-card :deep(.el-tabs__content) {
   flex: 1;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
 }
 
-.browse-card :deep(.el-tabs--left .el-tabs__content > .el-tab-pane) {
+.browse-card :deep(.el-tabs__content > .el-tab-pane) {
   height: 100%;
+}
+
+/* 左侧节点栏 */
+.browse-node-sidebar {
+  width: 216px;
+  padding: 10px 8px;
+}
+
+@media (width <= 800px) {
+  .browse-node-sidebar {
+    display: none;
+  }
+}
+
+.browse-node-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 8px;
+}
+
+.browse-node-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--el-text-color-regular);
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: var(--fa-radius-xs, 6px);
+}
+
+.browse-node-add:hover {
+  color: var(--el-color-primary);
+  background: var(--el-fill-color-light);
+}
+
+.browse-node-empty {
+  padding: 16px 8px;
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+}
+
+.browse-node-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  padding: 7px 8px;
+  font-size: 13px;
+  color: var(--el-text-color-regular);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: var(--fa-radius-sm, 8px);
+}
+
+.browse-node-item:hover {
+  background: var(--el-fill-color-light);
+}
+
+.browse-node-item.is-active {
+  color: var(--el-color-primary);
+  background: var(--el-color-primary-light-9);
+}
+
+.browse-node-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browse-node-close {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--el-text-color-secondary);
+  opacity: 0;
+}
+
+.browse-node-item:hover .browse-node-close,
+.browse-node-item.is-active .browse-node-close {
+  opacity: 1;
+}
+
+.browse-node-close:hover {
+  color: var(--el-color-danger);
 }
 
 /* 节点状态点（颜色 + 闪烁动画，原子类无法表达） */
