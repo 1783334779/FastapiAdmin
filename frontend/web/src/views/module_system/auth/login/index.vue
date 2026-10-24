@@ -66,6 +66,7 @@
                           @forget="setAuthPanel('forget')"
                           @register="setAuthPanel('register')"
                           @oauth="handleOAuthLogin"
+                          @slider-pass="handleSliderPass"
                         />
                       </template>
 
@@ -444,6 +445,12 @@ const captchaState = reactive<CaptchaInfo>({
   enable: false,
   key: "",
   img_base: "",
+  piece_base: "",
+  piece_y: 0,
+  piece_width: 55,
+  piece_height: 48,
+  bg_width: 320,
+  bg_height: 160,
 });
 
 const rules = computed<FormRules>(() => {
@@ -484,7 +491,13 @@ async function getCaptcha() {
     const response = await AuthAPI.getCaptcha();
     const data = response.data.data;
     loginForm.captcha_key = data.key;
-    captchaState.img_base = data.img_base;
+    captchaState.img_base = data.img_base ?? "";
+    captchaState.piece_base = data.piece_base ?? "";
+    captchaState.piece_y = data.piece_y ?? 0;
+    captchaState.piece_width = data.piece_width ?? 55;
+    captchaState.piece_height = data.piece_height ?? 48;
+    captchaState.bg_width = data.bg_width ?? 320;
+    captchaState.bg_height = data.bg_height ?? 160;
     captchaState.enable = data.enable;
     // 重置滑块状态
     isPassing.value = false;
@@ -497,21 +510,18 @@ async function getCaptcha() {
   }
 }
 
-/** 滑块验证完成后通知后端标记 */
-async function handleSliderPass(passed: boolean) {
-  if (!passed || !loginForm.captcha_key) return;
+/** 拼图滑块释放后交给后端校验位置 */
+async function handleSliderPass(position: number) {
+  if (!loginForm.captcha_key) return;
   try {
-    await AuthAPI.sliderComplete(loginForm.captcha_key);
+    await AuthAPI.sliderComplete(loginForm.captcha_key, position);
+    isPassing.value = true;
   } catch {
     isPassing.value = false;
+    accountFormRef.value?.resetDragVerify?.();
     await getCaptcha();
   }
 }
-
-/** 监听滑块通过状态 */
-watch(isPassing, (val) => {
-  handleSliderPass(val);
-});
 
 function resolveRedirectTarget(query: LocationQuery): RouteLocationRaw {
   const defaultPath = "/";

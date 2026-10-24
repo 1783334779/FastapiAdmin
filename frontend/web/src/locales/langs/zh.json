@@ -744,7 +744,9 @@
       "left": "居左",
       "center": "居中",
       "right": "居右"
-    }
+    },
+    "puzzleText": "按住滑块，拖动完成拼图",
+    "puzzleRefresh": "换一张"
   },
   "loginForm": {
     "remember": "记住我"

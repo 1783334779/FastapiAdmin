@@ -62,7 +62,7 @@
       @opened="handleDialogOpened"
       size="xl"
     >
-      <div class="flex h-[500px] gap-4">
+      <div class="flex h-[min(500px,60vh)] min-h-0 gap-4">
         <div class="h-full w-[300px] shrink-0">
           <ElScrollbar :style="'height: 100%'">
             <FaForm
