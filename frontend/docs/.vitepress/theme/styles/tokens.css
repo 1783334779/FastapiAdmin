@@ -116,13 +116,7 @@
 
   /* 标题渐变(亮色) */
   --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: linear-gradient(
-    135deg,
-    #4F6BFF 0%,
-    #4F6BFF 30%,
-    #6D5BFF 60%,
-    #8FA4FF 100%
-  );
+  --vp-home-hero-name-background: linear-gradient(135deg, #4F6BFF 0%, #6D5BFF 100%);
 
   /* Hero 图标背景 */
   --vp-home-hero-image-background-image: linear-gradient(
