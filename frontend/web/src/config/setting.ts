@@ -121,7 +121,7 @@ export const SETTING_DEFAULT_CONFIG = {
   /** 是否显示设置引导 */
   showSettingGuide: true,
   /** 是否显示节日文本 */
-  showFestivalText: false,
+  showFestivalText: true,
   /** 是否显示水印（新版本字段） */
   watermarkVisible: false,
   /** 是否自动关闭 */

@@ -9,8 +9,6 @@
         height="40px"
         :speed="55"
         :always-scroll="true"
-        show-close
-        @close="closeFestivalScroll"
       />
     </Transition>
   </div>
@@ -18,16 +16,12 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { storeToRefs } from "pinia";
-import { useSettingsStore } from "@stores";
 import { useCeremony } from "@/hooks/core/useCeremony";
 import { WEB_LINKS } from "@utils";
 
 defineOptions({ name: "FaFestivalTextScroll" });
 
-const settingStore = useSettingsStore();
-const { showFestivalText } = storeToRefs(settingStore);
-const { currentFestivalData, closeFestivalScroll } = useCeremony();
+const { currentFestivalData } = useCeremony();
 
 function versionLabel(): string {
   const v = String(import.meta.env.VITE_VERSION ?? "").trim();
@@ -41,10 +35,8 @@ const festivalScrollDisplayHtml = computed(() => {
   return raw.replace(/\{\{version\}\}/g, ver).replace(/\{\{introduceUrl\}\}/g, WEB_LINKS.INTRODUCE);
 });
 
+/** 通告横幅常驻：只要有通告文本就展示，不提供关闭入口 */
 const showFestivalStrip = computed(
-  () =>
-    showFestivalText.value &&
-    !!currentFestivalData.value?.scrollText &&
-    currentFestivalData.value.scrollText !== ""
+  () => !!currentFestivalData.value?.scrollText && currentFestivalData.value.scrollText !== ""
 );
 </script>

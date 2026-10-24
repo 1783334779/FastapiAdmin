@@ -4,7 +4,7 @@
     <a class="fa-skip-link" href="#app-content">跳到主内容</a>
     <div id="app-content-header">
       <!-- 节日滚动 -->
-      <FaFestivalTextScroll v-if="isHomePage" />
+      <FaFestivalTextScroll />
 
       <!-- 路由信息调试 -->
       <div
@@ -81,7 +81,6 @@ const route = useRoute();
 const router = useRouter();
 
 /** 常驻宣传条只在首页出现 */
-const isHomePage = computed(() => route.name === "Home" || route.path === "/home");
 
 /**
  * 解析 path 在本出口（depth=1）实际渲染的组件名。
