@@ -699,9 +699,17 @@ html.dark .el-card {
     }
   }
 
-  // 单元格垂直居中
+  // 单元格垂直居中；按表格尺寸提供密度档位
   .el-table__cell {
     padding: 8px 0 !important;
+  }
+
+  &.el-table--small .el-table__cell {
+    padding: 5px 0 !important;
+  }
+
+  &.el-table--large .el-table__cell {
+    padding: 12px 0 !important;
   }
 
   // 空状态卡片样式

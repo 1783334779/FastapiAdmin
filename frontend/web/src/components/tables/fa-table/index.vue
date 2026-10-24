@@ -410,7 +410,7 @@ const mergedTableProps = computed(() => {
     height: height.value,
     stripe: stripe.value,
     border: border.value,
-    size: hasExplicitTableProp("size") ? size.value : undefined,
+    size: size.value,
     headerCellStyle: headerCellStyle.value,
     highlightCurrentRow: highlightCurrentRow.value,
     // Element Plus 默认值为 true，未显式传入时不应被 FaTable 覆盖成 false。
