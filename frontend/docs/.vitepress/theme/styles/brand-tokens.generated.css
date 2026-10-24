@@ -5,4 +5,5 @@
   --fa-brand-gradient: linear-gradient(135deg, #4F6BFF 0%, #6D5BFF 100%);
   --vp-brand-gradient: linear-gradient(135deg, #4F6BFF 0%, #6D5BFF 100%);
   --fa-border: #E6E8EC;
+  --fa-shadow-card: 0 1px 2px rgb(16 24 40 / 4%);
 }

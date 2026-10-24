@@ -3,7 +3,6 @@
   --fa-brand-blue: #4F6BFF;
   --fa-brand-violet: #6D5BFF;
   --fa-brand-gradient: linear-gradient(135deg, #4F6BFF 0%, #6D5BFF 100%);
-
   --fa-radius-xs: 6px;
   --fa-radius-sm: 8px;
   --fa-radius-md: 12px;
@@ -21,8 +20,26 @@
   --fa-font-lg: 16px;
   --fa-font-xl: 20px;
   --fa-font-xxl: 24px;
+  --fa-control-h-sm: 24px;
+  --fa-control-h-md: 32px;
+  --fa-control-h-lg: 40px;
+  --fa-table-row-h: 40px;
+  --fa-table-header-h: 44px;
+  --fa-page-padding: 16px;
+  --fa-header-h: 56px;
+  --fa-shadow-card: 0 1px 2px rgb(16 24 40 / 4%);
+  --fa-shadow-pop: 0 4px 16px rgb(16 24 40 / 8%), 0 2px 8px rgb(16 24 40 / 4%);
+  --fa-shadow-modal: 0 24px 64px rgb(16 24 40 / 18%);
 }
 
-.dark {
-  --fa-brand-ink: #AEB6C6;
+html.dark {
+  --fa-surface: #15181E;
+  --fa-surface-2: #191D24;
+  --fa-border: #262B34;
+  --fa-text-1: #E5E7EB;
+  --fa-text-2: #A3AAB8;
+  --fa-text-3: #8B93A1;
+  --fa-shadow-card: 0 1px 2px rgb(0 0 0 / 35%);
+  --fa-shadow-pop: 0 4px 16px rgb(0 0 0 / 35%), 0 2px 8px rgb(0 0 0 / 25%);
+  --fa-shadow-modal: 0 24px 64px rgb(0 0 0 / 45%);
 }

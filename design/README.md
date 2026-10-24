@@ -34,6 +34,11 @@ node scripts/design-tokens/generate.mjs
 | space | `4 / 8 / 12 / 16 / 20 / 24` |
 | font | `12 / 13 / 14 / 16 / 20 / 24` |
 | breakpoint | `800 / 992 / 1280` |
+| control | `24 / 32 / 40`（sm/md/lg 控件高） |
+| table | 行高 40 / 表头 44 |
+| layout | 页面内边距 16 / 顶栏 56 |
+| shadow | card / pop / modal（含深色版本） |
+| dark | surface `#15181E` / `#191D24`，border `#262B34`，text `#E5E7EB / #A3AAB8 / #8B93A1` |
 
 ## 规则
 
