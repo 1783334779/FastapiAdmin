@@ -875,7 +875,7 @@ const { columnChecks, columns } = useTableColumns<MenuTable>(
     {
       prop: "name",
       label: "菜单名称",
-      minWidth: 220,
+      minWidth: 180,
       showOverflowTooltip: true,
       formatter: (row: MenuTable) => {
         const isButton = row.type === MenuTypeEnum.BUTTON;
@@ -900,7 +900,7 @@ const { columnChecks, columns } = useTableColumns<MenuTable>(
       },
     },
     { prop: "title", label: "菜单标题", minWidth: 120, showOverflowTooltip: true },
-    { prop: "permission", label: "权限标识", minWidth: 160, showOverflowTooltip: true },
+    { prop: "permission", label: "权限标识", minWidth: 130, showOverflowTooltip: true },
     {
       prop: "scope",
       label: "终端",
@@ -1070,7 +1070,7 @@ const { columnChecks, columns } = useTableColumns<MenuTable>(
     {
       prop: "operation",
       label: "操作",
-      width: 220,
+      width: 200,
       fixed: "right",
       align: "center",
       formatter: (row: MenuTable) => formatMenuOperationCell(row, opCtx),
