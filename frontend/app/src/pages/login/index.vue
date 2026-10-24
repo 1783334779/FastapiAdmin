@@ -521,7 +521,9 @@ async function handleOAuth(provider: OAuthProvider) {
   --wot-slide-verify-button-color: var(--wot-primary-6, #1C64FD);
   --wot-slide-verify-button-shadow: 0 4rpx 12rpx rgba(15, 23, 42, 0.12);
   /* 与输入框呼应的边框 + 浮层阴影 */
+  overflow: hidden;
   border: 2rpx solid var(--wot-primary-2, var(--wot-border-main, #EAECF0));
+  border-radius: var(--fa-radius-sm, 16rpx);
   box-shadow: 0 4rpx 16rpx rgba(15, 23, 42, 0.05);
 }
 
