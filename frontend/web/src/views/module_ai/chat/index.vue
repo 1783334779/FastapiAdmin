@@ -406,6 +406,16 @@ onDeactivated(disconnectWebSocket);
   overflow: hidden;
 }
 
+@media (width <= 800px) {
+  .chat-shell {
+    gap: 0;
+  }
+
+  .sidebar-container {
+    display: none;
+  }
+}
+
 .chat-footer {
   height: auto;
   min-height: 80px;
