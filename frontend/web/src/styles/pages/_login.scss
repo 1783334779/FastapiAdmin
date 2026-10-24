@@ -241,9 +241,11 @@ html.dark .login-page-footer--floating-layout {
   }
 }
 
-// 登录页下拉选择框桌面端高度
-.el-select.custom-height .el-select__wrapper {
-  height: 40px;
+// 登录页下拉选择框：仅桌面端固定 40px，移动端跟随 ConfigProvider small 与输入框一致
+@media (width >= 768px) {
+  .el-select.custom-height .el-select__wrapper {
+    height: 40px;
+  }
 }
 
 .login-page-panel {
@@ -519,4 +521,3 @@ html.dark .oauth-social-btn:hover {
     }
   }
 }
-
