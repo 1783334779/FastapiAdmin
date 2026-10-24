@@ -80,9 +80,11 @@
             />
           </div>
           <div class="grid grid-cols-2 gap-x-3 gap-y-1 mt-2 text-xs text-g-600">
-            <span class="truncate">编码：{{ row.code }}</span>
+            <span class="truncate">{{ $t("common.table.code") }}：{{ row.code }}</span>
             <span>{{ $t("common.sort") }}：{{ row.order ?? "—" }}</span>
-            <span class="col-span-2 truncate">上级：{{ row.parent_name || "—" }}</span>
+            <span class="col-span-2 truncate"
+              >{{ $t("common.parent") }}：{{ row.parent_name || "—" }}</span
+            >
             <span class="col-span-2"
               >{{ $t("common.create") }}：{{ formatDateTime(row.created_time) }}</span
             >

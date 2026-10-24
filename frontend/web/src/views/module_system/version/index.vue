@@ -184,7 +184,7 @@
         </ElRadio>
       </ElRadioGroup>
       <template #footer>
-        <ElButton @click="statusDialog.visible = false">取消</ElButton>
+        <ElButton @click="statusDialog.visible = false">{{ $t("common.cancel") }}</ElButton>
         <ElButton type="primary" :loading="statusDialog.loading" @click="confirmChangeStatus">
           确定
         </ElButton>

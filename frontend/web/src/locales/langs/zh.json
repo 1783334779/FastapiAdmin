@@ -129,7 +129,7 @@
     "gender": "性别",
     "status": "状态",
     "publish": "发布",
-    "source": "来源",
+    "source": "源",
     "target": "目标",
     "dataScope": "数据权限",
     "addNew": "新增",
@@ -268,7 +268,18 @@
     "search": "搜索",
     "uploadExcel": "上传 Excel",
     "clearData": "清除数据",
-    "chooseFile": "选择文件"
+    "chooseFile": "选择文件",
+    "parent": "上级",
+    "time": "时间",
+    "addNotice": "新增公告",
+    "transferList": "传输任务列表",
+    "newTransfer": "新建传输任务",
+    "copy": "复制",
+    "dragUpload": "将文件拖到此处，或",
+    "clickSelect": "点击选择文件",
+    "message": "提示消息",
+    "dictSelectType": "请在左侧选择一个字典类型",
+    "dictSelectDesc": "选择后将在右侧展示该字典的数据列表"
   },
   "search": {
     "placeholder": "搜索页面",

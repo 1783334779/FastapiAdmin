@@ -24,7 +24,7 @@
       >
         <template #left>
           <div class="flex items-center gap-2.5">
-            <span class="text-base font-semibold">传输任务列表</span>
+            <span class="text-base font-semibold">{{ $t("common.transferList") }}</span>
             <span
               class="inline-flex items-center gap-1.25 text-xs"
               :class="sseConnected ? 'text-(--el-color-success)' : 'text-(--el-color-info)'"
@@ -38,7 +38,8 @@
               v-hasPerm="['module_task:storage:transfer:create']"
               type="primary"
               @click="openCreate"
-              >新建传输任务</ElButton
+              >{{ $t("common.newTransfer") }}</ElButton
+            >
             >
           </div>
         </template>
@@ -97,7 +98,9 @@
             {{ row.error_msg }}
           </div>
           <div class="mobile-card-actions">
-            <ElButton link type="primary" size="small" @click="openDetail(row)"> 详情 </ElButton>
+            <ElButton link type="primary" size="small" @click="openDetail(row)">
+              {{ $t("common.detail") }}
+            </ElButton>
             <ElButton
               v-if="row.status === 'running' || row.status === 'pending'"
               link
@@ -107,7 +110,9 @@
             >
               取消
             </ElButton>
-            <ElButton link type="danger" size="small" @click="removeTask(row)">删除</ElButton>
+            <ElButton link type="danger" size="small" @click="removeTask(row)">{{
+              $t("common.delete")
+            }}</ElButton>
           </div>
         </div>
         <ElPagination
@@ -136,7 +141,9 @@
         <template #source="{ row }">
           <div class="min-w-0">
             <div>
-              <ElTag v-if="row.source_type === 'local'" size="small" type="success">本地</ElTag>
+              <ElTag v-if="row.source_type === 'local'" size="small" type="success">{{
+                $t("common.local")
+              }}</ElTag>
               <ElTag v-else size="small" type="info">{{
                 protoText(sourceById(row.source_id))
               }}</ElTag>
@@ -223,7 +230,10 @@
             title="暂无传输任务"
             description="创建第一个传输任务，把文件从源存储同步到目标存储"
           >
-            <ElButton type="primary" size="small" @click="openCreate">新建传输任务</ElButton>
+            <ElButton type="primary" size="small" @click="openCreate">{{
+              $t("common.newTransfer")
+            }}</ElButton
+            >>
           </FaEmptyState>
         </template>
       </FaTable>
@@ -280,7 +290,9 @@
             :on-remove="onFileRemove"
             style="width: 100%"
           >
-            <div class="el-upload__text">将文件拖到此处，或 <em>点击选择文件</em></div>
+            <div class="el-upload__text">
+              {{ $t("common.dragUpload") }} <em>{{ $t("common.clickSelect") }}</em>
+            </div>
           </ElUpload>
         </template>
 
@@ -321,7 +333,9 @@
                     ? '目标节点未配置默认源目录，请填写目标路径'
                     : '目标路径（对象存储填 Key 前缀）'"
               />
-              <ElButton link type="danger" @click="removeTarget(idx)">删除</ElButton>
+              <ElButton link type="danger" @click="removeTarget(idx)">{{
+                $t("common.delete")
+              }}</ElButton>
             </div>
             <div class="flex items-center gap-3">
               <ElButton type="primary" plain size="small" @click="addTarget">＋ 添加目标</ElButton>
@@ -404,7 +418,7 @@
               <div class="mt-1.5 break-all text-xs text-(--el-text-color-regular)">
                 <span
                   class="mr-1.5 inline-block rounded-[3px] bg-(--el-color-info) px-1.25 py-0.5 text-[11px] leading-none text-white"
-                  >源</span
+                  >{{ $t("common.source") }}</span
                 >{{ sourceName(step.source_id) }} · {{ step.source_path || "—" }}
               </div>
               <div

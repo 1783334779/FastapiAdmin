@@ -61,9 +61,13 @@
               </div>
               <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-3 text-xs text-g-600">
                 <span class="truncate">IP：{{ row.request_ip || "—" }}</span>
-                <span>处理：{{ row.process_time ?? "—" }}</span>
-                <span class="col-span-2 truncate">描述：{{ row.description || "—" }}</span>
-                <span class="col-span-2">时间：{{ formatDateTime(row.created_time) }}</span>
+                <span>{{ $t("common.col.processTime") }}：{{ row.process_time ?? "—" }}</span>
+                <span class="col-span-2 truncate"
+                  >{{ $t("common.table.description") }}：{{ row.description || "—" }}</span
+                >
+                <span class="col-span-2"
+                  >{{ $t("common.time") }}：{{ formatDateTime(row.created_time) }}</span
+                >
               </div>
               <div class="mobile-card-actions">
                 <ElButton
@@ -208,11 +212,19 @@
                 />
               </div>
               <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-3 text-xs text-g-600">
-                <span class="truncate">地点：{{ row.login_location || "—" }}</span>
-                <span class="truncate">系统：{{ row.request_os || "—" }}</span>
-                <span class="col-span-2 truncate">浏览器：{{ row.request_browser || "—" }}</span>
-                <span class="col-span-2 truncate">提示：{{ row.msg || "—" }}</span>
-                <span class="col-span-2">时间：{{ formatDateTime(row.created_time) }}</span>
+                <span class="truncate"
+                  >{{ $t("common.col.loginLocation") }}：{{ row.login_location || "—" }}</span
+                >
+                <span class="truncate">{{ $t("common.col.os") }}：{{ row.request_os || "—" }}</span>
+                <span class="col-span-2 truncate"
+                  >{{ $t("common.col.browser") }}：{{ row.request_browser || "—" }}</span
+                >
+                <span class="col-span-2 truncate"
+                  >{{ $t("common.message") }}：{{ row.msg || "—" }}</span
+                >
+                <span class="col-span-2"
+                  >{{ $t("common.time") }}：{{ formatDateTime(row.created_time) }}</span
+                >
               </div>
               <div class="mobile-card-actions">
                 <ElButton

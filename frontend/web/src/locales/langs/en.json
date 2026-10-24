@@ -268,7 +268,18 @@
     "search": "Search",
     "uploadExcel": "Upload Excel",
     "clearData": "Clear data",
-    "chooseFile": "Choose file"
+    "chooseFile": "Choose file",
+    "parent": "Parent",
+    "time": "Time",
+    "addNotice": "New notice",
+    "transferList": "Transfer tasks",
+    "newTransfer": "New transfer task",
+    "copy": "Copy",
+    "dragUpload": "Drop files here, or",
+    "clickSelect": "click to select",
+    "message": "Message",
+    "dictSelectType": "Select a dictionary type on the left",
+    "dictSelectDesc": "Its data will be shown on the right"
   },
   "search": {
     "placeholder": "Search page",

@@ -23,8 +23,8 @@
           <line x1="8" y1="13" x2="14" y2="13" />
         </svg>
       </div>
-      <p class="text-sm">请在左侧选择一个字典类型</p>
-      <p class="text-xs mt-1 opacity-50">选择后将在右侧展示该字典的数据列表</p>
+      <p class="text-sm">{{ $t("common.dictSelectType") }}</p>
+      <p class="text-xs mt-1 opacity-50">{{ $t("common.dictSelectDesc") }}</p>
     </div>
     <template v-else>
       <ElCard class="fa-table-card" :style="{ 'margin-top': '0' }">

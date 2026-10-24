@@ -82,7 +82,9 @@
           <div class="mt-2 text-xs text-g-600">
             {{ $t("common.create") }}：{{ formatDateTime(row.created_time) }}
           </div>
-          <div class="mt-1 text-xs text-g-600">更新：{{ formatDateTime(row.updated_time) }}</div>
+          <div class="mt-1 text-xs text-g-600">
+            {{ $t("common.update") }}：{{ formatDateTime(row.updated_time) }}
+          </div>
           <div class="mobile-card-actions">
             <ElButton link type="primary" size="small" @click="handleOpenDialog('detail', row.id!)">
               {{ $t("common.detail") }}
@@ -127,7 +129,9 @@
             title="暂无公告"
             description="发布第一条系统公告，通知到所有用户"
           >
-            <ElButton type="primary" size="small" @click="handleAdd">新增公告</ElButton>
+            <ElButton type="primary" size="small" @click="handleAdd">{{
+              $t("common.addNotice")
+            }}</ElButton>
           </FaEmptyState>
         </template>
       </FaTable>
@@ -184,8 +188,8 @@
         >
           <template #status>
             <ElRadioGroup v-model="formData.status">
-              <ElRadio :value="0">启用</ElRadio>
-              <ElRadio :value="1">停用</ElRadio>
+              <ElRadio :value="0">{{ $t("common.enabled") }}</ElRadio>
+              <ElRadio :value="1">{{ $t("common.disabled") }}</ElRadio>
             </ElRadioGroup>
           </template>
           <template #notice_content>
