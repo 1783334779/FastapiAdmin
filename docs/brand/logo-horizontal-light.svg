@@ -1,0 +1,17 @@
+<svg width="560" height="120" viewBox="0 0 560 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(0 0) scale(0.5)">
+    <rect width="240" height="240" rx="56" fill="url(#fa-brand-h)"/>
+    <path d="M240 0V150L90 0H240Z" fill="#FFFFFF" fill-opacity="0.14"/>
+    <g fill="#FFFFFF">
+      <rect x="62" y="52" width="40" height="136" rx="12"/>
+      <path d="M74 52H170L194 92H74C67.373 92 62 86.627 62 80V64C62 57.373 67.373 52 74 52Z"/>
+      <path d="M74 104H138L156 138H74C67.373 138 62 132.627 62 126V116C62 109.373 67.373 104 74 104Z"/>
+    </g>
+  </g>
+  <defs>
+    <linearGradient id="fa-brand-h" x1="20" y1="12" x2="222" y2="232" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5B7CFF"/><stop offset="0.52" stop-color="#5A5BFF"/><stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+  <text x="150" y="73" font-family="Inter, 'SF Pro Display', 'Segoe UI', 'PingFang SC', sans-serif" font-size="40" font-weight="700" letter-spacing="-1" fill="#141824">Fastapi<tspan font-weight="400" fill="#5B6472">Admin</tspan></text>
+</svg>
