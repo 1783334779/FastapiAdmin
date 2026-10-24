@@ -317,9 +317,9 @@ async function handleOAuth(provider: OAuthProvider) {
 
         <!-- Submit -->
         <wd-button
+          class="login-submit"
           type="primary"
           :loading="loading"
-          round
           block
           @click="handleSubmit"
         >
@@ -449,11 +449,11 @@ async function handleOAuth(provider: OAuthProvider) {
 .login-card {
   width: 100%;
   /* 亮色下默认带主题色最浅阶，避免一片纯白；--card-bg-color 可被外部覆盖 */
-  background: var(--card-bg-color, var(--wot-primary-1, #FFFFFF));
-  border-radius: var(--radius-xl, 32rpx);
-  padding: 28rpx 36rpx;
-  /* 边框跟随主题色浅阶，替代中性灰，让卡片更有主题感 */
-  border: 2rpx solid var(--border-color, var(--wot-primary-2, #EAECF0));
+  background: var(--card-bg-color, var(--wot-bg-filled-content, #FFFFFF));
+  border-radius: var(--fa-radius-md, 24rpx);
+  padding: 32rpx;
+  /* 与 Web 卡片一致：中性描边，不跟随主题色 */
+  border: 2rpx solid var(--fa-border, #E6E8EC);
   box-shadow: var(--shadow-md, 0 8rpx 32rpx rgba(15, 23, 42, 0.04));
   margin-bottom: 12rpx;
   flex-shrink: 0;
@@ -479,9 +479,17 @@ async function handleOAuth(provider: OAuthProvider) {
   }
 }
 
+.login-submit :deep(.wd-button) {
+  border-radius: var(--fa-radius-sm, 16rpx);
+}
+
+.login-submit {
+  border-radius: var(--fa-radius-sm, 16rpx);
+}
+
 /* 输入框微调 — 圆角加大 + 主题色边框 + 轻阴影，从"方方正正"变"圆润悬浮" */
 :deep(.wd-input) {
-  border-radius: 24rpx;
+  border-radius: var(--fa-radius-sm, 16rpx);
   /* 亮色下主题色浅阶边框与卡片边框呼应，白色底在淡色卡片上形成浮层 */
   border: 2rpx solid var(--wot-primary-2, var(--wot-border-main, #EAECF0));
   box-shadow: 0 4rpx 16rpx rgba(15, 23, 42, 0.05);
