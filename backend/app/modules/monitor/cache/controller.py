@@ -41,7 +41,7 @@ async def get_monitor_cache_key_controller(cache_name: Annotated[str, Path(descr
     return SuccessResponse(data=result, msg=f"获取缓存{cache_name}的键名列表成功")
 
 
-@CacheRouter.get("/get/value/{cache_name}/{cache_key}", summary="获取缓存值", response_model=ResponseSchema[CacheInfoSchema], dependencies=[Security(AuthPermission(["module_monitor:cache:query"]))])
+@CacheRouter.get("/get/value/{cache_name}/{cache_key}", summary="获取缓存值", response_model=ResponseSchema[CacheInfoSchema], dependencies=[Security(AuthPermission(["module_monitor:cache:detail"]))])
 async def get_monitor_cache_value_controller(
     cache_name: Annotated[str, Path(description="缓存名称")],
     cache_key: Annotated[str, Path(description="缓存键名")],
@@ -74,7 +74,9 @@ async def clear_monitor_cache_all_controller(
 # ── Redis 通用键空间浏览（只读）───────────────────────────────────────
 
 
-@CacheRouter.get("/redis/databases", summary="Redis 逻辑库列表（只读）", response_model=ResponseSchema[list[RedisDatabaseSchema]], dependencies=[Security(AuthPermission(["module_monitor:cache:query"]))])
+@CacheRouter.get(
+    "/redis/databases", summary="Redis 逻辑库列表（只读）", response_model=ResponseSchema[list[RedisDatabaseSchema]], dependencies=[Security(AuthPermission(["module_monitor:cache:query"]))]
+)
 async def list_redis_databases_controller(
     redis: Annotated[Redis, Depends(redis_getter)],
 ) -> JSONResponse:
@@ -90,13 +92,13 @@ async def scan_redis_keys_controller(
     cursor: Annotated[int, Query(ge=0, description="SCAN 游标，首页传 0")] = 0,
     count: Annotated[int, Query(ge=1, le=500, description="单页数量提示")] = 100,
 ) -> JSONResponse:
-    result: RedisKeyPageSchema = await RedisBrowserService.scan_keys(
-        redis=redis, db=db, pattern=pattern, cursor=cursor, count=count
-    )
+    result: RedisKeyPageSchema = await RedisBrowserService.scan_keys(redis=redis, db=db, pattern=pattern, cursor=cursor, count=count)
     return SuccessResponse(data=result, msg="扫描键成功")
 
 
-@CacheRouter.get("/redis/value", summary="读取 Redis 单键详情（只读，敏感键脱敏）", response_model=ResponseSchema[RedisValueSchema], dependencies=[Security(AuthPermission(["module_monitor:cache:query"]))])
+@CacheRouter.get(
+    "/redis/value", summary="读取 Redis 单键详情（只读，敏感键脱敏）", response_model=ResponseSchema[RedisValueSchema], dependencies=[Security(AuthPermission(["module_monitor:cache:detail"]))]
+)
 async def get_redis_value_controller(
     redis: Annotated[Redis, Depends(redis_getter)],
     key: Annotated[str, Query(min_length=1, max_length=512, description="键名")],

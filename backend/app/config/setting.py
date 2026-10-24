@@ -2,12 +2,12 @@ import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Literal
-from urllib.parse import quote_plus
 
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.common.enums import EnvironmentEnum
+from app.config.db_url import build_redis_url, build_sqlalchemy_url
 from app.config.path_conf import ENV_DIR
 
 
@@ -313,12 +313,13 @@ class Settings(BaseSettings):
     @property
     def REDIS_URI(self) -> str:
         """构建 Redis 连接 URI（供 slowapi / 其他模块复用）。"""
-        auth_part = ""
-        if self.REDIS_USER and self.REDIS_PASSWORD:
-            auth_part = f"{self.REDIS_USER}:{self.REDIS_PASSWORD}@"
-        elif self.REDIS_PASSWORD:
-            auth_part = f":{self.REDIS_PASSWORD}@"
-        return f"redis://{auth_part}{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB_NAME}"
+        return build_redis_url(
+            username=self.REDIS_USER,
+            password=self.REDIS_PASSWORD,
+            host=self.REDIS_HOST,
+            port=self.REDIS_PORT,
+            db=self.REDIS_DB_NAME,
+        )
 
     @property
     def MIDDLEWARE_LIST(self) -> list[str | None]:
@@ -338,9 +339,24 @@ class Settings(BaseSettings):
             raise ValueError(f"数据库驱动不支持: {self.DATABASE_TYPE}, 异步数据库请选择 mysql、postgres、sqlite")
         db_connect: str = ""
         if self.DATABASE_TYPE == "mysql":
-            db_connect = f"mysql+aiomysql://{self.DATABASE_USER}:{quote_plus(self.DATABASE_PASSWORD)}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}?charset=utf8mb4"
+            db_connect = build_sqlalchemy_url(
+                "mysql+aiomysql",
+                username=self.DATABASE_USER,
+                password=self.DATABASE_PASSWORD,
+                host=self.DATABASE_HOST,
+                port=self.DATABASE_PORT,
+                database=self.DATABASE_NAME,
+                query={"charset": "utf8mb4"},
+            )
         elif self.DATABASE_TYPE == "postgres":
-            db_connect = f"postgresql+asyncpg://{self.DATABASE_USER}:{quote_plus(self.DATABASE_PASSWORD)}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
+            db_connect = build_sqlalchemy_url(
+                "postgresql+asyncpg",
+                username=self.DATABASE_USER,
+                password=self.DATABASE_PASSWORD,
+                host=self.DATABASE_HOST,
+                port=self.DATABASE_PORT,
+                database=self.DATABASE_NAME,
+            )
         else:
             name = self.DATABASE_NAME if self.DATABASE_NAME.endswith(".db") else f"{self.DATABASE_NAME}.db"
             db_connect = f"sqlite+aiosqlite:///{name}"
@@ -352,9 +368,24 @@ class Settings(BaseSettings):
             raise ValueError(f"数据库驱动不支持: {self.DATABASE_TYPE}, 同步数据库请选择 mysql、postgres、sqlite")
         db_connect: str = ""
         if self.DATABASE_TYPE == "mysql":
-            db_connect = f"mysql+pymysql://{self.DATABASE_USER}:{quote_plus(self.DATABASE_PASSWORD)}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}?charset=utf8mb4"
+            db_connect = build_sqlalchemy_url(
+                "mysql+pymysql",
+                username=self.DATABASE_USER,
+                password=self.DATABASE_PASSWORD,
+                host=self.DATABASE_HOST,
+                port=self.DATABASE_PORT,
+                database=self.DATABASE_NAME,
+                query={"charset": "utf8mb4"},
+            )
         elif self.DATABASE_TYPE == "postgres":
-            db_connect = f"postgresql+psycopg://{self.DATABASE_USER}:{quote_plus(self.DATABASE_PASSWORD)}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
+            db_connect = build_sqlalchemy_url(
+                "postgresql+psycopg",
+                username=self.DATABASE_USER,
+                password=self.DATABASE_PASSWORD,
+                host=self.DATABASE_HOST,
+                port=self.DATABASE_PORT,
+                database=self.DATABASE_NAME,
+            )
         else:
             name = self.DATABASE_NAME if self.DATABASE_NAME.endswith(".db") else f"{self.DATABASE_NAME}.db"
             db_connect = f"sqlite:///{name}"
@@ -379,7 +410,7 @@ class Settings(BaseSettings):
                 404: {"description": "资源不存在"},
                 422: {"description": "请求参数验证错误"},
                 500: {"description": "服务器内部错误"},
-            }
+            },
         }
 
 

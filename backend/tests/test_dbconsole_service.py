@@ -5,7 +5,9 @@ from types import SimpleNamespace
 from typing import Any
 
 import pytest
+from sqlalchemy.engine import make_url
 
+from app.config.db_url import build_redis_url
 from app.core.exceptions import CustomException
 from app.modules.dbconsole import service as service_module
 from app.modules.dbconsole.schema import DbConnectionCreateSchema, DbConnectionUpdateSchema
@@ -14,10 +16,20 @@ from app.utils.crypto_util import CryptoUtil
 
 
 def test_build_url_escapes_password_and_database() -> None:
-    url = build_url("mysql", "db.internal", 3306, "user", "p@ss/w:ord", "app db")
+    url = build_url("mysql", "db.internal", 3306, "user", "p@ss/w:ord!", "app db")
     assert url.startswith("mysql+aiomysql://user:")
-    assert "p%40ss" in url and "app+db" in url
-    assert build_url("postgres", "pg", 5432, "u", "p", None) == "postgresql+asyncpg://u:p@pg:5432/"
+    assert "p%40ss" in url and "w%3Aord%21" in url
+    parsed = make_url(url)
+    assert parsed.password == "p@ss/w:ord!"
+    assert parsed.username == "user"
+    assert parsed.database == "app db"
+    assert build_url("postgres", "pg", 5432, "u", "p", None) == "postgresql+asyncpg://u:p@pg:5432"
+
+
+def test_redis_url_escapes_special_chars() -> None:
+    url = build_redis_url(username="", password="p@ss!中文", host="redis", port=6379, db=1)
+    assert "%40" in url and "%21" in url
+    assert "p@ss!" not in url
 
 
 def test_build_url_rejects_unsupported_type() -> None:

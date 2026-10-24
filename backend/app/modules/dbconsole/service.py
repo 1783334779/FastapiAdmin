@@ -11,11 +11,11 @@
 import asyncio
 import time
 from typing import Any
-from urllib.parse import quote_plus
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
+from app.config.db_url import build_sqlalchemy_url
 from app.core.base_schema import AuthSchema
 from app.core.exceptions import CustomException
 from app.utils.crypto_util import CryptoUtil
@@ -43,9 +43,14 @@ def build_url(db_type: str, host: str, port: int, username: str, password: str, 
     driver = _DRIVERS.get(db_type)
     if driver is None:
         raise CustomException(msg=f"不支持的数据库类型: {db_type}（仅 mysql/postgres）")
-    auth = f"{quote_plus(username)}:{quote_plus(password)}"
-    db_part = f"/{quote_plus(database)}" if database else "/"
-    return f"{driver}://{auth}@{host}:{port}{db_part}"
+    return build_sqlalchemy_url(
+        driver,
+        username=username,
+        password=password,
+        host=host,
+        port=port,
+        database=database,
+    )
 
 
 class DbConsoleService:
