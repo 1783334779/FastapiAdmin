@@ -229,7 +229,7 @@ async function handleSubmitPassword() {
 
     <!-- 退出登录 -->
     <view class="mx-4">
-      <wd-button type="danger" plain round block @click="handleLogout">
+      <wd-button class="logout-btn" type="danger" plain block @click="handleLogout">
         {{ t('mine.logout') }}
       </wd-button>
     </view>
@@ -279,3 +279,13 @@ async function handleSubmitPassword() {
     </wd-popup>
   </view>
 </template>
+
+<style lang="scss">
+/* global logout：uni-button 自定义标签不受 scoped 样式作用域约束 */
+.wd-button.logout-btn {
+  color: #f56c6c !important;
+  background: transparent !important;
+  border: 2rpx solid rgb(245 108 108 / 45%) !important;
+  border-radius: 16rpx !important;
+}
+</style>
