@@ -121,7 +121,8 @@ function updateFromTouch(event: TouchEvent) {
   const touch = event.touches?.[0] ?? event.changedTouches?.[0]
   if (!touch || trackWidth.value <= buttonSize)
     return
-  progress.value = clamp((touch.clientX - trackLeft.value - buttonSize / 2) / (trackWidth.value - buttonSize))
+  const clientX = touch.clientX ?? touch.pageX ?? 0
+  progress.value = clamp((clientX - trackLeft.value - buttonSize / 2) / (trackWidth.value - buttonSize))
 }
 
 function onTouchEnd() {
