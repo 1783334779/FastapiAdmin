@@ -128,7 +128,7 @@ async function getLoginCaptcha() {
 async function handleSliderSuccess(position: number) {
   if (!captchaState.key) {
     uni.showToast({ title: t('login.captchaExpired'), icon: 'none' })
-    sliderCaptchaRef.value?.reset()
+    sliderCaptchaRef.value?.reset?.()
     return
   }
 
@@ -143,14 +143,14 @@ async function handleSliderSuccess(position: number) {
     }
     else {
       uni.showToast({ title: t('login.sliderFailed'), icon: 'none' })
-      sliderCaptchaRef.value?.reset()
+      sliderCaptchaRef.value?.reset?.()
     }
   }
   catch (e) {
     console.error('滑块验证失败', e)
     uni.showToast({ title: t('login.sliderFailed'), icon: 'none' })
-    sliderCaptchaRef.value?.reset()
-    void getCaptcha()
+    sliderCaptchaRef.value?.reset?.()
+    void getLoginCaptcha()
   }
 }
 
@@ -158,7 +158,7 @@ async function handleSliderSuccess(position: number) {
 function resetSliderCaptcha() {
   sliderPassed.value = false
   loginFormData.captcha = ''
-  sliderCaptchaRef.value?.reset()
+  sliderCaptchaRef.value?.reset?.()
 }
 
 onLoad((options) => {
@@ -307,7 +307,7 @@ async function handleOAuth(provider: OAuthProvider) {
             :text="t('login.puzzleText')"
             :success-text="t('login.sliderSuccessText')"
             @verify="handleSliderSuccess"
-            @refresh="getCaptcha"
+            @refresh="getLoginCaptcha"
           />
         </wd-form-item>
 
