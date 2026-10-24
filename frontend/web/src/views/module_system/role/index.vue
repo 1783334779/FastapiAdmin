@@ -64,14 +64,18 @@
             </div>
             <FaStatusTag
               :type="row.status === 0 ? 'success' : 'danger'"
-              :label="row.status === 0 ? '启用' : '停用'"
+              :label="row.status === 0 ? $t('common.enabled') : $t('common.disabled')"
             />
           </div>
           <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-3 text-xs text-g-600">
-            <span class="truncate">数据权限：{{ scopeText(row.data_scope) }}</span>
-            <span>排序：{{ row.order }}</span>
-            <span class="col-span-2 truncate">所属部门：{{ deptText(row) }}</span>
-            <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
+            <span class="truncate"
+              >{{ $t("common.dataScope") }}：{{ scopeText(row.data_scope) }}</span
+            >
+            <span>{{ $t("common.sort") }}：{{ row.order }}</span>
+            <span class="col-span-2 truncate">{{ $t("common.dept") }}：{{ deptText(row) }}</span>
+            <span class="col-span-2"
+              >{{ $t("common.create") }}：{{ formatDateTime(row.created_time) }}</span
+            >
           </div>
           <div class="mobile-card-actions">
             <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">

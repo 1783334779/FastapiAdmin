@@ -100,7 +100,9 @@
                 />
               </div>
             </div>
-            <div class="mt-2 text-xs text-g-600">排序：{{ row.dict_sort ?? "—" }}</div>
+            <div class="mt-2 text-xs text-g-600">
+              {{ $t("common.sort") }}：{{ row.dict_sort ?? "—" }}
+            </div>
             <div class="mobile-card-actions">
               <ElButton
                 link

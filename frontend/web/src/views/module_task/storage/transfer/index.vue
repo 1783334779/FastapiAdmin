@@ -81,7 +81,9 @@
           <div class="mt-2 text-xs text-g-600 truncate">
             {{ row.source_name || row.source_path || "—" }}
           </div>
-          <div class="mt-1 text-xs text-g-600 truncate">目标：{{ targetShortText(row) }}</div>
+          <div class="mt-1 text-xs text-g-600 truncate">
+            {{ $t("common.target") }}：{{ targetShortText(row) }}
+          </div>
           <ElProgress
             class="mt-2"
             :percentage="row.progress || 0"

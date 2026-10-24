@@ -89,7 +89,7 @@
               <FaStatusTag :type="menuTypeTag(row.type)" :label="menuTypeText(row.type)" />
               <FaStatusTag
                 :type="row.status === 0 ? 'success' : 'danger'"
-                :label="row.status === 0 ? '启用' : '停用'"
+                :label="row.status === 0 ? $t('common.enabled') : $t('common.disabled')"
               />
             </div>
           </div>

@@ -118,7 +118,20 @@
     "detail": "Details",
     "resetPassword": "Reset password",
     "addChild": "Add child",
-    "changeStatus": "Change status"
+    "changeStatus": "Change status",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "create": "Created",
+    "update": "Updated",
+    "sort": "Sort",
+    "dept": "Department",
+    "role": "Role",
+    "gender": "Gender",
+    "status": "Status",
+    "publish": "Release",
+    "source": "Source",
+    "target": "Target",
+    "dataScope": "Data scope"
   },
   "search": {
     "placeholder": "Search page",

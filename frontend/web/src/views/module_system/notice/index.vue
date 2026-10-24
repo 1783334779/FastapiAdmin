@@ -72,14 +72,16 @@
               />
               <FaStatusTag
                 :type="row.status === 0 ? 'success' : 'danger'"
-                :label="row.status === 0 ? '启用' : '停用'"
+                :label="row.status === 0 ? $t('common.enabled') : $t('common.disabled')"
               />
             </div>
           </div>
           <div class="mt-2 text-xs text-g-600 line-clamp-3">
             {{ row.description || "暂无描述" }}
           </div>
-          <div class="mt-2 text-xs text-g-600">创建：{{ formatDateTime(row.created_time) }}</div>
+          <div class="mt-2 text-xs text-g-600">
+            {{ $t("common.create") }}：{{ formatDateTime(row.created_time) }}
+          </div>
           <div class="mt-1 text-xs text-g-600">更新：{{ formatDateTime(row.updated_time) }}</div>
           <div class="mobile-card-actions">
             <ElButton link type="primary" size="small" @click="handleOpenDialog('detail', row.id!)">

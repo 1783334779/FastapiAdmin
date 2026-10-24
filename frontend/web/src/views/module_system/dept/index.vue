@@ -76,14 +76,16 @@
             </div>
             <FaStatusTag
               :type="row.status === 0 ? 'success' : 'danger'"
-              :label="row.status === 0 ? '启用' : '停用'"
+              :label="row.status === 0 ? $t('common.enabled') : $t('common.disabled')"
             />
           </div>
           <div class="grid grid-cols-2 gap-x-3 gap-y-1 mt-2 text-xs text-g-600">
             <span class="truncate">编码：{{ row.code }}</span>
-            <span>排序：{{ row.order ?? "—" }}</span>
+            <span>{{ $t("common.sort") }}：{{ row.order ?? "—" }}</span>
             <span class="col-span-2 truncate">上级：{{ row.parent_name || "—" }}</span>
-            <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
+            <span class="col-span-2"
+              >{{ $t("common.create") }}：{{ formatDateTime(row.created_time) }}</span
+            >
           </div>
           <div class="mobile-card-actions">
             <ElButton link type="primary" size="small" @click="opCtx.onAddChild(row.id!)">

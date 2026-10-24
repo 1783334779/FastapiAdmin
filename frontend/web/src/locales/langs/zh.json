@@ -118,7 +118,20 @@
     "detail": "详情",
     "resetPassword": "重置密码",
     "addChild": "新增子级",
-    "changeStatus": "变更状态"
+    "changeStatus": "变更状态",
+    "enabled": "启用",
+    "disabled": "停用",
+    "create": "创建",
+    "update": "更新",
+    "sort": "排序",
+    "dept": "部门",
+    "role": "角色",
+    "gender": "性别",
+    "status": "状态",
+    "publish": "发布",
+    "source": "来源",
+    "target": "目标",
+    "dataScope": "数据权限"
   },
   "search": {
     "placeholder": "搜索页面",

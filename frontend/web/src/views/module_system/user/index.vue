@@ -80,19 +80,23 @@
                       <span class="font-medium truncate">{{ row.name || row.username }}</span>
                       <FaStatusTag
                         :type="row.status === 0 ? 'success' : 'danger'"
-                        :label="row.status === 0 ? '启用' : '停用'"
+                        :label="row.status === 0 ? $t('common.enabled') : $t('common.disabled')"
                       />
                     </div>
                     <div class="mt-0.5 text-xs text-g-600">{{ row.username }}</div>
                   </div>
                 </div>
                 <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-3 text-xs text-g-600">
-                  <span class="col-span-2">部门：{{ row.dept_name || "—" }}</span>
+                  <span class="col-span-2"
+                    >{{ $t("common.dept") }}：{{ row.dept_name || "—" }}</span
+                  >
                   <span class="col-span-2 truncate">
-                    角色：{{ resolveLabels(row.role_ids, roleOptions) || "—" }}
+                    {{ $t("common.role") }}：{{ resolveLabels(row.role_ids, roleOptions) || "—" }}
                   </span>
-                  <span>性别：{{ row.gender === "1" ? "女" : "男" }}</span>
-                  <span class="col-span-2">创建：{{ formatDateTime(row.created_time) }}</span>
+                  <span>{{ $t("common.gender") }}：{{ row.gender === "1" ? "女" : "男" }}</span>
+                  <span class="col-span-2"
+                    >{{ $t("common.create") }}：{{ formatDateTime(row.created_time) }}</span
+                  >
                 </div>
                 <div class="mobile-card-actions">
                   <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">

@@ -60,15 +60,19 @@
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0">
               <div class="text-sm font-medium truncate">{{ row.name }}</div>
-              <div class="mt-0.5 text-xs text-g-600">排序：{{ row.order ?? "—" }}</div>
+              <div class="mt-0.5 text-xs text-g-600">
+                {{ $t("common.sort") }}：{{ row.order ?? "—" }}
+              </div>
             </div>
             <FaStatusTag
               :type="row.status === 0 ? 'success' : 'danger'"
-              :label="row.status === 0 ? '启用' : '停用'"
+              :label="row.status === 0 ? $t('common.enabled') : $t('common.disabled')"
             />
           </div>
           <div class="mt-3 text-xs text-g-600 line-clamp-2">{{ row.description || "—" }}</div>
-          <div class="mt-1 text-xs text-g-600">创建：{{ formatDateTime(row.created_time) }}</div>
+          <div class="mt-1 text-xs text-g-600">
+            {{ $t("common.create") }}：{{ formatDateTime(row.created_time) }}
+          </div>
           <div class="mobile-card-actions">
             <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
               {{ $t("common.detail") }}
