@@ -151,7 +151,7 @@
                   />
                   <!-- 后缀：存储路径按钮，点击回到存储根目录 -->
                   <span
-                    class="shrink-0 cursor-pointer whitespace-nowrap bg-(--el-fill-color) px-2 py-1 text-[13px] text-(--el-color-primary) hover:bg-(--el-fill-color-light)"
+                    class="path-root-btn shrink-0 cursor-pointer whitespace-nowrap bg-(--el-fill-color) px-2 py-1 text-[13px] text-(--el-color-primary) hover:bg-(--el-fill-color-light)"
                     title="点击回到存储根目录（FTP/SFTP 登录目录、对象存储桶根，不带路径前缀）"
                     @click="goRoot"
                     >存储路径</span
@@ -1850,6 +1850,16 @@ onMounted(async () => {
 
 @media (width <= 800px) {
   .browse-node-sidebar {
+    display: none;
+  }
+
+  /* 窄屏路径栏空间有限，隐藏“存储路径”快捷按钮 */
+  .path-root-btn {
+    display: none;
+  }
+
+  /* 节点栏隐藏后，工作区左槽位同步收起，避免顶部 320px 空白 */
+  :deep(.fa-workbench__side) {
     display: none;
   }
 }
