@@ -116,7 +116,7 @@
               >
                 <ElButton class="reset-button" @click="handleReset" v-ripple>
                   <template #icon>
-                    <Refresh />
+                    <FaSvgIcon icon="ri:refresh-line" />
                   </template>
                   {{ t("table.searchBar.reset") }}
                 </ElButton>
@@ -134,7 +134,7 @@
                   :disabled="disabledSearch"
                 >
                   <template #icon>
-                    <Search />
+                    <FaSvgIcon icon="ri:search-line" />
                   </template>
                   {{ t("table.searchBar.search") }}
                 </ElButton>
@@ -157,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-import { ArrowUpBold, ArrowDownBold, Refresh, Search } from "@element-plus/icons-vue";
+import { ArrowUpBold, ArrowDownBold } from "@element-plus/icons-vue";
 import { useWindowSize, onKeyStroke } from "@vueuse/core";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";

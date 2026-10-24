@@ -3,9 +3,11 @@
     <div class="input-wrapper">
       <div v-if="uploadedFiles.length > 0" class="uploaded-files">
         <div v-for="file in uploadedFiles" :key="file.id" class="file-item">
-          <ElIcon class="file-icon"><Document /></ElIcon>
+          <ElIcon class="file-icon"><FaSvgIcon icon="ri:file-text-line" /></ElIcon>
           <span class="file-name">{{ file.name }}</span>
-          <ElIcon class="file-remove" @click="removeFile(file.id)"><Close /></ElIcon>
+          <ElIcon class="file-remove" @click="removeFile(file.id)"
+            ><FaSvgIcon icon="ri:close-line"
+          /></ElIcon>
         </div>
       </div>
       <div class="input-container">
@@ -123,8 +125,6 @@ import { ElMessage } from "element-plus";
 import {
   Promotion,
   Paperclip,
-  Document,
-  Close,
   VideoPause,
   Cpu,
   ArrowDown,

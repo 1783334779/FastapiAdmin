@@ -32,7 +32,7 @@
         <p class="m-0 mb-3 text-base font-medium">{{ props.title }}</p>
         <div class="flex items-center gap-4 text-xs text-g-600">
           <span class="flex items-center gap-1" v-if="props.views">
-            <ElIcon class="text-base"><View /></ElIcon>
+            <ElIcon class="text-base"><FaSvgIcon icon="ri:eye-line" /></ElIcon>
             {{ props.views }}
           </span>
           <span class="flex items-center gap-1" v-if="props.comments">
@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { Picture, View, ChatLineRound } from "@element-plus/icons-vue";
+import { Picture, ChatLineRound } from "@element-plus/icons-vue";
 
 defineOptions({ name: "FaImageCard" });
 

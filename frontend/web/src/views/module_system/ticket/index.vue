@@ -29,7 +29,7 @@
             type="primary"
             @click="handleOpenDialog('create')"
           >
-            <ElIcon><Plus /></ElIcon>
+            <ElIcon><FaSvgIcon icon="ri:add-line" /></ElIcon>
             提交工单
           </ElButton>
           <ElButton
@@ -39,7 +39,7 @@
             :loading="batchDeleting"
             @click="handleBatchDelete"
           >
-            <ElIcon><Delete /></ElIcon>
+            <ElIcon><FaSvgIcon icon="ri:delete-bin-4-line" /></ElIcon>
             批量删除
           </ElButton>
         </template>
@@ -417,7 +417,6 @@ import {
   ElInput,
   ElMessageBox,
 } from "element-plus";
-import { Plus, Delete } from "@element-plus/icons-vue";
 import DOMPurify from "dompurify";
 import FaForm from "@/components/forms/fa-form/index.vue";
 import FaTableHeader from "@/components/tables/fa-table-header/index.vue";

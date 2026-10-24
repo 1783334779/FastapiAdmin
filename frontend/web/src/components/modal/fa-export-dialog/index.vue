@@ -7,7 +7,8 @@
       dialog-class="crud-embed-dialog"
       modal-class="crud-embed-dialog"
       @close="handleCloseExportsModal"
-     size="md">
+      size="md"
+    >
       <!-- 滚动 -->
       <ElScrollbar max-height="60vh">
         <!-- 表单 -->

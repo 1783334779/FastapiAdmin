@@ -24,7 +24,7 @@
       >
         <template #left>
           <ElButton type="primary" @click="handleAdd">
-            <ElIcon><Plus /></ElIcon>
+            <ElIcon><FaSvgIcon icon="ri:add-line" /></ElIcon>
             新增版本
           </ElButton>
         </template>
@@ -139,7 +139,6 @@
 <script setup lang="ts">
 import { renderTableOperationCell, resolveStatusColumns, type TableOperationAction } from "@utils";
 import VersionAPI, { type VersionForm, type VersionTable } from "@/api/module_system/version";
-import { Plus } from "@element-plus/icons-vue";
 import type { AuditSearchFormParams } from "@/components/forms/fa-search-bar/auditSearchFormItems";
 import type { FormItem } from "@/components/forms/fa-form/index.vue";
 import type { ColumnOption } from "@/types/component";

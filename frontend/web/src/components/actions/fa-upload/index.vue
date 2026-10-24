@@ -6,7 +6,8 @@
       :title="cropDialogTitle"
       :draggable="false"
       @closed="onCropDialogClosed"
-     size="xl">
+      size="xl"
+    >
       <FaCutterImg
         v-if="cropVisible && cropSourceUrl"
         :key="cropSourceUrl"
@@ -62,7 +63,7 @@
         </template>
         <template v-else>
           <ElIcon class="single-upload__add-btn">
-            <Plus />
+            <FaSvgIcon icon="ri:add-line" />
           </ElIcon>
         </template>
       </template>
@@ -79,7 +80,7 @@ defineOptions({ name: "FaUpload" });
 import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import type { UploadRawFile, UploadRequestOptions, UploadUserFile } from "element-plus";
-import { CircleCloseFilled, Plus } from "@element-plus/icons-vue";
+import { CircleCloseFilled } from "@element-plus/icons-vue";
 import ParamsAPI from "@/api/module_system/params";
 import { dataURLToFile } from "@utils";
 

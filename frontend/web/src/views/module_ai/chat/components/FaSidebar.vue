@@ -16,7 +16,7 @@
             class="new-session-btn"
             @click="handleNewSession"
           >
-            <ElIcon class="btn-icon"><Plus /></ElIcon>
+            <ElIcon class="btn-icon"><FaSvgIcon icon="ri:add-line" /></ElIcon>
             <span>开启新对话</span>
           </ElButton>
         </div>
@@ -58,7 +58,9 @@
                     trigger="click"
                     @command="(cmd) => handleSessionCommand(cmd, session)"
                   >
-                    <ElIcon class="more-icon" @click.stop><MoreFilled /></ElIcon>
+                    <ElIcon class="more-icon" @click.stop
+                      ><FaSvgIcon icon="ri:more-2-fill"
+                    /></ElIcon>
                     <template #dropdown>
                       <ElDropdownMenu>
                         <div v-hasPerm="['module_ai:chat:update']" style="display: contents">
@@ -84,7 +86,7 @@
     <div class="sidebar-footer">
       <div v-if="!isCollapsed" class="user-info">
         <ElAvatar :size="32" :src="userInfo.avatar">
-          <ElIcon><User /></ElIcon>
+          <ElIcon><FaSvgIcon icon="ri:user-3-line" /></ElIcon>
         </ElAvatar>
         <div class="user-details">
           <div class="user-name">{{ userInfo.name }}</div>
@@ -104,7 +106,7 @@
       <div v-else class="collapsed-user">
         <ElDropdown trigger="click" @command="handleUserCommand">
           <ElAvatar :size="32" :src="userInfo.avatar">
-            <ElIcon><User /></ElIcon>
+            <ElIcon><FaSvgIcon icon="ri:user-3-line" /></ElIcon>
           </ElAvatar>
           <template #dropdown>
             <ElDropdownMenu>
@@ -122,16 +124,7 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
-import {
-  ChatDotRound,
-  ChatLineRound,
-  User,
-  Setting,
-  MoreFilled,
-  Plus,
-  Search,
-  ArrowDown,
-} from "@element-plus/icons-vue";
+import { ChatDotRound, ChatLineRound, Setting, Search, ArrowDown } from "@element-plus/icons-vue";
 import { useUserStoreHook } from "@stores";
 import { ChatSession, SessionGroup, UserInfo } from "@/api/module_ai/chat";
 import AiChatAPI from "@/api/module_ai/chat";

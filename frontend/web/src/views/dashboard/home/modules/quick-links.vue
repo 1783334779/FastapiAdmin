@@ -37,7 +37,7 @@
             :aria-label="`移除 ${item.title}`"
             @click.stop="handleRemove(item)"
           >
-            <ElIcon :size="10"><Close /></ElIcon>
+            <ElIcon :size="10"><FaSvgIcon icon="ri:close-line" /></ElIcon>
           </button>
         </div>
       </div>
@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { onScopeDispose, ref } from "vue";
 import { useRouter } from "vue-router";
-import { Close, QuestionFilled } from "@element-plus/icons-vue";
+import { QuestionFilled } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { quickStartManager, type QuickLink } from "@utils";
 

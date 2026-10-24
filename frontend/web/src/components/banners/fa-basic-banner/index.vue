@@ -246,7 +246,12 @@ function generateMeteors(count: number): Meteor[] {
     text-align: center;
     cursor: pointer;
     user-select: none;
-    transition: background-color 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s,
+      color 0.3s,
+      box-shadow 0.3s,
+      transform 0.3s;
 
     &:hover {
       opacity: 0.8;

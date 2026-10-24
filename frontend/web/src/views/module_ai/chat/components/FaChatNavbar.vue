@@ -29,7 +29,7 @@
         <ElIcon :class="['status-icon', connectionStatus]">
           <Connection v-if="connectionStatus === 'connected'" />
           <Loading v-else-if="connectionStatus === 'connecting'" />
-          <Warning v-else />
+          <FaSvgIcon v-else icon="ri:error-warning-line" />
         </ElIcon>
         <span class="status-text">{{ connectionStatusText }}</span>
       </ElTag>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { Connection, Loading, Warning, Delete, Setting } from "@element-plus/icons-vue";
+import { Connection, Loading, Delete, Setting } from "@element-plus/icons-vue";
 import { resolveIconForFaSvgIcon } from "@utils";
 
 interface Props {

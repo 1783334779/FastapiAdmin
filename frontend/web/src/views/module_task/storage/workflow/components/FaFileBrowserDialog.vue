@@ -57,8 +57,8 @@
           @dblclick="item.is_dir && navTo(joinPath(dir, item.name))"
         >
           <ElIcon :size="16" :color="item.is_dir ? '#e6a23c' : '#909399'">
-            <Folder v-if="item.is_dir" />
-            <Document v-else />
+            <FaSvgIcon v-if="item.is_dir" icon="ri:folder-2-line" />
+            <FaSvgIcon v-else icon="ri:file-text-line" />
           </ElIcon>
           <span class="flex-1 min-w-0 truncate" :title="item.name">{{ item.name }}</span>
           <span v-if="!item.is_dir && item.size" class="text-xs text-(--el-text-color-secondary)">{{
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { Document, Folder, Refresh } from "@element-plus/icons-vue";
+import { Refresh } from "@element-plus/icons-vue";
 import StorageAPI, { type StorageObject } from "@/api/module_storage/browse";
 
 interface Props {

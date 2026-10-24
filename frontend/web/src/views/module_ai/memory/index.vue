@@ -61,7 +61,7 @@
           <ElTooltip v-else content="点击编辑" placement="top">
             <span class="editable-cell" @click="handleEditTitle(row)">
               {{ row.title || "未命名会话" }}
-              <ElIcon class="edit-icon"><Edit /></ElIcon>
+              <ElIcon class="edit-icon"><FaSvgIcon icon="ri:edit-2-line" /></ElIcon>
             </span>
           </ElTooltip>
         </template>
@@ -146,7 +146,6 @@ defineOptions({
   inheritAttrs: false,
 });
 
-import { Edit } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import AiChatAPI, { type ChatSession, type ChatSessionDetail } from "@/api/module_ai/chat";
 import type { SearchFormItem } from "@/components/forms/fa-search-bar/index.vue";

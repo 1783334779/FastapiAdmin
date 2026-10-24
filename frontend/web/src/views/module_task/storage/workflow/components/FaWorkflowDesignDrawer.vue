@@ -46,7 +46,7 @@
                 aria-label="搜索存储源名称"
               >
                 <template #prefix>
-                  <ElIcon><Search /></ElIcon>
+                  <ElIcon><FaSvgIcon icon="ri:search-line" /></ElIcon>
                 </template>
               </ElInput>
               <div
@@ -64,7 +64,9 @@
                 draggable="true"
                 @dragstart="onDragStart($event, item)"
               >
-                <ElIcon :size="15" :color="protocolColor(item.protocol)"><Folder /></ElIcon>
+                <ElIcon :size="15" :color="protocolColor(item.protocol)"
+                  ><FaSvgIcon icon="ri:folder-2-line"
+                /></ElIcon>
                 <div class="flex flex-col min-w-0 leading-tight">
                   <span class="truncate text-xs font-medium text-(--el-text-color-primary)">{{
                     item.name
@@ -235,16 +237,7 @@ import type {
   NodeMouseEvent,
   EdgeMouseEvent,
 } from "@vue-flow/core";
-import {
-  Folder,
-  FolderOpened,
-  Grid,
-  Rank,
-  Search,
-  VideoPlay,
-  VideoPause,
-  Check,
-} from "@element-plus/icons-vue";
+import { FolderOpened, Grid, Rank, VideoPlay, VideoPause, Check } from "@element-plus/icons-vue";
 
 import dagre from "dagre";
 import "@vue-flow/core/dist/style.css";

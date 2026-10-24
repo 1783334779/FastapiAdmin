@@ -59,7 +59,7 @@
           <div class="absolute z-36 right-5 top-2">
             <ElLink type="primary" @click="emit('copy-code')">
               <ElIcon>
-                <CopyDocument />
+                <FaSvgIcon icon="ri:file-copy-line" />
               </ElIcon>
               复制代码
             </ElLink>
@@ -89,7 +89,6 @@ import Codemirror from "codemirror-editor-vue3";
 import type { EditorConfiguration } from "codemirror";
 import type { CmComponentRef } from "codemirror-editor-vue3";
 import { resolveLocalIconUrl, resolveIconForFaSvgIcon } from "@utils";
-import { CopyDocument } from "@element-plus/icons-vue";
 import { GENCODE_CM_KEY } from "../gencodeInjectionKeys";
 import type { TreeNode } from "../types";
 

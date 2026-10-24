@@ -57,7 +57,7 @@
               @click.stop
             >
               <button type="button" class="dict-type-more" aria-label="更多操作">
-                <ElIcon><MoreFilled /></ElIcon>
+                <ElIcon><FaSvgIcon icon="ri:more-2-fill" /></ElIcon>
               </button>
               <template #dropdown>
                 <ElDropdownMenu>

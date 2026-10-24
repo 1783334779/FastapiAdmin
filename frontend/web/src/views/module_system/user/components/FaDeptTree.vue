@@ -12,7 +12,7 @@
       >
         <template #prefix>
           <ElIcon class="text-(--el-text-color-placeholder)">
-            <Search />
+            <FaSvgIcon icon="ri:search-line" />
           </ElIcon>
         </template>
         <template #suffix>
@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, Switch } from "@element-plus/icons-vue";
+import { Switch } from "@element-plus/icons-vue";
 import DeptAPI from "@/api/module_system/dept";
 import { formatTree } from "@utils";
 import type { FilterNodeMethodFunction, TreeInstance } from "element-plus";

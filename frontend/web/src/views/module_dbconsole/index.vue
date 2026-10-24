@@ -13,7 +13,7 @@
               :loading="createLoading"
               @click="handleAdd"
             >
-              <ElIcon class="mr-1"><Plus /></ElIcon>新增
+              <ElIcon class="mr-1"><FaSvgIcon icon="ri:add-line" /></ElIcon>新增
             </ElButton>
           </template>
 
@@ -43,7 +43,7 @@
                 @command="(cmd) => handleConnCommand(String(cmd), item)"
                 @click.stop
               >
-                <ElIcon class="fa-list-item__action"><MoreFilled /></ElIcon>
+                <ElIcon class="fa-list-item__action"><FaSvgIcon icon="ri:more-2-fill" /></ElIcon>
                 <template #dropdown>
                   <ElDropdownMenu>
                     <ElDropdownItem command="test">测试连接</ElDropdownItem>
@@ -226,7 +226,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Clock, MoreFilled, Plus } from "@element-plus/icons-vue";
+import { Clock } from "@element-plus/icons-vue";
 import DbConsoleAPI, {
   type DbConnection,
   type DbConnectionForm,

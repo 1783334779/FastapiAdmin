@@ -37,7 +37,7 @@
           :aria-label="$t('login.placeholder.username')"
         >
           <template #prefix>
-            <ElIcon><User /></ElIcon>
+            <ElIcon><FaSvgIcon icon="ri:user-3-line" /></ElIcon>
           </template>
         </ElInput>
       </ElFormItem>
@@ -56,7 +56,7 @@
             :aria-label="$t('login.placeholder.password')"
           >
             <template #prefix>
-              <ElIcon><Lock /></ElIcon>
+              <ElIcon><FaSvgIcon icon="ri:lock-2-line" /></ElIcon>
             </template>
           </ElInput>
         </ElFormItem>
@@ -135,7 +135,6 @@
 </template>
 
 <script setup lang="ts">
-import { Lock, User } from "@element-plus/icons-vue";
 import type { CaptchaInfo, LoginFormData } from "@/api/module_system/auth";
 import type { FormRules } from "element-plus";
 import type { Account, AccountKey } from "@views/module_system/auth/login/types";

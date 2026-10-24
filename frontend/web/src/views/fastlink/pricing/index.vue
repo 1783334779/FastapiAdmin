@@ -97,7 +97,7 @@
                 class="mr-2.5 mt-0.5 shrink-0"
                 :class="feat.highlight ? 'text-theme!' : 'text-g-400!'"
               >
-                <Check />
+                <FaSvgIcon icon="ri:check-line" />
               </ElIcon>
               <span>{{ feat.text }}</span>
             </div>
@@ -128,7 +128,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { ElMessage } from "element-plus";
-import { Check } from "@element-plus/icons-vue";
 
 // 与路由 name 一致：KeepAlive 的 include/exclude 按组件 name 匹配
 defineOptions({ name: "FastlinkPricing" });

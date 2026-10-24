@@ -18,7 +18,7 @@
           :aria-label="$t('login.placeholder.username')"
         >
           <template #prefix>
-            <ElIcon><User /></ElIcon>
+            <ElIcon><FaSvgIcon icon="ri:user-3-line" /></ElIcon>
           </template>
         </ElInput>
       </ElFormItem>
@@ -31,7 +31,7 @@
           :aria-label="$t('register.placeholder.name')"
         >
           <template #prefix>
-            <ElIcon><User /></ElIcon>
+            <ElIcon><FaSvgIcon icon="ri:user-3-line" /></ElIcon>
           </template>
         </ElInput>
       </ElFormItem>
@@ -49,7 +49,7 @@
             :aria-label="$t('login.placeholder.password')"
           >
             <template #prefix>
-              <ElIcon><Lock /></ElIcon>
+              <ElIcon><FaSvgIcon icon="ri:lock-2-line" /></ElIcon>
             </template>
           </ElInput>
         </ElFormItem>
@@ -68,7 +68,7 @@
             :aria-label="$t('login.message.password.confirm')"
           >
             <template #prefix>
-              <ElIcon><Lock /></ElIcon>
+              <ElIcon><FaSvgIcon icon="ri:lock-2-line" /></ElIcon>
             </template>
           </ElInput>
         </ElFormItem>
@@ -112,7 +112,6 @@
 </template>
 
 <script setup lang="ts">
-import { Lock, User } from "@element-plus/icons-vue";
 import type { RegisterForm } from "@/api/module_system/user";
 import type { FormRules } from "element-plus";
 

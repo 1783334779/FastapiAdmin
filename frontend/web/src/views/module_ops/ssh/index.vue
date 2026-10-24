@@ -19,7 +19,7 @@
                 :loading="createLoading"
                 @click="handleAdd"
               >
-                <ElIcon class="mr-1"><Plus /></ElIcon>新增
+                <ElIcon class="mr-1"><FaSvgIcon icon="ri:add-line" /></ElIcon>新增
               </ElButton>
             </div>
 
@@ -32,7 +32,7 @@
                 aria-label="搜索名称 / 地址"
               >
                 <template #prefix>
-                  <ElIcon><Search /></ElIcon>
+                  <ElIcon><FaSvgIcon icon="ri:search-line" /></ElIcon>
                 </template>
               </ElInput>
             </div>
@@ -64,7 +64,7 @@
                   @command="(cmd) => handleHostCommand(String(cmd), host)"
                   @click.stop
                 >
-                  <ElIcon class="fa-list-item__action"><MoreFilled /></ElIcon>
+                  <ElIcon class="fa-list-item__action"><FaSvgIcon icon="ri:more-2-fill" /></ElIcon>
                   <template #dropdown>
                     <ElDropdownMenu>
                       <ElDropdownItem command="terminal">打开终端</ElDropdownItem>
@@ -382,7 +382,6 @@
 </template>
 
 <script lang="ts" setup>
-import { MoreFilled, Plus, Search } from "@element-plus/icons-vue";
 import SshAPI, {
   type BatchExecResult,
   type SshHost,

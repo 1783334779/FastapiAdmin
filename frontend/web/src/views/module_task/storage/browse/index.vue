@@ -12,7 +12,7 @@
               aria-label="打开节点"
               @click="openAddDialog"
             >
-              <ElIcon><Plus /></ElIcon>
+              <ElIcon><FaSvgIcon icon="ri:add-line" /></ElIcon>
             </button>
           </ElTooltip>
         </template>
@@ -38,7 +38,7 @@
             aria-label="关闭节点"
             @click.stop="closeTab(node.id!)"
           >
-            <ElIcon><Close /></ElIcon>
+            <ElIcon><FaSvgIcon icon="ri:close-line" /></ElIcon>
           </span>
         </button>
       </FaSidePanel>
@@ -157,7 +157,7 @@
                 </div>
                 <el-tooltip content="刷新" placement="top">
                   <el-button size="small" :loading="activeTab.loading" @click="load">
-                    <el-icon><Refresh /></el-icon>
+                    <el-icon><FaSvgIcon icon="ri:refresh-line" /></el-icon>
                   </el-button>
                 </el-tooltip>
               </div>
@@ -169,14 +169,14 @@
               >
                 <div class="flex min-w-0 flex-wrap items-center gap-2">
                   <el-button size="small" type="primary" plain @click="triggerUpload">
-                    <el-icon class="mr-1"><Upload /></el-icon>上传
+                    <el-icon class="mr-1"><FaSvgIcon icon="ri:upload-2-line" /></el-icon>上传
                   </el-button>
                   <el-button size="small" @click="createDir">
                     <el-icon class="mr-1"><FolderAdd /></el-icon>新建目录
                   </el-button>
                   <el-divider direction="vertical" />
                   <el-button size="small" :disabled="!selectedRows.length" @click="batchDownload">
-                    <el-icon class="mr-1"><Download /></el-icon>下载
+                    <el-icon class="mr-1"><FaSvgIcon icon="ri:download-2-line" /></el-icon>下载
                   </el-button>
                   <el-button
                     size="small"
@@ -213,7 +213,9 @@
                           >分享</el-dropdown-item
                         >
                         <el-dropdown-item command="delete" divided>
-                          <el-icon class="mr-1.5 text-(--el-color-danger)"><Delete /></el-icon>
+                          <el-icon class="mr-1.5 text-(--el-color-danger)"
+                            ><FaSvgIcon icon="ri:delete-bin-4-line"
+                          /></el-icon>
                           <span class="text-(--el-color-danger)">删除</span>
                         </el-dropdown-item>
                       </el-dropdown-menu>
@@ -232,7 +234,7 @@
                     @clear="load"
                   >
                     <template #prefix
-                      ><el-icon><Search /></el-icon
+                      ><el-icon><FaSvgIcon icon="ri:search-line" /></el-icon
                     ></template>
                   </el-input>
                 </div>
@@ -271,7 +273,9 @@
                   :title="`进入存储桶 ${b}`"
                   @click="enterBucket(b)"
                 >
-                  <el-icon :size="18" color="#e6a23c"><Folder /></el-icon>
+                  <el-icon :size="18" color="#e6a23c"
+                    ><FaSvgIcon icon="ri:folder-2-line"
+                  /></el-icon>
                   <span class="min-w-0 truncate font-medium text-(--el-text-color-primary)">{{
                     b
                   }}</span>
@@ -312,8 +316,8 @@
                   <template #name="{ row }">
                     <span class="inline-flex items-center gap-1">
                       <el-icon :size="16" :class="row.is_dir ? 'text-[#e6a23c]' : 'text-[#909399]'">
-                        <Folder v-if="row.is_dir" />
-                        <Document v-else />
+                        <FaSvgIcon v-if="row.is_dir" icon="ri:folder-2-line" />
+                        <FaSvgIcon v-else icon="ri:file-text-line" />
                       </el-icon>
                       <span
                         :class="
@@ -330,7 +334,7 @@
                         :size="14"
                         title="复制文件名"
                         @click.stop="copyName(row.name)"
-                        ><CopyDocument
+                        ><FaSvgIcon icon="ri:file-copy-line"
                       /></el-icon>
                     </span>
                   </template>
@@ -432,7 +436,8 @@
               "
             >
               <el-button v-if="nodes.length" type="primary" @click="openAddDialog">
-                <el-icon style="margin-right: 4px"><Plus /></el-icon>打开节点
+                <el-icon style="margin-right: 4px"><FaSvgIcon icon="ri:add-line" /></el-icon
+                >打开节点
               </el-button>
             </FaEmptyState>
           </div>
@@ -447,7 +452,7 @@
           "
         >
           <el-button v-if="nodes.length" type="primary" @click="openAddDialog">
-            <el-icon style="margin-right: 4px"><Plus /></el-icon>打开节点
+            <el-icon style="margin-right: 4px"><FaSvgIcon icon="ri:add-line" /></el-icon>打开节点
           </el-button>
         </FaEmptyState>
       </div>
@@ -552,7 +557,9 @@
                 :title="`进入 ${e.name}`"
                 @click="pickerEnter(e.name || '')"
               >
-                <el-icon class="shrink-0 text-[#e6a23c]"><Folder /></el-icon>
+                <el-icon class="shrink-0 text-[#e6a23c]"
+                  ><FaSvgIcon icon="ri:folder-2-line"
+                /></el-icon>
                 <span class="min-w-0 flex-1 truncate">{{ e.name }}</span>
               </div>
               <FaEmptyState
@@ -643,22 +650,15 @@ import {
   ArrowLeft,
   ArrowRight,
   CopyDocument,
-  Delete,
-  Document,
-  Close,
   Download,
   EditPen,
-  Folder,
   FolderAdd,
   FolderOpened,
   Loading,
   MoreFilled,
-  Plus,
   Promotion,
   Refresh,
-  Search,
   Share,
-  Upload,
 } from "@element-plus/icons-vue";
 import StorageAPI, { type StorageObject } from "@/api/module_storage/browse";
 import NodeAPI, { type SourceTable } from "@/api/module_storage/node";

@@ -11,7 +11,9 @@
           <div class="status-info">
             <span class="status-title">当前使用</span>
             <ElTag :type="activeId ? 'primary' : 'info'" effect="dark" size="small">
-              <ElIcon class="tag-icon"><CircleCheck v-if="activeId" /><Cpu v-else /></ElIcon>
+              <ElIcon class="tag-icon"
+                ><FaSvgIcon v-if="activeId" icon="ri:checkbox-circle-line" /><Cpu v-else
+              /></ElIcon>
               <span>{{ activeModelName }}</span>
             </ElTag>
           </div>
@@ -67,7 +69,7 @@
                 <div class="config-item-main">
                   <div class="item-icon-wrap">
                     <ElIcon class="item-icon" :size="18">
-                      <CircleCheck v-if="item.id === activeId" />
+                      <FaSvgIcon v-if="item.id === activeId" icon="ri:checkbox-circle-line" />
                       <ChatLineSquare v-else />
                     </ElIcon>
                   </div>
@@ -119,7 +121,10 @@
                         size="small"
                         @click="showKeyId = showKeyId === item.id ? null : item.id"
                       >
-                        <ElIcon><View v-if="showKeyId !== item.id" /><Hide v-else /></ElIcon>
+                        <ElIcon
+                          ><FaSvgIcon v-if="showKeyId !== item.id" icon="ri:eye-line" /><Hide
+                            v-else
+                        /></ElIcon>
                       </ElButton>
                       <ElButton
                         text
@@ -127,7 +132,7 @@
                         :disabled="!item.api_key"
                         @click="copyKey(item.api_key)"
                       >
-                        <ElIcon><CopyDocument /></ElIcon>
+                        <ElIcon><FaSvgIcon icon="ri:file-copy-line" /></ElIcon>
                       </ElButton>
                     </div>
                   </div>
@@ -158,7 +163,8 @@
         v-model="dialogVisible"
         :title="form.id ? '编辑模型' : '新增模型'"
         :close-on-click-modal="false"
-       size="sm">
+        size="sm"
+      >
         <ElForm
           ref="formRef"
           :model="form"
@@ -252,7 +258,7 @@
         <template #footer>
           <ElButton @click="dialogVisible = false">取消</ElButton>
           <ElButton type="primary" :loading="saving" @click="handleSave">
-            <ElIcon><Check /></ElIcon>
+            <ElIcon><FaSvgIcon icon="ri:check-line" /></ElIcon>
             <span>{{ form.id ? "保存" : "新增并使用" }}</span>
           </ElButton>
         </template>
@@ -270,14 +276,10 @@ import {
   Delete,
   Cpu,
   ChatLineSquare,
-  CircleCheck,
   ArrowDown,
   RefreshLeft,
   Loading,
-  Check,
-  View,
   Hide,
-  CopyDocument,
 } from "@element-plus/icons-vue";
 import AiChatAPI, {
   type AiModelConfigInput,
@@ -691,7 +693,12 @@ onMounted(loadList);
   background: var(--el-fill-color-blank);
   border: 1px solid var(--el-border-color-lighter);
   border-radius: 8px;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
 
   &.active {
     background: var(--el-color-primary-light-9);
@@ -874,7 +881,12 @@ onMounted(loadList);
 /* 列表过渡 */
 .list-enter-active,
 .list-leave-active {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
 }
 
 .list-enter-from {
