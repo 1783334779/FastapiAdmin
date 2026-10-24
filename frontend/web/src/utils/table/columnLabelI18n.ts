@@ -47,6 +47,18 @@ const STATUS_KEYS: Record<string, string> = {
   已发布: "common.published",
   已回滚: "common.rolledBack",
   未知: "common.unknown",
+  全部数据权限: "common.dataScopeAll",
+  仅本人数据权限: "common.dataScopeSelf",
+  本部门及以下数据权限: "common.dataScopeDept",
+  目录: "common.catalog",
+  菜单: "common.menu",
+  按钮: "common.button",
+  外链: "common.extlink",
+  通知: "common.notification",
+  公告: "common.announcement",
+  本地: "common.local",
+  链式: "common.chain",
+  多目标: "common.multiTarget",
 };
 
 export function translateStatusText(text: string, t: (key: string) => string): string {

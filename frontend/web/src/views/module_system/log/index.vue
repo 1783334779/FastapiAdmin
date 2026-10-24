@@ -2,7 +2,7 @@
 <template>
   <div class="fa-full-height">
     <ElTabs v-model="activeTab" class="fa-tabs-fill">
-      <ElTabPane label="操作日志" name="operation">
+      <ElTabPane :label="$t('common.operationLog')" name="operation">
         <FaSearchBar
           v-show="opShowSearchBar"
           ref="opSearchBarRef"
@@ -152,7 +152,7 @@
         />
       </ElTabPane>
 
-      <ElTabPane label="登录日志" name="login">
+      <ElTabPane :label="$t('common.loginLog')" name="login">
         <FaSearchBar
           v-show="loginShowSearchBar"
           ref="loginSearchBarRef"

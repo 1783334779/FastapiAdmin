@@ -251,7 +251,20 @@
     "draft": "Draft",
     "published": "Published",
     "rolledBack": "Rolled back",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "dataScopeAll": "All data",
+    "dataScopeSelf": "Own data only",
+    "dataScopeDept": "Department and below",
+    "catalog": "Catalog",
+    "button": "Button",
+    "extlink": "External link",
+    "notification": "Notification",
+    "announcement": "Announcement",
+    "local": "Local",
+    "chain": "Chain",
+    "multiTarget": "Multi-target",
+    "operationLog": "Operation logs",
+    "loginLog": "Login logs"
   },
   "search": {
     "placeholder": "Search page",
