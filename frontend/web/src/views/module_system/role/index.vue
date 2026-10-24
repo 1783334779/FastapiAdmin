@@ -558,11 +558,11 @@ const {
       { type: "selection", width: 48, fixed: "left" },
       { type: "globalIndex", width: 56, label: "序号" },
       { prop: "name", label: "角色名称", minWidth: 120, showOverflowTooltip: true },
-      { prop: "code", label: "角色编码", minWidth: 130, showOverflowTooltip: true },
+      { prop: "code", label: "角色编码", minWidth: 110, showOverflowTooltip: true },
       {
         prop: "data_scope",
         label: "数据权限",
-        minWidth: 160,
+        minWidth: 140,
         status: {
           1: { type: "primary", text: "仅本人数据权限" },
           2: { type: "warning", text: "本部门及以下数据权限" },
@@ -572,7 +572,7 @@ const {
       {
         prop: "depts",
         label: "所属部门",
-        minWidth: 200,
+        minWidth: 160,
         formatter: (row: RoleTable) => deptsCell(row),
       },
       { prop: "order", label: "排序", width: 80, showOverflowTooltip: true },
@@ -589,25 +589,16 @@ const {
       {
         prop: "created_time",
         label: "创建时间",
-        width: 168,
+        width: 150,
         formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
           row.created_time ? row.created_time.slice(0, 16) : "—",
         sortable: true,
         showOverflowTooltip: true,
       },
       {
-        prop: "updated_time",
-        label: "更新时间",
-        width: 168,
-        formatter: (row: { created_time?: string | null; updated_time?: string | null }) =>
-          row.updated_time ? row.updated_time.slice(0, 16) : "—",
-        sortable: true,
-        showOverflowTooltip: true,
-      },
-      {
         prop: "operation",
         label: "操作",
-        width: 230,
+        width: 200,
         fixed: "right",
         align: "center",
         formatter: (row: RoleTable) => formatRoleOperationCell(row, opCtx),
