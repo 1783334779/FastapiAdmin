@@ -185,6 +185,7 @@ const containerStyle = computed(
     width: "100%",
     minWidth: 0,
     maxWidth: containerWidth.value,
+    marginInline: "auto",
     flex: "1",
     minHeight: "0",
     display: "flex",
