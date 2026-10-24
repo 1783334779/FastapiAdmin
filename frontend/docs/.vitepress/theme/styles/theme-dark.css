@@ -46,7 +46,7 @@
 }
 
 .dark :deep(.VPNavBarMenuLink:hover) {
-  color: #c4b5fd;
+  color: #C9BFFF;
 }
 
 .dark :deep(.VPNavBarMenuLink::after) {
@@ -91,11 +91,11 @@
 .dark :deep(.VPSidebarItem.is-active > .item > .link) {
   background: linear-gradient(135deg, rgba(79, 107, 255, 0.15), rgba(109, 91, 255, 0.08));
   border-radius: var(--vp-radius-sm);
-  color: #c4b5fd;
+  color: #C9BFFF;
 }
 
 .dark :deep(.VPSidebarItem .link:hover) {
-  color: #c4b5fd;
+  color: #C9BFFF;
 }
 
 /* 侧边栏展开动画 */
@@ -183,7 +183,7 @@
 }
 
 .dark :deep(.VPHero .features .VPFeature:hover .title) {
-  background: linear-gradient(135deg, #c4b5fd 0%, #f9a8d4 100%);
+  background: linear-gradient(135deg, #C9BFFF 0%, #C9BFFF 100%);
   -webkit-background-clip: text;
   background-clip: text;
 }
