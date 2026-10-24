@@ -51,8 +51,6 @@
         :model-value="activeId ?? undefined"
         tab-position="top"
         class="min-h-0 flex-1"
-        :addable="true"
-        @tab-add="openAddDialog"
         @update:model-value="(v) => (activeId = v as number)"
         @tab-change="onElTabChange"
         @tab-remove="(name) => closeTab(Number(name))"
@@ -1777,6 +1775,14 @@ onMounted(async () => {
 }
 
 /* 高度链闭合：左侧标签布局下内容区撑满，使表格独立滚动、状态栏/分页固定底部 */
+.browse-card :deep(.el-tabs__new-tab) {
+  display: none !important;
+}
+
+.browse-card :deep(.el-table__inner-wrapper::before) {
+  display: none;
+}
+
 .browse-card :deep(.el-tabs) {
   height: 100%;
 }
