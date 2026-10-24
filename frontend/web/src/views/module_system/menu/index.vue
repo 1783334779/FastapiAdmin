@@ -55,7 +55,76 @@
         </template>
       </FaTableHeader>
 
+      <div v-if="isNarrow" class="flex flex-col gap-3">
+        <div v-if="!mobileMenuRows.length" class="py-12">
+          <FaEmptyState
+            icon="ri:menu-line"
+            title="暂无菜单"
+            description="新增第一个菜单后在这里展示"
+          />
+        </div>
+        <div
+          v-for="{ row, depth } in mobileMenuRows"
+          :key="row.id"
+          class="p-3 rounded-lg bg-(--default-box-color) border border-(--default-border)"
+          :style="{ marginLeft: `${depth * 12}px` }"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="flex items-center gap-1 min-w-0">
+              <button
+                v-if="row.children?.length"
+                type="button"
+                class="flex items-center justify-center shrink-0 size-5 text-g-600"
+                @click="toggleMobileMenu(row.id!)"
+              >
+                <FaSvgIcon
+                  :icon="
+                    expandedMenuIds.has(row.id!) ? 'ri:arrow-down-s-line' : 'ri:arrow-right-s-line'
+                  "
+                />
+              </button>
+              <span class="text-sm font-medium truncate">{{ row.title || row.name }}</span>
+            </div>
+            <div class="flex gap-1 shrink-0">
+              <FaStatusTag :type="menuTypeTag(row.type)" :label="menuTypeText(row.type)" />
+              <FaStatusTag
+                :type="row.status === 0 ? 'success' : 'danger'"
+                :label="row.status === 0 ? '启用' : '停用'"
+              />
+            </div>
+          </div>
+          <div class="mt-1 text-xs text-g-600 truncate">
+            {{ row.route_path || row.component_path || "—" }}
+          </div>
+          <div class="flex justify-end gap-1 mt-2">
+            <ElButton
+              v-if="row.type === 1 || row.type === 2"
+              link
+              type="primary"
+              size="small"
+              @click="opCtx.onAdd(row)"
+            >
+              新增子级
+            </ElButton>
+            <ElButton link type="primary" size="small" @click="opCtx.onDetail(row.id!)">
+              详情
+            </ElButton>
+            <ElButton link type="primary" size="small" @click="opCtx.onEdit(row.id!)">
+              编辑
+            </ElButton>
+            <ElButton
+              link
+              type="danger"
+              size="small"
+              @click="opCtx.onDelete(row.id!, row.title ?? row.name ?? '')"
+            >
+              删除
+            </ElButton>
+          </div>
+        </div>
+      </div>
       <FaTable
+        v-else
         ref="tableRef"
         row-key="id"
         :loading="loading"
@@ -268,6 +337,7 @@
 </template>
 
 <script setup lang="ts">
+import { useWindowSize } from "@vueuse/core";
 defineOptions({
   // 与菜单 route_name 一致：KeepAlive 的 include/exclude 按组件 name 匹配
   // eslint-disable-next-line vue/no-reserved-component-names -- 须与后端菜单 route_name 对齐；本组件仅由路由加载，不作为模板标签使用
@@ -863,6 +933,46 @@ async function handleOpenMenuDetail(id: number) {
     detailFormData.value = { ...data };
   }
   dialogVisible.visible = true;
+}
+
+const { width: viewportWidth } = useWindowSize();
+const isNarrow = computed(() => viewportWidth.value < 800);
+
+const expandedMenuIds = ref<Set<number>>(new Set());
+
+const mobileMenuRows = computed(() => {
+  const rows: Array<{ row: MenuTable; depth: number }> = [];
+  const walk = (nodes: MenuTable[], depth: number) => {
+    nodes.forEach((node) => {
+      rows.push({ row: node, depth });
+      if (node.children?.length && expandedMenuIds.value.has(node.id!)) {
+        walk(node.children, depth + 1);
+      }
+    });
+  };
+  walk(tableData.value ?? [], 0);
+  return rows;
+});
+
+function toggleMobileMenu(id: number) {
+  const next = new Set(expandedMenuIds.value);
+  if (next.has(id)) next.delete(id);
+  else next.add(id);
+  expandedMenuIds.value = next;
+}
+
+function menuTypeText(type?: number) {
+  return (
+    ({ 1: "目录", 2: "菜单", 3: "按钮", 4: "外链" } as Record<number, string>)[Number(type)] ?? "—"
+  );
+}
+
+function menuTypeTag(type?: number): "primary" | "success" | "warning" | "info" {
+  return (
+    ({ 1: "primary", 2: "success", 3: "info", 4: "warning" } as const)[
+      Number(type) as 1 | 2 | 3 | 4
+    ] ?? "info"
+  );
 }
 
 const opCtx = {
