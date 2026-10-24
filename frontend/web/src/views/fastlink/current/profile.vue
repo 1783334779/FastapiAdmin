@@ -14,10 +14,11 @@
           <div class="relative z-10 mt-30 mx-auto">
             <div class="relative inline-block">
               <img
-                v-if="infoFormState.avatar"
+                v-if="infoFormState.avatar && !avatarLoadFailed"
                 class="w-20 h-20 object-cover border-2 border-white rounded-full"
                 :src="infoFormState.avatar"
                 alt=""
+                @error="avatarLoadFailed = true"
               />
               <img
                 v-else
@@ -467,6 +468,16 @@ const passwordFormState = reactive<PasswordFormState>({
 
 const fileList = ref<any[]>([]);
 const uploadRef = ref<InstanceType<typeof ElUpload>>();
+
+/** 远程头像加载失败时回退到本地默认头像 */
+const avatarLoadFailed = ref(false);
+
+watch(
+  () => infoFormState.avatar,
+  () => {
+    avatarLoadFailed.value = false;
+  }
+);
 
 const avatarCropVisible = ref(false);
 const avatarCropSrc = ref("");
