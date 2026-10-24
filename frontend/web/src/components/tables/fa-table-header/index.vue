@@ -117,14 +117,19 @@
       </ElPopover>
 
       <!-- 表格设置 -->
-      <ElPopover v-if="shouldShow('settings')" placement="bottom" trigger="click">
+      <ElPopover v-if="shouldShow('settings')" placement="bottom" trigger="click" :width="200">
         <template #reference>
           <div class="button">
             <FaSvgIcon icon="ri:settings-line" />
           </div>
         </template>
-        <div class="flex min-w-50 flex-col gap-2">
-          <span class="text-xs font-medium text-g-600">{{ t("table.toolbar.settings") }}</span>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-g-600">{{ t("table.toolbar.settings") }}</span>
+            <ElButton link type="primary" size="small" @click="resetTableSettings">
+              {{ t("table.toolbar.reset") }}
+            </ElButton>
+          </div>
           <ElCheckbox v-model="isZebra" :value="true">
             {{ t("table.zebra") }}
           </ElCheckbox>
@@ -254,6 +259,15 @@ function resetColumns(): void {
     col.visible = visible;
     col.checked = visible;
   });
+}
+
+function resetTableSettings(): void {
+  tableStore.setTableSize(TableSizeEnum.DEFAULT);
+  tableStore.setIsZebra(false);
+  tableStore.setIsBorder(false);
+  tableStore.setIsHeaderBackground(false);
+  tableStore.setHighlightCurrentRow(false);
+  tableStore.setIsRowDrag(false);
 }
 
 /** 表格大小选项配置 */
