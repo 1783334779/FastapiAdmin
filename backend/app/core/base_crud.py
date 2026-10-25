@@ -77,8 +77,11 @@ class CRUDBase[ModelType: ModelMixin, CreateSchemaType, UpdateSchemaType]:
             sql = select(self.model).where(*conditions)
             for opt in self._loader_options(preload):
                 sql = sql.options(opt)
+            
             result: Result = await self.db.execute(sql)
-            return result.scalars().first()
+
+            obj = result.scalars().first()
+            return obj
         except Exception:
             logger.exception('获取查询失败')
             raise
@@ -413,6 +416,7 @@ class CRUDBase[ModelType: ModelMixin, CreateSchemaType, UpdateSchemaType]:
         if not preload:
             preload = []
         mapper = sa_inspect(self.model)
+
         processed_attrs = set()
 
         for opt in preload:

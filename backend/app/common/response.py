@@ -10,7 +10,7 @@ from starlette.background import BackgroundTask
 
 from app.common.constant import DATE_DISPLAY_FMT, DATETIME_DISPLAY_FMT, TIME_DISPLAY_FMT
 from app.common.enums import RET
-
+from app.core.logger import logger
 # 裸 datetime/date/time（未走 Pydantic 的 dict 等）JSON 输出与 constant 中展示格式一致
 _JSON_DATETIME_CUSTOM_ENCODER: dict[type[Any], Any] = {
     datetime: lambda d: d.strftime(DATETIME_DISPLAY_FMT),

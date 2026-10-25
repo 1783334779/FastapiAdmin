@@ -1,0 +1,20 @@
+{
+  "vetur.validation.script": false,
+  "vetur.validation.template": false,
+  "vetur.validation.style": false,
+  "workbench.editorAssociations": {
+    "*.md": "vscode.markdown.preview.editor"
+  },
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+  "python.analysis.extraPaths": ["${workspaceFolder}/backend"],
+  "eslint.workingDirectories": [
+    {
+      "directory": "./frontend/web",
+      "changeProcessCWD": true
+    },
+    {
+      "directory": "./frontend/app",
+      "changeProcessCWD": true
+    }
+  ]
+}

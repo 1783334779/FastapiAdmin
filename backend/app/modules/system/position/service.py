@@ -14,7 +14,7 @@ from .schema import (
     PositionQueryParam,
     PositionUpdateSchema,
 )
-
+from app.core.logger import logger 
 
 class PositionService:
     """岗位管理服务
@@ -28,7 +28,11 @@ class PositionService:
 
     async def detail(self, id: int) -> PositionOutSchema:
         obj = await PositionCRUD(self.auth, self.db).get_or_404(id=id)
-        return PositionOutSchema.model_validate(obj)
+        
+
+        result = PositionOutSchema.model_validate(obj)
+        logger.info("[sql] {}",result)
+        return result
 
     async def get_options(self) -> list[dict[str, Any]]:
         """获取岗位下拉选项，委托给 PositionCRUD"""

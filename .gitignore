@@ -4,7 +4,10 @@ __pycache__
 *.pyd
 .Python
 
-.vscode
+# 仅提交团队共用的 VS Code 配置，其他个人工作区状态继续忽略
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea
 .DS_Store
 *.log
