@@ -227,6 +227,7 @@
 
 <script setup lang="ts">
 import { computed, h } from "vue";
+import { useRouter } from "vue-router";
 import { useWindowSize } from "@vueuse/core";
 import { useCrudForm } from "@/hooks/core/useCrudForm";
 import { confirmToggleStatus } from "@/hooks/core/useConfirm";
@@ -254,8 +255,11 @@ import FaForm from "@/components/forms/fa-form/index.vue";
 import StatusTag from "@/components/display/fa-status-tag/index.vue";
 import { ElMessage } from "element-plus";
 import FaPermissonDrawer from "./components/FaPermissonDrawer.vue";
+
 import FaTableHeader from "@/components/tables/fa-table-header/index.vue";
 import FaDescriptions from "@/components/display/fa-descriptions/index.vue";
+
+const roleScopeRouter = useRouter();
 
 defineOptions({
   name: "Role",
@@ -323,6 +327,18 @@ function buildRoleRowActions(
   const warnSys = () => ElMessage.warning("系统默认角色，不可操作");
 
   const all: TableOperationAction[] = [
+    {
+      key: "managed-departments",
+      label: "管理部门",
+      artType: "view",
+      icon: "ri:building-2-line",
+      perm: "module_system:workflow:configure",
+      run: () =>
+        roleScopeRouter.push({
+          path: "/system/approval-flows",
+          query: { tab: "members", role_id: String(row.id) },
+        }),
+    },
     {
       key: "perm",
       label: "分配权限",

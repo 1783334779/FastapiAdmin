@@ -3,6 +3,7 @@
 from fastapi import APIRouter
 
 from app.modules.ai.chat.controller import ChatRouter
+from app.modules.business.project.controller import ProjectRouter
 from app.modules.common.file.controller import FileRouter
 from app.modules.dbconsole.controller import DbConsoleRouter
 from app.modules.generator.gencode.controller import GenRouter
@@ -29,6 +30,7 @@ from app.modules.task.storage.browse.controller import StorageBrowseRouter
 from app.modules.task.storage.node.controller import StorageNodeRouter
 from app.modules.task.storage.transfer.controller import StorageTransferRouter
 from app.modules.task.storage.workflow.controller import StorageWorkflowRouter
+from app.modules.workflow.controller import TaskRouter, WorkflowRouter
 
 # 域前缀 → 该域 controller 清单（唯一路由事实来源）
 DOMAIN_CONTROLLERS: dict[str, list[APIRouter]] = {
@@ -45,6 +47,7 @@ DOMAIN_CONTROLLERS: dict[str, list[APIRouter]] = {
         TicketRouter,
         VersionRouter,
         LogRouter,
+        WorkflowRouter,
     ],
     "/monitor": [
         CacheRouter,
@@ -65,6 +68,8 @@ DOMAIN_CONTROLLERS: dict[str, list[APIRouter]] = {
     "/common": [FileRouter],
     "/dbconsole": [DbConsoleRouter],
     "/ops": [SshRouter],
+    "/business": [ProjectRouter],
+    "/workflow": [TaskRouter],
 }
 
 api_v1 = APIRouter()

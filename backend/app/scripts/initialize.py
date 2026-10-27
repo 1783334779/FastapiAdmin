@@ -199,6 +199,10 @@ class InitializeData:
         if skipped:
             logger.info(f"⏭️  {len(skipped)} 张表已有数据，跳过初始化：{', '.join(skipped)}")
 
+        from app.modules.workflow.bootstrap import bootstrap_workflow
+
+        await bootstrap_workflow(db)
+
     @staticmethod
     async def __create_dict_data_objs(db: AsyncSession, data: list[dict]) -> list[DictDataModel]:
         """字典数据种子：dict_type_id 通过查询库内字典类型解析。"""

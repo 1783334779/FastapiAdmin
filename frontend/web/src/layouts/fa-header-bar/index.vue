@@ -71,6 +71,12 @@
       </div>
 
       <div id="app-header-toolbar" class="flex items-center gap-2.5">
+        <FaIconButton
+          icon="ri:task-line"
+          aria-label="我的审批"
+          title="我的审批"
+          @click="router.push('/workflow/tasks')"
+        />
         <!-- 搜索 -->
         <div
           v-if="shouldShowGlobalSearch"

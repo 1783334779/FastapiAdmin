@@ -19,6 +19,7 @@ import { Auth } from "@utils/auth";
 import { isHttpError, ApiStatus } from "@utils/http";
 import { refreshState } from "./refresh";
 import { getMainScrollEl } from "@/hooks/core/useCommon";
+import { isPersonalWorkflowPath } from "./workflow-access";
 
 /** 全局 loading 状态（用于路由切换时显示加载遮罩） */
 const globalLoading = ref(false);
@@ -251,6 +252,7 @@ export class RoutePermissionValidator {
   /** 判断用户是否有权限访问 targetPath（/ 和壳层路由始终放行） */
   static hasPermission(targetPath: string, menuList: AppRouteRecord[]): boolean {
     if (targetPath === "/") return true;
+    if (isPersonalWorkflowPath(targetPath)) return true;
     if (this.isShellPath(targetPath)) return true;
     return this.matchRoute(targetPath, menuList);
   }

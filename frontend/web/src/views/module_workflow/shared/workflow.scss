@@ -1,0 +1,130 @@
+.wf-page {
+  gap: 16px;
+  min-width: 0;
+}
+
+.wf-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.wf-toolbar .wf-spacer {
+  flex: 1;
+}
+
+.wf-section {
+  min-width: 0;
+  padding: 16px;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: var(--fa-radius-md, 12px);
+}
+
+.wf-muted {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--el-text-color-secondary);
+}
+
+.wf-pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.wf-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.wf-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.wf-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.wf-full {
+  width: 100%;
+}
+
+.wf-descriptions {
+  overflow-wrap: anywhere;
+}
+
+.wf-condition {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: 12px;
+  border-left: 1px solid var(--el-border-color);
+}
+
+.wf-designer {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 200px minmax(0, 1fr) 320px;
+  gap: 16px;
+  min-height: 560px;
+}
+
+.wf-designer__canvas {
+  min-width: 0;
+  min-height: 560px;
+  background: var(--el-bg-color);
+  border: 1px solid var(--el-border-color-light);
+  border-radius: var(--fa-radius-md, 12px);
+}
+
+.wf-designer__panel {
+  min-width: 0;
+  padding: 16px;
+  overflow: auto;
+  background: var(--el-bg-color);
+  border-radius: var(--fa-radius-md, 12px);
+}
+
+.wf-node-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wf-node-palette button {
+  margin-left: 0 !important;
+}
+@media (width <= 1280px) {
+  .wf-designer {
+    grid-template-columns: 160px minmax(0, 1fr);
+  }
+
+  .wf-designer__config {
+    grid-column: 1 / -1;
+  }
+}
+@media (width <= 800px) {
+  .wf-grid,
+  .wf-designer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wf-designer__canvas {
+    min-height: 400px;
+  }
+
+  .wf-pagination {
+    justify-content: flex-start;
+    overflow: auto;
+  }
+}

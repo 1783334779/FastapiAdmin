@@ -247,6 +247,18 @@ export const staticRoutes: AppRouteRecordRaw[] = [
         meta: HOME_MENU_META,
       },
       {
+        path: "workflow/tasks",
+        name: "WorkflowTasks",
+        component: () => import("@/views/module_workflow/tasks/index.vue"),
+        meta: { title: "我的审批", icon: "ri:task-line", hidden: true, keepAlive: false },
+      },
+      {
+        path: "workflow/tasks/:taskId",
+        name: "WorkflowTaskApproval",
+        component: () => import("@/views/module_business/project/approval.vue"),
+        meta: { title: "审批项目", hidden: true, keepAlive: false },
+      },
+      {
         path: "dashboard",
         name: "Dashboard",
         redirect: "/dashboard/workplace",

@@ -11,6 +11,7 @@
 import type { Router } from "vue-router";
 import type { AppRouteRecord } from "@/types/router";
 import { h } from "vue";
+import { isPersonalWorkflowPath } from "./workflow-access";
 import {
   IframeRouteManager,
   IframeView,
@@ -114,11 +115,7 @@ function warnInvalidRouteConfig(routes: AppRouteRecord[], parentPath = ""): void
         );
       }
       // 检查目录挂组件：会让 RouterView 的深度跳级失效（出口渲染目录组件而非叶子页面，叶子被重复挂载）
-      if (
-        route.children?.length &&
-        route.component &&
-        route.component !== ROUTE_COMPONENT_LAYOUT
-      ) {
+      if (route.children?.length && route.component && route.component !== ROUTE_COMPONENT_LAYOUT) {
         console.warn(
           `[路由配置] 目录节点不应挂组件: "${route.path}" → ${String(route.component)}；` +
             "中间层一旦有组件，RouterView 深度跳级即失效，页面会被重复挂载、接口重复请求"
@@ -319,6 +316,9 @@ export class RouteRegistry {
 
     this.registered = true;
     menuList.forEach((menu, index) => {
+      // 该菜单只负责侧栏展示。页面已有静态登录路由，动态包壳会重名替换它，
+      // 且一级叶子的相对路径转换会使 /workflow/tasks 变成错误的重复前缀。
+      if (isPersonalWorkflowPath(menu.path)) return;
       const firstSegment = this.transformer.pathFirstSegment(menu.path);
       // 壳层路径不覆盖
       if (this.isShellSegment(firstSegment)) return;
