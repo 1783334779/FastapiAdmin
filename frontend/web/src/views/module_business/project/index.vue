@@ -15,6 +15,13 @@
           type="primary"
           @click="router.push('/business/projects/new')"
           ><FaSvgIcon icon="ri:add-line" />新建项目</ElButton
+        ><ElButton
+          v-hasPerm="['module_business:project:query']"
+          :loading="exporting"
+          :disabled="loading || exporting || total === 0"
+          :title="`导出当前列表筛选下的全部 ${total} 条项目，不限当前页`"
+          @click="exportProjects"
+          ><FaSvgIcon icon="ri:download-2-line" />导出</ElButton
         ><ElButton @click="router.push('/workflow/tasks')">我的审批</ElButton
         ><span class="wf-spacer" /><ElButton :loading="loading" @click="load">刷新</ElButton>
       </div>
@@ -86,11 +93,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { projectApi } from "@/api/module_business/project";
+import { projectApi, type ProjectListFilters } from "@/api/module_business/project";
 import { statusLabels, statusType, type ProjectData } from "@/api/module_workflow/workflow";
+import { saveAs } from "file-saver";
 import "@/views/module_workflow/shared/workflow.scss";
 const router = useRouter();
 const search = ref<Record<string, string>>({ name: "", status: "" });
+// 导出使用最近一次成功加载列表的条件，尚未点击搜索的输入不影响导出范围。
+const appliedSearch = ref<ProjectListFilters>({ name: "", status: "" });
 const searchItems = [
   { key: "name", label: "项目名称", type: "input", props: { clearable: true } },
   {
@@ -109,19 +119,35 @@ const rows = ref<ProjectData[]>([]),
   total = ref(0),
   page = ref(1),
   size = ref(10),
-  loading = ref(false);
+  loading = ref(false),
+  exporting = ref(false);
+let loadSequence = 0;
 async function load() {
+  const sequence = ++loadSequence;
+  const filters = { name: search.value.name ?? "", status: search.value.status ?? "" };
   loading.value = true;
   try {
     const result = await projectApi.list({
-      ...search.value,
+      ...filters,
       page_no: page.value,
       page_size: size.value,
     });
+    if (sequence !== loadSequence) return;
     rows.value = result.items;
     total.value = result.total;
+    appliedSearch.value = filters;
   } finally {
-    loading.value = false;
+    if (sequence === loadSequence) loading.value = false;
+  }
+}
+async function exportProjects() {
+  if (loading.value || exporting.value || total.value === 0) return;
+  exporting.value = true;
+  try {
+    const content = await projectApi.export({ ...appliedSearch.value });
+    saveAs(content, "项目列表.xlsx");
+  } finally {
+    exporting.value = false;
   }
 }
 function searchNow() {

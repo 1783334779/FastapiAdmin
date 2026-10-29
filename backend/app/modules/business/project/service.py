@@ -10,6 +10,7 @@ from app.modules.system.dict.model import DictDataModel, DictTypeModel
 from app.modules.system.user.model import UserModel
 from app.modules.workflow.model import WorkflowInstanceModel
 from app.modules.workflow.resolvers import managed_department_ids
+from app.utils.excel_util import ExcelUtil
 
 from .adapter import ProjectWorkflowAdapter
 from .crud import ProjectCRUD
@@ -18,6 +19,8 @@ from .schema import ProjectCreateSchema, ProjectUpdateSchema
 
 EDITABLE = {"DRAFT", "RETURNED", "WITHDRAWN"}
 DICTIONARIES = {"initiation_type": "project_initiation_type", "category": "project_category", "currency": "project_currency"}
+PROJECT_STATUS_LABELS = {"DRAFT": "起草", "IN_REVIEW": "审批中", "RETURNED": "退回起草", "BLOCKED": "流程阻塞", "APPROVED": "已通过", "WITHDRAWN": "已撤回"}
+EXPORT_COLUMNS = {"name": "项目名称", "initiation_type": "立项类型", "business_dept_id": "业务部门", "status": "状态", "creator_name": "创建人", "created_date": "创建日期"}
 
 
 class ProjectService:
@@ -75,9 +78,13 @@ class ProjectService:
         return {"labels": labels, "users": [{"id": row.id, "name": row.name} for row in rows]}
 
     async def save_revision(self, project, data, display) -> None:
+        from .attachments import ProjectAttachmentService
+
+        attachments = await ProjectAttachmentService(self.auth, self.db).bind(project, data.attachment_ids)
         project.revision_no += 1
         payload = data.model_dump(mode="json", exclude={"expected_version"})
         payload.update(display)
+        payload["attachments"] = attachments
         creator = await self.db.get(UserModel, project.creator_user_id)
         dept = await self.db.get(DeptModel, project.creator_dept_id)
         payload.update(
@@ -103,7 +110,7 @@ class ProjectService:
         project = await self.adapter.load(project_id, lock=True)
         self.require_owner_edit(project, data.expected_version)
         display = await self.validate_input(data)
-        for key, value in data.model_dump(exclude={"expected_version", "it_manager_ids", "business_manager_ids"}).items():
+        for key, value in data.model_dump(exclude={"expected_version", "it_manager_ids", "business_manager_ids", "attachment_ids"}).items():
             setattr(project, key, value)
         await self.db.execute(delete(ProjectMemberModel).where(ProjectMemberModel.project_id == project.id))
         for kind, ids in (("IT_MANAGER", data.it_manager_ids), ("BUSINESS_MANAGER", data.business_manager_ids)):
@@ -181,15 +188,48 @@ class ProjectService:
             },
         }
 
-    async def page(self, page_no: int, page_size: int, name: str = "", status: str = ""):
+    async def list_conditions(self, name: str = "", status: str = ""):
+        """列表和全量导出共用筛选及对象可见范围，不接受客户端指定数据范围。"""
         conditions = [ProjectModel.is_deleted.is_(False), await self.visible_condition()]
         if name:
             conditions.append(ProjectModel.name.contains(name, autoescape=True))
         if status:
             conditions.append(ProjectModel.status == status)
+        return conditions
+
+    async def page(self, page_no: int, page_size: int, name: str = "", status: str = ""):
+        conditions = await self.list_conditions(name, status)
         total = await self.db.scalar(select(func.count()).select_from(ProjectModel).where(*conditions))
         projects = (await self.db.execute(select(ProjectModel).where(*conditions).order_by(ProjectModel.id.desc()).offset((page_no - 1) * page_size).limit(page_size))).scalars().all()
         return {"items": [await self.serialize(project) for project in projects], "total": total, "page_no": page_no, "page_size": page_size}
+
+    async def export(self, name: str = "", status: str = "") -> bytes:
+        conditions = await self.list_conditions(name, status)
+        # 与列表同序，不分页；批量取当前快照，避免逐条 serialize 额外查询审批实例。
+        rows = (
+            await self.db.execute(
+                select(ProjectModel, ProjectRevisionModel.payload)
+                .outerjoin(ProjectRevisionModel, ProjectRevisionModel.id == ProjectModel.current_revision_id)
+                .where(*conditions)
+                .order_by(ProjectModel.id.desc())
+            )
+        ).all()
+        data = []
+        for project, snapshot in rows:
+            if snapshot is None:
+                raise CustomException(msg=f"项目 {project.id} 缺少当前资料版本，请修复后重新导出")
+            labels = snapshot.get("labels") or {}
+            data.append(
+                {
+                    "name": snapshot.get("name"),
+                    "initiation_type": labels.get("initiation_type") if labels.get("initiation_type") is not None else snapshot.get("initiation_type"),
+                    "business_dept_id": labels.get("business_dept_id") if labels.get("business_dept_id") is not None else snapshot.get("business_dept_id"),
+                    "status": PROJECT_STATUS_LABELS.get(project.status, project.status),
+                    "creator_name": snapshot.get("creator_name"),
+                    "created_date": project.created_time.strftime("%Y-%m-%d") if project.created_time else None,
+                }
+            )
+        return await ExcelUtil.aexport_list2excel(data, EXPORT_COLUMNS, max_rows=None)
 
     async def detail(self, project_id: int):
         project = await self.get_visible(project_id)

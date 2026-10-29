@@ -4,7 +4,7 @@ from datetime import date
 from typing import Annotated, Self
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
-
+from models import ProjectMilestoneModel
 PositiveId = Annotated[int, Field(strict=True, gt=0)]
 
 
@@ -23,11 +23,12 @@ class ProjectCreateSchema(BaseModel):
     planned_start_date: date = Field(..., description="计划开始日期，格式 YYYY-MM-DD")
     planned_end_date: date = Field(..., description="计划结束日期，格式 YYYY-MM-DD")
     currency: str = Field(..., min_length=1, max_length=255, description="币种的字典值")
-
-    @field_validator("it_manager_ids", "business_manager_ids")
+    attachment_ids: list[PositiveId] = Field(default_factory=list, max_length=20, description="上传成功的私有附件ID，附件可选")
+    milestones: list[ProjectMilestoneModel] = Field(default_factory=list, max_length=20, description="项目里程碑，最多20个")
+    @field_validator("it_manager_ids", "business_manager_ids", "attachment_ids")
     @classmethod
-    def deduplicate_manager_ids(cls, value: list[int]) -> list[int]:
-        """每类经理按用户 ID 去重，保留首次出现的顺序。"""
+    def deduplicate_ids(cls, value: list[int]) -> list[int]:
+        """经理与附件各自按 ID 去重，保留首次出现的顺序。"""
         return list(dict.fromkeys(value))
 
     @model_validator(mode="after")

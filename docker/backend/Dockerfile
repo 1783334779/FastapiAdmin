@@ -37,7 +37,7 @@ COPY ./backend/ /home/
 
 # 以非 root 用户运行；运行时需要写的目录预先建好并交给该用户
 RUN useradd --uid 1000 --create-home --shell /usr/sbin/nologin app \
- && mkdir -p /home/logs /home/static/upload /home/alembic/versions \
+ && mkdir -p /home/logs /home/static/upload /home/alembic/versions /home/private/files \
  && chown -R app:app /home
 USER app
 

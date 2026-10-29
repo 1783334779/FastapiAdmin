@@ -10,9 +10,11 @@ from app.core.dependencies import AuthPermission
 from app.core.router_class import OperationLogRoute
 from app.utils.upload_util import UploadUtil
 
+from .private_controller import PrivateFileRouter
 from .service import FileService
 
 FileRouter = APIRouter(route_class=OperationLogRoute, prefix="/file", tags=["文件管理"])
+FileRouter.include_router(PrivateFileRouter)
 
 
 @FileRouter.post("/upload", summary="上传文件", response_model=ResponseSchema[UploadResponseSchema], dependencies=[Security(AuthPermission(["module_common:file:upload"]))])

@@ -118,30 +118,32 @@ const missingDictionaries = computed(() =>
 );
 const rules = computed<FormRules>(() =>
   Object.fromEntries(
-    Object.keys(model.value).map((key) => [
-      key,
-      [
-        { required: true, message: "请填写或选择此项", trigger: "change" },
-        ...(key === "name"
-          ? [{ whitespace: true, message: "项目名称不能全为空白", trigger: "blur" }]
-          : []),
-        ...(key === "planned_end_date"
-          ? [
-              {
-                validator: (_rule: unknown, value: string, callback: (error?: Error) => void) =>
-                  callback(
-                    value &&
-                      model.value.planned_start_date &&
-                      value < model.value.planned_start_date
-                      ? new Error("结束日期不能早于开始日期")
-                      : undefined
-                  ),
-                trigger: "change",
-              },
-            ]
-          : []),
-      ],
-    ])
+    Object.keys(model.value)
+      .filter((key) => key !== "attachment_ids")
+      .map((key) => [
+        key,
+        [
+          { required: true, message: "请填写或选择此项", trigger: "change" },
+          ...(key === "name"
+            ? [{ whitespace: true, message: "项目名称不能全为空白", trigger: "blur" }]
+            : []),
+          ...(key === "planned_end_date"
+            ? [
+                {
+                  validator: (_rule: unknown, value: string, callback: (error?: Error) => void) =>
+                    callback(
+                      value &&
+                        model.value.planned_start_date &&
+                        value < model.value.planned_start_date
+                        ? new Error("结束日期不能早于开始日期")
+                        : undefined
+                    ),
+                  trigger: "change",
+                },
+              ]
+            : []),
+        ],
+      ])
   )
 );
 defineExpose({ validate: () => formRef.value?.validate() });

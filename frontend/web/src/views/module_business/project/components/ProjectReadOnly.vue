@@ -29,11 +29,28 @@
     <ElDescriptionsItem label="创建部门快照">{{
       data.creator_dept_name ?? data.creator_dept_id
     }}</ElDescriptionsItem>
+    <ElDescriptionsItem label="项目附件" :span="2">
+      <PrivateFileList
+        :items="data.attachments ?? []"
+        :download-context="{
+          business_key: 'project',
+          business_id: projectId,
+          revision_id: revisionId,
+          task_id: taskId,
+        }"
+      />
+    </ElDescriptionsItem>
   </ElDescriptions>
 </template>
 <script setup lang="ts">
 import type { ProjectSnapshot } from "@/api/module_workflow/workflow";
-const props = defineProps<{ data: ProjectSnapshot }>();
+import PrivateFileList from "@/components/media/fa-private-file-list/index.vue";
+const props = defineProps<{
+  data: ProjectSnapshot;
+  projectId?: number;
+  revisionId?: number;
+  taskId?: number;
+}>();
 function names(ids: number[] = []) {
   return ids
     .map((id) => props.data.users?.find((person) => person.id === id)?.name ?? `用户 ${id}`)

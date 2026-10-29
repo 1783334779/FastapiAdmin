@@ -24,8 +24,8 @@ class ProjectCRUD:
         data 必须经过 Schema 校验；创建身份由 Service 从认证用户取得。
         人员/部门启用状态、字典有效性及创建权限不由这一层判断。
         """
-        # 请求中的两个数组不是主表列，先从主表数据中排除。
-        project_data = data.model_dump(exclude={"it_manager_ids", "business_manager_ids"})
+        # 经理与附件ID数组都不是主表列，先从主表数据中排除。
+        project_data = data.model_dump(exclude={"it_manager_ids", "business_manager_ids", "attachment_ids"})
         project = ProjectModel(
             **project_data,
             creator_user_id=creator_user_id,

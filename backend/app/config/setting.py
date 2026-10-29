@@ -216,6 +216,9 @@ class Settings(BaseSettings):
     # ***************** 动态文件配置 ***************** #
     # ================================================= #
     UPLOAD_FILE_PATH: Path = Path("static/upload")  # 上传目录
+    # 通用私有文件不进入 static；各业务仅管理文件关联和下载权限。
+    PRIVATE_FILE_ROOT: Path = Path("private/files")
+    PRIVATE_FILE_EXTENSIONS: list[str] = [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".csv", ".png", ".jpg", ".jpeg", ".zip"]
     UPLOAD_MACHINE: str = "A"  # 上传机器标识
     ALLOWED_EXTENSIONS: list[str] = [  # 允许的文件类型
         ".gif",

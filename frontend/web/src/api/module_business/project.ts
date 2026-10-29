@@ -6,10 +6,26 @@ import {
   type Page,
   type Options,
 } from "@/api/module_workflow/workflow";
+import { request } from "@utils";
+
+export interface ProjectListFilters {
+  name: string;
+  status: string;
+}
 
 export const projectApi = {
   list: (params: Record<string, unknown>) =>
     http<Page<ProjectData>>("/business/project/list", "get", undefined, params),
+  export: async ({ name, status }: ProjectListFilters) => {
+    const response = await request<Blob>({
+      url: "/business/project/export",
+      method: "get",
+      params: { name, status },
+      responseType: "blob",
+      timeout: 120000,
+    });
+    return response.data;
+  },
   detail: (id: number) => http<ProjectData>(`/business/project/detail/${id}`),
   create: (body: ProjectFormData) => http<ProjectData>("/business/project/create", "post", body),
   createAndSubmit: (body: ProjectFormData, key: string) =>
@@ -52,5 +68,6 @@ export function emptyProject(): ProjectFormData {
     planned_start_date: "",
     planned_end_date: "",
     currency: "",
+    attachment_ids: [],
   };
 }

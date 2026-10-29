@@ -15,12 +15,12 @@
           v-if="canSubmit"
           type="primary"
           :loading="activeAction === 'submit'"
-          :disabled="loading || !!activeAction"
+          :disabled="loading || !!activeAction || attachmentsBusy"
           @click="save('submit')"
           >提交审批</ElButton
         ><ElButton
           :loading="activeAction === 'draft'"
-          :disabled="loading || !!activeAction"
+          :disabled="loading || !!activeAction || attachmentsBusy"
           @click="save('draft')"
           >保存草稿</ElButton
         >
@@ -31,6 +31,16 @@
         :options="options"
         :selected-people="selectedPeople"
       />
+      <PrivateFileUpload
+        v-model="form.attachment_ids"
+        label="项目附件"
+        :max-files="20"
+        :initial-files="selectedAttachments"
+        :can-upload="hasAuth(`module_business:project:${projectId ? 'update' : 'create'}`)"
+        :download-context="{ business_key: 'project', business_id: projectId }"
+        :disabled="loading || !!activeAction"
+        @busy-change="attachmentsBusy = $event"
+      />
     </section>
   </div>
 </template>
@@ -39,8 +49,14 @@ import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { emptyProject, projectApi } from "@/api/module_business/project";
-import type { Options, Person, ProjectFormData } from "@/api/module_workflow/workflow";
+import type {
+  Options,
+  Person,
+  ProjectFormData,
+  ProjectAttachment,
+} from "@/api/module_workflow/workflow";
 import ProjectForm from "./ProjectForm.vue";
+import PrivateFileUpload from "@/components/forms/fa-private-file-upload/index.vue";
 import { useAuth } from "@/hooks/core/useAuth";
 import "@/views/module_workflow/shared/workflow.scss";
 const props = defineProps<{ projectId?: number }>();
@@ -55,6 +71,8 @@ const form = ref(emptyProject());
 const formRef = ref<InstanceType<typeof ProjectForm>>();
 const options = ref<Options>({ users: [], departments: [], dictionaries: {} });
 const selectedPeople = ref<Person[]>([]);
+const selectedAttachments = ref<ProjectAttachment[]>([]),
+  attachmentsBusy = ref(false);
 const loading = ref(false),
   activeAction = ref<"draft" | "submit">(),
   loadError = ref("");
@@ -69,9 +87,13 @@ async function load() {
       const detail = await projectApi.detail(props.projectId);
       if (!detail.allowed_actions?.edit) throw new Error("当前账号或项目状态不允许编辑");
       form.value = Object.fromEntries(
-        Object.keys(emptyProject()).map((key) => [key, detail[key as keyof ProjectFormData]])
+        Object.keys(emptyProject()).map((key) => [
+          key,
+          detail[key as keyof ProjectFormData] ?? emptyProject()[key as keyof ProjectFormData],
+        ])
       ) as unknown as ProjectFormData;
       selectedPeople.value = detail.users ?? [];
+      selectedAttachments.value = detail.attachments ?? [];
       version.value = detail.lock_version;
     }
   } catch (error) {
@@ -81,7 +103,7 @@ async function load() {
   }
 }
 async function save(action: "draft" | "submit") {
-  if (activeAction.value || loading.value) return;
+  if (activeAction.value || loading.value || attachmentsBusy.value) return;
   if (action === "submit" && !canSubmit.value) return;
   activeAction.value = action;
   try {

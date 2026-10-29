@@ -102,3 +102,42 @@ class ProjectRevisionModel(MappedBase):
     payload: Mapped[dict] = mapped_column(JSONType, nullable=False)
     editor_id: Mapped[int] = mapped_column(Integer, nullable=False)
     created_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC))
+
+
+class ProjectAttachmentModel(MappedBase):
+    """项目只保存文件关联；文件元数据和临时生命周期位于 common_file。"""
+
+    __tablename__ = "biz_project_file"
+    __table_args__ = (Index("ix_project_file_project_removed", "project_id", "removed_time"),)
+    project_id: Mapped[int] = mapped_column(ForeignKey("biz_project.id", ondelete="RESTRICT"), primary_key=True)
+    file_id: Mapped[int] = mapped_column(ForeignKey("common_file.id", ondelete="RESTRICT"), primary_key=True)
+    removed_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+class ProjectMilestoneModel(MappedBase):
+    """项目里程碑：一行代表一个里程碑节点，随项目主表删除。"""
+
+    __tablename__ = "biz_project_milestone"
+    __table_args__ = (
+        CheckConstraint("planned_end_time >= planned_start_time", name="project_milestone_period"),
+        Index("ix_biz_project_milestone_project", "project_id"),
+        {"comment": "项目里程碑表"},
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, comment="主键ID")
+    project_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("biz_project.id", ondelete="CASCADE"),
+        nullable=False,
+        comment="所属项目ID",
+    )
+    name: Mapped[str] = mapped_column(String(200), nullable=False, comment="里程碑名称")
+    delivery_standard: Mapped[str] = mapped_column(String(1000), nullable=False, comment="交付标准")
+    owner_user_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("sys_user.id", ondelete="RESTRICT"),
+        nullable=False,
+        comment="责任人用户ID",
+    )
+    planned_start_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, comment="计划开始时间")
+    planned_end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, comment="计划结束时间")
+    created_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False, comment="创建时间")

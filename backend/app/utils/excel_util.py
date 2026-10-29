@@ -3,9 +3,12 @@ import io
 from typing import Any
 
 from openpyxl import Workbook, load_workbook
+from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import Alignment, PatternFill
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
+
+EXCEL_SHEET_MAX_DATA_ROWS = 1048575  # Excel 每张表共 1048576 行，扣除一行表头。
 
 
 class ExcelUtil:
@@ -102,37 +105,40 @@ class ExcelUtil:
         return buffer.getvalue()
 
     @classmethod
-    def export_list2excel(cls, list_data: list[dict[str, Any]], mapping_dict: dict) -> bytes:
+    def export_list2excel(cls, list_data: list[dict[str, Any]], mapping_dict: dict, *, max_rows: int | None = 100000) -> bytes:
         """将列表数据导出为 Excel 文件。
 
         参数:
         - list_data: 要导出的数据列表。
         - mapping_dict: 字段名映射字典 {英文key: 中文表头}。
+        - max_rows: 默认保留原有 10 万条上限；None 表示全量，不截断。
 
         返回:
         - bytes: Excel 文件的二进制数据。
 
-        限制:
-        - 最多导出 100000 条记录，超出部分截断。
+        超过单张 Excel 工作表容量时自动分表，每张表都有表头。
         """
-        max_rows = 100000
-        if len(list_data) > max_rows:
+        if max_rows is not None and len(list_data) > max_rows:
             list_data = list_data[:max_rows]
 
-        mapping_data = cls.__mapping_list(list_data, mapping_dict)
         headers = list(mapping_dict.values())
 
-        wb = Workbook()
-        ws = wb.active
-        if not ws:
-            raise ValueError("不存在活动工作表")
-
-        for col_num, header in enumerate(headers, 1):
-            ws.cell(row=1, column=col_num, value=header)
-
-        for row_num, row_data in enumerate(mapping_data, 2):
-            for col_num, header in enumerate(headers, 1):
-                ws.cell(row=row_num, column=col_num, value=row_data.get(header))
+        wb = Workbook(write_only=True)
+        ws = wb.create_sheet("Sheet")
+        ws.append(headers)
+        for row_num, item in enumerate(list_data):
+            if row_num and row_num % EXCEL_SHEET_MAX_DATA_ROWS == 0:
+                ws = wb.create_sheet()
+                ws.append(headers)
+            cells = []
+            for key in mapping_dict:
+                value = item.get(key)
+                cell = WriteOnlyCell(ws, value=value)
+                if isinstance(value, str):
+                    # 导出的用户输入按文本写入，不把 =HYPERLINK(...) 等当公式执行。
+                    cell.data_type = "s"
+                cells.append(cell)
+            ws.append(cells)
 
         buffer = io.BytesIO()
         wb.save(buffer)
@@ -140,10 +146,10 @@ class ExcelUtil:
         return buffer.getvalue()
 
     @classmethod
-    async def aexport_list2excel(cls, list_data: list[dict[str, Any]], mapping_dict: dict) -> bytes:
+    async def aexport_list2excel(cls, list_data: list[dict[str, Any]], mapping_dict: dict, *, max_rows: int | None = 100000) -> bytes:
         """export_list2excel 的异步版本：构建与序列化在线程池中执行。
 
-        导出最多 10 万行，逐单元格写入 + ZIP 压缩为纯同步 CPU 操作，
+        默认最多 10 万行，max_rows=None 全量导出。逐单元格写入 + ZIP 压缩为纯同步 CPU 操作，
         千行以上即会明显卡住事件循环，async 调用点必须使用本方法。
         """
-        return await asyncio.to_thread(cls.export_list2excel, list_data, mapping_dict)
+        return await asyncio.to_thread(cls.export_list2excel, list_data, mapping_dict, max_rows=max_rows)

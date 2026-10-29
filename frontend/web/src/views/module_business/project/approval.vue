@@ -30,7 +30,12 @@
             >回到当前资料后审批</ElButton
           >
         </div>
-        <ProjectReadOnly :data="shownSnapshot" />
+        <ProjectReadOnly
+          :data="shownSnapshot"
+          :project-id="detail.project.id"
+          :revision-id="selectedRevision"
+          :task-id="detail.task.id"
+        />
         <ElForm v-if="detail.allowed_actions.approve" label-position="top" style="margin-top: 16px"
           ><ElFormItem label="审批意见"
             ><ElInput

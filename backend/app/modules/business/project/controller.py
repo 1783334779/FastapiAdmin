@@ -3,18 +3,22 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, Security
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.common.response import SuccessResponse
+from app.common.response import StreamResponse, SuccessResponse
 from app.core.base_schema import AuthSchema
 from app.core.dependencies import AuthPermission, db_getter
 from app.core.router_class import OperationLogRoute
+from app.modules.common.file.private_access import register_file_access
 from app.modules.workflow.schema import CommandRequest
 from app.modules.workflow.service import WorkflowService
+from app.utils.common_util import bytes2file_response
 
+from .attachments import authorize_file_download
 from .schema import ProjectCreateSchema, ProjectCreateSubmitSchema, ProjectUpdateSchema, ProjectUpdateSubmitSchema
 from .service import ProjectService
 
 ProjectRouter = APIRouter(prefix="/project", tags=["项目管理"], route_class=OperationLogRoute)
 DB = Annotated[AsyncSession, Depends(db_getter)]
+register_file_access("project", authorize_file_download, upload_permissions=("module_business:project:create", "module_business:project:update"))
 
 
 @ProjectRouter.get("/list", summary="按创建人/管理部门快照查询项目")
@@ -27,6 +31,21 @@ async def project_list(
     status: Annotated[str, Query(max_length=32)] = "",
 ):
     return SuccessResponse(data=await ProjectService(auth, db).page(page_no, page_size, name, status))
+
+
+@ProjectRouter.get("/export", summary="按列表筛选与可见权限导出全部项目")
+async def project_export(
+    db: DB,
+    auth: Annotated[AuthSchema, Security(AuthPermission(["module_business:project:query"]))],
+    name: Annotated[str, Query(max_length=200)] = "",
+    status: Annotated[str, Query(max_length=32)] = "",
+):
+    content = await ProjectService(auth, db).export(name, status)
+    return StreamResponse(
+        data=bytes2file_response(content),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=projects.xlsx"},
+    )
 
 
 @ProjectRouter.get("/options", summary="项目最小人员/部门/字典目录")

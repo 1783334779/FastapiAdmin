@@ -61,3 +61,4 @@ LICENSE
 # 取消注释以加速构建：backend/alembic/versions
 # 用户上传文件（本地存储源根目录）不进镜像；static/image、static/swagger 是程序资源必须保留
 backend/static/upload
+backend/private

@@ -138,6 +138,7 @@ deploy_backend() {
   ( cd backend && tar -cf - \
       --exclude='.mypy_cache' --exclude='.pytest_cache' --exclude='__pycache__' \
       --exclude='logs' --exclude='tests' --exclude='dist' --exclude='.venv' \
+      --exclude='private' \
       --exclude='.DS_Store' --exclude='.ruff_cache' --exclude='.codebuddy' \
       --exclude='.vscode' --exclude='.python-version' \
       --exclude='env/.env.dev' --exclude='env/.env.test' \

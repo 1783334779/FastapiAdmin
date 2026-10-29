@@ -57,6 +57,10 @@ def _load_components_without_application_startup():
             __tablename__ = "sys_dept"
             id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
+        class PrivateFileModel(base.MappedBase):
+            __tablename__ = "common_file"
+            id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
         base.MappedBase.registry.configure()
         return types.SimpleNamespace(base=base, schema=schema, model=model, crud=crud, user=UserModel, dept=DeptModel)
 

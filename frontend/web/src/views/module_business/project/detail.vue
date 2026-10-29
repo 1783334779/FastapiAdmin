@@ -53,7 +53,11 @@
               :label="`资料 v${revision.revision_no}${revision.id === project.revision_id ? '（当前）' : '（历史）'}`" /></ElSelect
           ><span class="wf-muted">审批记录保留原审阅版本，旧通过结果不会被改写。</span>
         </div>
-        <ProjectReadOnly :data="shownSnapshot" />
+        <ProjectReadOnly
+          :data="shownSnapshot"
+          :project-id="project.id"
+          :revision-id="selectedRevision"
+        />
       </section>
       <section v-if="project.workflow" class="wf-section">
         <div v-if="project.workflow.blocked" class="wf-toolbar">

@@ -28,6 +28,7 @@ const blank = vi.hoisted(() => () => ({
   planned_start_date: "",
   planned_end_date: "",
   currency: "",
+  attachment_ids: [],
 }));
 vi.mock("vue-router", () => ({ useRouter: () => ({ push: state.push }) }));
 vi.mock("@/hooks/core/useAuth", () => ({ useAuth: () => ({ hasAuth: state.hasAuth }) }));
@@ -36,6 +37,14 @@ vi.mock("element-plus", () => ({
   ElMessageBox: { confirm: state.confirm },
 }));
 vi.mock("@/api/module_business/project", () => ({ emptyProject: blank, projectApi: state }));
+vi.mock("@/components/forms/fa-private-file-upload/index.vue", () => ({
+  default: {
+    name: "PrivateFileUpload",
+    props: ["modelValue"],
+    emits: ["update:modelValue", "busy-change"],
+    render: () => null,
+  },
+}));
 vi.mock("@/views/module_business/project/components/ProjectForm.vue", () => ({
   default: {
     name: "ProjectFormStub",
@@ -70,7 +79,7 @@ async function editor(id?: number) {
   const wrapper = mount(ProjectEditor, {
     props: id ? { projectId: id } : {},
     global: {
-      stubs: { ElButton: ButtonStub, ElResult: true },
+      stubs: { ElButton: ButtonStub, ElResult: true, PrivateFileUpload: true },
       directives: { loading: () => {} },
       config: { errorHandler: state.error },
     },
@@ -104,6 +113,20 @@ beforeEach(() => {
 });
 
 describe("项目表单保存或直接提交", () => {
+  it("上传未完成时不能保存或提交，完成后携带通用文件ID", async () => {
+    const wrapper = await editor();
+    const upload = wrapper.findComponent({ name: "PrivateFileUpload" });
+    upload.vm.$emit("busy-change", true);
+    await wrapper.vm.$nextTick();
+    expect(button(wrapper, "保存草稿").element.disabled).toBe(true);
+    expect(button(wrapper, "提交审批").element.disabled).toBe(true);
+    upload.vm.$emit("update:modelValue", [7, 9]);
+    upload.vm.$emit("busy-change", false);
+    await wrapper.vm.$nextTick();
+    await button(wrapper, "保存草稿").trigger("click");
+    await flushPromises();
+    expect(state.create).toHaveBeenCalledWith({ ...blank(), attachment_ids: [7, 9] });
+  });
   it("保存草稿只创建草稿，不自动提交", async () => {
     const wrapper = await editor();
     await button(wrapper, "保存草稿").trigger("click");

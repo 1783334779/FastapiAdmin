@@ -1,4 +1,5 @@
 import { request } from "@utils";
+import type { PrivateFile } from "@/api/module_common/private-file";
 
 export type StatusType = "primary" | "success" | "warning" | "danger" | "info";
 export interface Person {
@@ -73,6 +74,7 @@ export interface FlowDefinition {
   read_only?: boolean;
   versions?: { id: number; version_no: number; created_time: string }[];
 }
+export type ProjectAttachment = PrivateFile;
 export interface ProjectFormData {
   name: string;
   initiation_type: string;
@@ -84,8 +86,10 @@ export interface ProjectFormData {
   planned_start_date: string;
   planned_end_date: string;
   currency: string;
+  attachment_ids?: number[];
 }
 export interface ProjectSnapshot extends ProjectFormData {
+  attachments?: ProjectAttachment[];
   labels?: Record<string, string>;
   users?: Person[];
   creator_name?: string;

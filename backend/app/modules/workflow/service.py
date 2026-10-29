@@ -311,8 +311,11 @@ class WorkflowService:
         business = ProjectService(self.auth, self.db)
         business.require_owner_edit(project, body.expected_version)
         context = await adapter.context(project)
-        data = ProjectCreateSchema.model_validate({key: context["snapshot"][key] for key in ProjectCreateSchema.model_fields})
+        data = ProjectCreateSchema.model_validate({key: context["snapshot"][key] for key in ProjectCreateSchema.model_fields if key in context["snapshot"]})
         await business.validate_input(data)
+        from app.modules.business.project.attachments import ProjectAttachmentService
+
+        await ProjectAttachmentService(self.auth, self.db).validate_snapshot(project, context["snapshot"])
         version, instance = await self.version_for_project(project, lock=True)
         issues = await AssigneeResolver(self.db).precheck(version.graph, version.role_rules, context)
         if issues:

@@ -1,0 +1,8 @@
+# 显式叠加此文件启用通用私有文件持久化；不改变现有公开上传目录。
+# 宿主目录由运维预先创建并授权给容器 UID 1000。
+services:
+  backend:
+    environment:
+      PRIVATE_FILE_ROOT: /home/private/files
+    volumes:
+      - ${PRIVATE_FILE_DATA_DIR:-/home/FastapiAdmin/data/private-files}:/home/private/files
