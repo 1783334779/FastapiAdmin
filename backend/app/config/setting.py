@@ -3,7 +3,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import model_validator
+from pydantic import EmailStr, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.common.enums import EnvironmentEnum
@@ -164,6 +164,19 @@ class Settings(BaseSettings):
     # ******************* 外部 HTTP（httpx）******************* #
     # ================================================= #
     HTTPX_DEFAULT_TIMEOUT: float = 10.0  # 对外 HTTP 请求默认超时（秒）
+
+    # ================================================= #
+    # ******************* 邮件发送（可选）**************** #
+    # ================================================= #
+    MAIL_ENABLED: bool = False  # 默认关闭；配置完成后显式开启，不影响原有业务启动
+    MAIL_HOST: str = ""
+    MAIL_PORT: int = Field(default=465, ge=1, le=65535)
+    MAIL_SECURITY: Literal["SSL", "STARTTLS"] = "SSL"  # 不提供明文认证或关闭证书校验的选项
+    MAIL_USERNAME: str = ""
+    MAIL_PASSWORD: SecretStr = Field(default=SecretStr(""), repr=False, exclude=True)  # 163 填客户端授权码，不是网页登录密码
+    MAIL_FROM: EmailStr | None = None
+    MAIL_FROM_NAME: str = "FastapiAdmin"
+    MAIL_TIMEOUT_SECONDS: float = Field(default=10.0, gt=0, le=60)  # 单次 socket 操作超时，不是整个请求的总时长
 
     # ================================================= #
     # ********************* 日志配置 ******************* #

@@ -75,6 +75,14 @@ export interface FlowDefinition {
   versions?: { id: number; version_no: number; created_time: string }[];
 }
 export type ProjectAttachment = PrivateFile;
+/** 对齐 ProjectMilestoneSchema；随项目表单整体提交，不单独调用里程碑写接口。 */
+export interface ProjectMilestoneInput {
+  name: string;
+  delivery_standard: string;
+  owner_user_ids: number[];
+  planned_start_time: string;
+  planned_end_time: string;
+}
 export interface ProjectFormData {
   name: string;
   initiation_type: string;
@@ -87,6 +95,7 @@ export interface ProjectFormData {
   planned_end_date: string;
   currency: string;
   attachment_ids?: number[];
+  milestones?: ProjectMilestoneInput[];
 }
 export interface ProjectSnapshot extends ProjectFormData {
   attachments?: ProjectAttachment[];

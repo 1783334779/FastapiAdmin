@@ -1,11 +1,35 @@
 """项目请求的数据结构；不访问数据库，也不创建数据库表。"""
 
-from datetime import date
+from datetime import date, datetime
 from typing import Annotated, Self
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
-from models import ProjectMilestoneModel
 PositiveId = Annotated[int, Field(strict=True, gt=0)]
+
+
+class ProjectMilestoneSchema(BaseModel):
+    """项目里程碑输入，只校验格式；责任人有效性由 Service 校验。"""
+
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
+
+    name: str = Field(..., min_length=1, max_length=200, description="里程碑名称")
+    delivery_standard: str = Field(..., min_length=1, max_length=1000, description="交付标准")
+    owner_user_ids: list[PositiveId] = Field(..., min_length=1, description="责任人用户ID列表，至少一人")
+    planned_start_time: datetime = Field(..., description="计划开始时间，格式 YYYY-MM-DDTHH:MM:SS")
+    planned_end_time: datetime = Field(..., description="计划结束时间，格式 YYYY-MM-DDTHH:MM:SS")
+
+    @field_validator("owner_user_ids")
+    @classmethod
+    def deduplicate_owner_ids(cls, value: list[int]) -> list[int]:
+        """责任人按 ID 去重，保留首次出现的顺序。"""
+        return list(dict.fromkeys(value))
+
+    @model_validator(mode="after")
+    def validate_milestone_period(self) -> Self:
+        """单个时间合法之后，再校验两个时间之间的关系。"""
+        if self.planned_end_time < self.planned_start_time:
+            raise ValueError("计划结束时间不能早于计划开始时间")
+        return self
 
 
 class ProjectCreateSchema(BaseModel):
@@ -24,7 +48,7 @@ class ProjectCreateSchema(BaseModel):
     planned_end_date: date = Field(..., description="计划结束日期，格式 YYYY-MM-DD")
     currency: str = Field(..., min_length=1, max_length=255, description="币种的字典值")
     attachment_ids: list[PositiveId] = Field(default_factory=list, max_length=20, description="上传成功的私有附件ID，附件可选")
-    milestones: list[ProjectMilestoneModel] = Field(default_factory=list, max_length=20, description="项目里程碑，最多20个")
+    milestones: list[ProjectMilestoneSchema] = Field(default_factory=list, max_length=20, description="项目里程碑，最多20个")
     @field_validator("it_manager_ids", "business_manager_ids", "attachment_ids")
     @classmethod
     def deduplicate_ids(cls, value: list[int]) -> list[int]:

@@ -38,6 +38,7 @@ import { projectApi } from "@/api/module_business/project";
 import type { Department, Person } from "@/api/module_workflow/workflow";
 
 const model = defineModel<number[]>({ required: true });
+const emit = defineEmits<{ "selected-people-change": [people: Person[]] }>();
 const props = defineProps<{
   label: string;
   initialPeople: Person[];
@@ -58,6 +59,13 @@ watch(
       cached.value.set(person.id, { ...cached.value.get(person.id), ...person });
     }
   },
+  { immediate: true }
+);
+
+watch(
+  () =>
+    model.value.map((id) => cached.value.get(id)).filter((person): person is Person => !!person),
+  (people) => emit("selected-people-change", people),
   { immediate: true }
 );
 

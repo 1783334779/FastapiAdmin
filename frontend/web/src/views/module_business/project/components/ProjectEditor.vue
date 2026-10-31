@@ -30,6 +30,7 @@
         v-model="form"
         :options="options"
         :selected-people="selectedPeople"
+        :disabled="loading || !!activeAction"
       />
       <PrivateFileUpload
         v-model="form.attachment_ids"

@@ -2,7 +2,7 @@
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .model import ProjectMemberModel, ProjectModel
+from .model import ProjectMemberModel, ProjectModel, ProjectMilestoneModel, ProjectMilestoneMemberModel
 from .schema import ProjectCreateSchema
 
 
@@ -25,7 +25,7 @@ class ProjectCRUD:
         人员/部门启用状态、字典有效性及创建权限不由这一层判断。
         """
         # 经理与附件ID数组都不是主表列，先从主表数据中排除。
-        project_data = data.model_dump(exclude={"it_manager_ids", "business_manager_ids", "attachment_ids"})
+        project_data = data.model_dump(exclude={"it_manager_ids", "business_manager_ids", "attachment_ids","milestones"})
         project = ProjectModel(
             **project_data,
             creator_user_id=creator_user_id,
@@ -46,5 +46,18 @@ class ProjectCRUD:
                 members.append(ProjectMemberModel(project_id=project.id, user_id=user_id, member_type=member_type))
 
         self.db.add_all(members)
-        await self.db.flush()  # 让关联写入错误在同一事务中暴露；失败交给外层回滚。
+        milestones = []
+        for milestone in data.milestones:
+            m = milestone.model_dump()
+            milestones.append(ProjectMilestoneModel(
+                project_id=project.id, name=m["name"],
+                delivery_standard=m["delivery_standard"],
+                planned_start_time=m["planned_start_time"],
+                planned_end_time=m["planned_end_time"],
+            ))
+            for user_id in milestone.owner_user_ids:
+                milestones[-1].owner_users.append(ProjectMilestoneMemberModel(user_id=user_id))
+        self.db.add_all(milestones)
+
+        await self.db.flush()
         return project

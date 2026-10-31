@@ -14,7 +14,7 @@ from app.utils.excel_util import ExcelUtil
 
 from .adapter import ProjectWorkflowAdapter
 from .crud import ProjectCRUD
-from .model import ProjectMemberModel, ProjectModel, ProjectRevisionModel
+from .model import ProjectMemberModel, ProjectModel, ProjectRevisionModel, ProjectMilestoneModel, ProjectMilestoneMemberModel
 from .schema import ProjectCreateSchema, ProjectUpdateSchema
 
 EDITABLE = {"DRAFT", "RETURNED", "WITHDRAWN"}
@@ -110,12 +110,24 @@ class ProjectService:
         project = await self.adapter.load(project_id, lock=True)
         self.require_owner_edit(project, data.expected_version)
         display = await self.validate_input(data)
-        for key, value in data.model_dump(exclude={"expected_version", "it_manager_ids", "business_manager_ids", "attachment_ids"}).items():
+        for key, value in data.model_dump(exclude={"expected_version", "it_manager_ids", "business_manager_ids", "attachment_ids", "milestones"}).items():
             setattr(project, key, value)
         await self.db.execute(delete(ProjectMemberModel).where(ProjectMemberModel.project_id == project.id))
         for kind, ids in (("IT_MANAGER", data.it_manager_ids), ("BUSINESS_MANAGER", data.business_manager_ids)):
             self.db.add_all([ProjectMemberModel(project_id=project.id, user_id=user_id, member_type=kind) for user_id in ids])
         project.updated_id, project.lock_version = self.auth.user.id, project.lock_version + 1
+        await self.db.execute(delete(ProjectMilestoneModel).where(ProjectMilestoneModel.project_id == project.id))
+        milestones = []
+        for milestone in data.milestones:
+            m = milestone.model_dump()
+            milestones.append(ProjectMilestoneModel(
+                project_id=project.id, name=m["name"],
+                delivery_standard=m["delivery_standard"],
+                planned_start_time=m["planned_start_time"],
+                planned_end_time=m["planned_end_time"],
+                owner_users=[ProjectMilestoneMemberModel(user_id=user_id) for user_id in milestone.owner_user_ids]
+            ))
+        self.db.add_all(milestones)
         await self.save_revision(project, data, display)
         return await self.serialize(project)
 

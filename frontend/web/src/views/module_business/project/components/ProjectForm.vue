@@ -7,7 +7,14 @@
       title="项目字典尚未配置完整"
       description="请管理员在字典管理维护项目立项类型、项目类别、项目币种的有效选项；此处不会使用虚构业务选项。"
     />
-    <ElForm ref="formRef" :model="model" :rules="rules" label-width="130px" label-position="left">
+    <ElForm
+      ref="formRef"
+      :model="model"
+      :rules="rules"
+      :disabled="disabled"
+      label-width="130px"
+      label-position="left"
+    >
       <ElRow :gutter="16">
         <ElCol :xs="24" :md="12"
           ><ElFormItem label="项目名称" prop="name"
@@ -94,6 +101,14 @@
         ></ElCol>
       </ElRow>
     </ElForm>
+    <ProjectMilestones
+      ref="milestonesRef"
+      v-model="model.milestones"
+      :initial-people="options.users"
+      :selected-people="selectedPeople"
+      :departments="options.departments"
+      :disabled="disabled"
+    />
   </div>
 </template>
 
@@ -101,6 +116,7 @@
 import { computed, ref } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import ProjectPersonSelect from "./ProjectPersonSelect.vue";
+import ProjectMilestones from "./ProjectMilestones.vue";
 import {
   departmentTree,
   type ProjectFormData,
@@ -108,8 +124,9 @@ import {
   type Person,
 } from "@/api/module_workflow/workflow";
 const model = defineModel<ProjectFormData>({ required: true });
-const props = defineProps<{ options: Options; selectedPeople?: Person[] }>();
+const props = defineProps<{ options: Options; selectedPeople?: Person[]; disabled?: boolean }>();
 const formRef = ref<FormInstance>();
+const milestonesRef = ref<InstanceType<typeof ProjectMilestones>>();
 const departments = computed(() => departmentTree(props.options.departments));
 const missingDictionaries = computed(() =>
   ["initiation_type", "category", "currency"].some(
@@ -119,7 +136,7 @@ const missingDictionaries = computed(() =>
 const rules = computed<FormRules>(() =>
   Object.fromEntries(
     Object.keys(model.value)
-      .filter((key) => key !== "attachment_ids")
+      .filter((key) => !["attachment_ids", "milestones"].includes(key))
       .map((key) => [
         key,
         [
@@ -146,5 +163,10 @@ const rules = computed<FormRules>(() =>
       ])
   )
 );
-defineExpose({ validate: () => formRef.value?.validate() });
+defineExpose({
+  validate: async () => {
+    if (milestonesRef.value?.validate() === false) return false;
+    return formRef.value?.validate();
+  },
+});
 </script>

@@ -13,6 +13,21 @@ export interface ProjectListFilters {
   status: string;
 }
 
+function projectPayload(body: ProjectFormData): ProjectFormData {
+  if (body.milestones === undefined) return { ...body };
+  return {
+    ...body,
+    // 详情可能附带只读 ID 等字段，写请求只发送后端输入 Schema 接受的五个字段。
+    milestones: body.milestones.map((item) => ({
+      name: item.name,
+      delivery_standard: item.delivery_standard,
+      owner_user_ids: [...new Set(item.owner_user_ids)],
+      planned_start_time: item.planned_start_time,
+      planned_end_time: item.planned_end_time,
+    })),
+  };
+}
+
 export const projectApi = {
   list: (params: Record<string, unknown>) =>
     http<Page<ProjectData>>("/business/project/list", "get", undefined, params),
@@ -27,17 +42,21 @@ export const projectApi = {
     return response.data;
   },
   detail: (id: number) => http<ProjectData>(`/business/project/detail/${id}`),
-  create: (body: ProjectFormData) => http<ProjectData>("/business/project/create", "post", body),
+  create: (body: ProjectFormData) =>
+    http<ProjectData>("/business/project/create", "post", projectPayload(body)),
   createAndSubmit: (body: ProjectFormData, key: string) =>
-    http<ProjectData>("/business/project/create-and-submit", "post", { ...body, command_key: key }),
+    http<ProjectData>("/business/project/create-and-submit", "post", {
+      ...projectPayload(body),
+      command_key: key,
+    }),
   update: (id: number, body: ProjectFormData, version: number) =>
     http<ProjectData>(`/business/project/update/${id}`, "put", {
-      ...body,
+      ...projectPayload(body),
       expected_version: version,
     }),
   updateAndSubmit: (id: number, body: ProjectFormData, version: number, key: string) =>
     http<ProjectData>(`/business/project/update-and-submit/${id}`, "put", {
-      ...body,
+      ...projectPayload(body),
       expected_version: version,
       command_key: key,
     }),
@@ -69,5 +88,6 @@ export function emptyProject(): ProjectFormData {
     planned_end_date: "",
     currency: "",
     attachment_ids: [],
+    milestones: [],
   };
 }

@@ -3,7 +3,7 @@
 from datetime import UTC, date, datetime
 
 from sqlalchemy import Boolean, CheckConstraint, Date, DateTime, ForeignKey, Index, Integer, String, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.base_model import JSONType, MappedBase, ModelMixin, UserMixin
 
@@ -59,7 +59,6 @@ class ProjectModel(ModelMixin, UserMixin):
     revision_no: Mapped[int] = mapped_column(Integer, default=0, server_default="0", nullable=False, comment="资料版本号")
     lock_version: Mapped[int] = mapped_column(Integer, default=1, server_default="1", nullable=False, comment="并发版本号")
 
-
 class ProjectMemberModel(MappedBase):
     """当前经理关系；三个字段共同组成主键，历史名单由资料版本保留。"""
 
@@ -114,7 +113,7 @@ class ProjectAttachmentModel(MappedBase):
     removed_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 class ProjectMilestoneModel(MappedBase):
-    """项目里程碑：一行代表一个里程碑节点，随项目主表删除。"""
+    """项目里程碑：一行代表一个里程碑节点，责任人多对多存于成员表。"""
 
     __tablename__ = "biz_project_milestone"
     __table_args__ = (
@@ -132,12 +131,39 @@ class ProjectMilestoneModel(MappedBase):
     )
     name: Mapped[str] = mapped_column(String(200), nullable=False, comment="里程碑名称")
     delivery_standard: Mapped[str] = mapped_column(String(1000), nullable=False, comment="交付标准")
-    owner_user_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey("sys_user.id", ondelete="RESTRICT"),
-        nullable=False,
-        comment="责任人用户ID",
-    )
     planned_start_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, comment="计划开始时间")
     planned_end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, comment="计划结束时间")
-    created_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(UTC), nullable=False, comment="创建时间")
+    owner_users: Mapped[list["ProjectMilestoneMemberModel"]] = relationship(
+        "ProjectMilestoneMemberModel",
+        back_populates="milestone",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
+class ProjectMilestoneMemberModel(MappedBase):
+    """里程碑责任人关系表；多个字段共同组成主键，与项目经理关联表同构。"""
+
+    __tablename__ = "biz_project_milestone_member"
+    __table_args__ = (
+        Index("ix_biz_project_milestone_member_milestone", "milestone_id"),
+        Index("ix_biz_project_milestone_member_user", "user_id"),
+        {"comment": "里程碑责任人关联表"},
+    )
+
+    milestone_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("biz_project_milestone.id", ondelete="CASCADE"),
+        primary_key=True,
+        comment="里程碑ID",
+    )
+    user_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("sys_user.id", ondelete="RESTRICT"),
+        primary_key=True,
+        comment="责任人用户ID",
+    )
+    milestone: Mapped["ProjectMilestoneModel"] = relationship(
+        "ProjectMilestoneModel",
+        back_populates="owner_users",
+        passive_deletes=True,
+    )
