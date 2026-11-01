@@ -135,7 +135,7 @@ class TestProjectCreateSchema(unittest.TestCase):
 
     def test_json_round_trip(self) -> None:
         project = ProjectCreateSchema.model_validate_json(json.dumps(valid_payload()))
-        self.assertEqual(project.model_dump(mode="json"), valid_payload())
+        self.assertEqual(project.model_dump(mode="json"), {**valid_payload(), "attachment_ids": [], "milestones": []})
 
     def test_json_schema_lists_ten_required_fields(self) -> None:
         schema = ProjectCreateSchema.model_json_schema()

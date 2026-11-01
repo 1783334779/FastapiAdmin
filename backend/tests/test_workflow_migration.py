@@ -22,7 +22,13 @@ def test_workflow_incremental_upgrade_and_downgrade_leave_existing_tables_intact
         migration = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(migration)
         migrations.append(migration)
-    new_names = {name for name in MappedBase.metadata.tables if name.startswith(("wf_", "biz_project")) or name in {"sys_user_role_managed_dept", "common_file"}}
+    # 本测试只执行上面四个流程/附件迁移；后来新增的里程碑表应作为已有表保留，
+    # 不能把它们误算成这四个迁移负责创建/删除的表。
+    milestone_tables = {"biz_project_milestone", "biz_project_milestone_member"}
+    new_names = {
+        name for name in MappedBase.metadata.tables
+        if (name.startswith(("wf_", "biz_project")) or name in {"sys_user_role_managed_dept", "common_file"}) and name not in milestone_tables
+    }
     assert len(new_names) == 15
 
     def run(connection):

@@ -1,6 +1,11 @@
 name: frontend
 
 on:
+  workflow_call:
+    inputs:
+      upload-artifact:
+        type: boolean
+        default: false
   push:
     paths:
       - "frontend/**"
@@ -33,6 +38,10 @@ jobs:
     defaults:
       run:
         working-directory: frontend/web
+    env:
+      VITE_BASE_URL: /web/
+      VITE_APP_BASE_API: /api/v1
+      VITE_APP_WS_ENDPOINT: wss://${{ vars.DEPLOY_HOST }}/api/v1/ai/chat/ws
     steps:
       - uses: actions/checkout@v4
 
@@ -61,6 +70,15 @@ jobs:
 
       - name: 单元测试
         run: pnpm run test
+
+      - name: 保存已通过检查的前端成品
+        if: inputs.upload-artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: web-dist-${{ github.sha }}
+          path: frontend/web/dist/
+          if-no-files-found: error
+          retention-days: 1
 
   app:
     name: app（类型检查）

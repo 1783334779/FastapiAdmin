@@ -1,0 +1,103 @@
+name: Deploy master
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: fastapiadmin-production
+  cancel-in-progress: false
+
+jobs:
+  backend:
+    uses: ./.github/workflows/backend-ci.yml
+  frontend:
+    uses: ./.github/workflows/frontend-ci.yml
+    with:
+      upload-artifact: true
+  secrets:
+    uses: ./.github/workflows/secrets.yml
+
+  publish:
+    name: Build and deploy checked commit
+    if: github.ref == 'refs/heads/master'
+    needs: [backend, frontend, secrets]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    environment: production
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: 下载同一次提交已通过检查的前端
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: web-dist-${{ github.sha }}
+          path: ${{ runner.temp }}/release/web
+
+      - name: 复用项目 Dockerfile 构建后端（不在服务器编译）
+        run: |
+          set -euo pipefail
+          docker build --platform linux/amd64 -f docker/backend/Dockerfile \
+            -t "backend:sha-${GITHUB_SHA}" .
+          docker save "backend:sha-${GITHUB_SHA}" -o "$RUNNER_TEMP/release/backend-image.tar"
+
+      - name: 打包本次发布配置和成品
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, shutil
+          release = pathlib.Path(os.environ["RUNNER_TEMP"]) / "release"
+          sha = os.environ["GITHUB_SHA"]
+          (release / "release.json").write_text(json.dumps({"sha": sha, "image": f"backend:sha-{sha}"}))
+          (release / "web/version.json").write_text(json.dumps({"sha": sha}))
+          for name in ("docker-compose.yaml", "docker-compose.ci.yaml", "redis/conf/redis.conf", "nginx/host-ci.conf.template"):
+              destination = release / "docker" / name
+              destination.parent.mkdir(parents=True, exist_ok=True)
+              shutil.copyfile(pathlib.Path("docker") / name, destination)
+          shutil.copytree("docker/mysql/init", release / "docker/mysql/init")
+          PY
+          tar -czf "$RUNNER_TEMP/release.tar.gz" -C "$RUNNER_TEMP/release" .
+
+      - name: 通过专用受限 SSH 密钥发布
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$DEPLOY_HOST" && test -n "$DEPLOY_USER" && test -n "$DEPLOY_SSH_KEY" && test -n "$DEPLOY_KNOWN_HOSTS"
+          umask 077
+          key_dir=$(mktemp -d "$RUNNER_TEMP/deploy-key.XXXXXXXX")
+          trap 'rm -f "$key_dir/id_ed25519" "$key_dir/known_hosts"; rmdir "$key_dir"' EXIT
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$key_dir/id_ed25519"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$key_dir/known_hosts"
+          unset DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS
+          ssh_options=(-T -i "$key_dir/id_ed25519" -p "${DEPLOY_PORT:-22}" \
+            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o "UserKnownHostsFile=$key_dir/known_hosts" -o ConnectTimeout=15 \
+            -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
+          ssh "${ssh_options[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "receive $GITHUB_SHA" < "$RUNNER_TEMP/release.tar.gz"
+          ssh "${ssh_options[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "deploy $GITHUB_SHA"
+          ssh "${ssh_options[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "status $GITHUB_SHA"
+          printf 'Published commit: %s\n' "$GITHUB_SHA"
+
+      - name: 检查公网前端、后端和证书
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 3 "https://$DEPLOY_HOST/web/" > /dev/null
+          curl --fail --silent --show-error --retry 3 "https://$DEPLOY_HOST/api/v1/monitor/health/check"
+          curl --fail --silent --show-error "https://$DEPLOY_HOST/web/version.json" | \
+            python3 -c 'import json,os,sys; assert json.load(sys.stdin)["sha"] == os.environ["GITHUB_SHA"]'
+          printf '### Deployment succeeded\n\nCommit: `%s`\n\nURL: https://%s/web/\n' \
+            "$GITHUB_SHA" "$DEPLOY_HOST" >> "$GITHUB_STEP_SUMMARY"

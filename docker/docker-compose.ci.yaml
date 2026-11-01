@@ -1,0 +1,80 @@
+# 复用基础 Compose，仅覆盖这台低内存服务器的运行方式。
+# 使用：--env-file /opt/fastapiadmin/shared/server.env -f docker-compose.yaml -f docker-compose.ci.yaml
+# 镜像在 GitHub 构建；公网入口使用已安装的 apt Nginx，不启动第二套 Nginx。
+services:
+  mysql:
+    container_name: fastapiadmin-mysql
+    ports: !override []
+    command:
+      - --performance-schema=OFF
+      - --innodb-buffer-pool-size=64M
+      - --max-connections=25
+      - --table-open-cache=128
+      - --table-definition-cache=400
+      - --tmp-table-size=8M
+      - --max-heap-table-size=8M
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+        reservations:
+          memory: 128m
+  redis:
+    container_name: fastapiadmin-redis
+    ports: !override []
+    command: >-
+      redis-server /usr/local/etc/redis/redis.conf
+      --requirepass ${REDIS_PASSWORD:?}
+      --maxmemory 32mb --maxmemory-policy noeviction
+    deploy:
+      resources:
+        limits:
+          memory: 64m
+        reservations:
+          memory: 16m
+  backend:
+    container_name: fastapiadmin-backend
+    environment:
+      DEBUG: "false"
+      WORKERS: "1"
+      POOL_SIZE: "3"
+      MAX_OVERFLOW: "2"
+      DEMO_ENABLE: "false"
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?}
+      TRUSTED_PROXY_HOPS: "1"
+      FORWARDED_ALLOW_IPS: "10.255.178.0/24,127.0.0.1"
+    ports: !override
+      - "127.0.0.1:8001:8001"
+    volumes: !override
+      - ${APP_ROOT:?}/shared/uploads:/home/static/upload
+      - ${APP_ROOT:?}/shared/files:/home/private/files
+      - ${APP_ROOT:?}/shared/sys_user.initial.json:/home/sql/sys_user.json:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          python -c 'import json,urllib.request;
+          req=urllib.request.Request("http://localhost:8001/api/v1/monitor/health/check",headers={"Host":"${PUBLIC_HOST:?}","X-Forwarded-Proto":"https"});
+          data=json.load(urllib.request.urlopen(req,timeout=5));
+          assert data.get("success") and data["data"]["db_status"]==1 and data["data"]["redis_status"]==1'
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 420m
+        reservations:
+          memory: 128m
+  nginx:
+    profiles: [container-nginx-not-used]
+volumes:
+  mysql_data:
+    driver_opts:
+      device: ${APP_ROOT:?}/shared/mysql
+  redis_data:
+    driver_opts:
+      device: ${APP_ROOT:?}/shared/redis
+networks:
+  app_network:
+    ipam:
+      config:
+        - subnet: 10.255.178.0/24

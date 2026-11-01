@@ -56,6 +56,12 @@ backend/env/.env.prod
 backend/env/.env.test
 
 docker/.env
+# MySQL / Redis 运行数据可能包含业务数据和私钥，不入库；只保留目录占位文件
+/docker/mysql/data/*
+!/docker/mysql/data/.gitkeep
+/docker/redis/data/*
+!/docker/redis/data/.gitkeep
+
 docker/nginx/app/dist
 docker/nginx/docs/dist
 docker/nginx/web/dist

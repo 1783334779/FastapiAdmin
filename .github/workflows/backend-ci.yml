@@ -1,6 +1,7 @@
 name: backend
 
 on:
+  workflow_call:
   push:
     paths:
       - "backend/**"
@@ -31,6 +32,9 @@ jobs:
 
       - name: 代码检查（ruff）
         run: uv run ruff check
+
+      - name: 发布入口检查（兼容服务器 Python 3.10）
+        run: uv run ruff check --no-fix --target-version py310 ../scripts/ci_server.py
 
       - name: 单元测试（pytest）
         run: uv run pytest -q
