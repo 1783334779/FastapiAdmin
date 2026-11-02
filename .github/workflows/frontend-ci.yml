@@ -6,7 +6,14 @@ on:
       upload-artifact:
         type: boolean
         default: false
+      skip-web:
+        type: boolean
+        default: false
+      skip-app:
+        type: boolean
+        default: false
   push:
+    branches-ignore: [master]
     paths:
       - "frontend/**"
       - "design/**"
@@ -33,6 +40,7 @@ jobs:
         run: node scripts/check-brand-consistency.mjs
 
   web:
+    if: ${{ !inputs.skip-web }}
     name: web（类型检查 + 单元测试）
     runs-on: ubuntu-latest
     defaults:
@@ -81,6 +89,7 @@ jobs:
           retention-days: 1
 
   app:
+    if: ${{ !inputs.skip-app }}
     name: app（类型检查）
     runs-on: ubuntu-latest
     defaults:

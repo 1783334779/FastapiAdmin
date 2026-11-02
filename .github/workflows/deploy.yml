@@ -13,84 +13,184 @@ concurrency:
   group: fastapiadmin-production
   cancel-in-progress: false
 
-jobs:
-  backend:
-    uses: ./.github/workflows/backend-ci.yml
-  frontend:
-    uses: ./.github/workflows/frontend-ci.yml
-    with:
-      upload-artifact: true
-  secrets:
-    uses: ./.github/workflows/secrets.yml
+env:
+  BACKEND_IMAGE_NAME: ghcr.io/1783334779/fastapiadmin-backend
 
-  publish:
-    name: Build and deploy checked commit
-    if: github.ref == 'refs/heads/master'
-    needs: [backend, frontend, secrets]
+jobs:
+  prepare:
+    name: 对比线上成功版本，识别需要发布的组件
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
     environment: production
+    timeout-minutes: 10
+    outputs:
+      frontend: ${{ steps.plan.outputs.frontend }}
+      backend: ${{ steps.plan.outputs.backend }}
+      app: ${{ steps.plan.outputs.app }}
+      deploy: ${{ steps.plan.outputs.deploy }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
+          fetch-depth: 0
           persist-credentials: false
-
-      - name: 下载同一次提交已通过检查的前端
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
-        with:
-          name: web-dist-${{ github.sha }}
-          path: ${{ runner.temp }}/release/web
-
-      - name: 复用项目 Dockerfile 构建后端（不在服务器编译）
-        run: |
-          set -euo pipefail
-          docker build --platform linux/amd64 -f docker/backend/Dockerfile \
-            -t "backend:sha-${GITHUB_SHA}" .
-          docker save "backend:sha-${GITHUB_SHA}" -o "$RUNNER_TEMP/release/backend-image.tar"
-
-      - name: 打包本次发布配置和成品
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import json, os, pathlib, shutil
-          release = pathlib.Path(os.environ["RUNNER_TEMP"]) / "release"
-          sha = os.environ["GITHUB_SHA"]
-          (release / "release.json").write_text(json.dumps({"sha": sha, "image": f"backend:sha-{sha}"}))
-          (release / "web/version.json").write_text(json.dumps({"sha": sha}))
-          for name in ("docker-compose.yaml", "docker-compose.ci.yaml", "redis/conf/redis.conf", "nginx/host-ci.conf.template"):
-              destination = release / "docker" / name
-              destination.parent.mkdir(parents=True, exist_ok=True)
-              shutil.copyfile(pathlib.Path("docker") / name, destination)
-          shutil.copytree("docker/mysql/init", release / "docker/mysql/init")
-          PY
-          tar -czf "$RUNNER_TEMP/release.tar.gz" -C "$RUNNER_TEMP/release" .
-
-      - name: 通过专用受限 SSH 密钥发布
+      - name: 读取服务器实际成功版本（不修改服务）
         env:
           DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
           DEPLOY_USER: ${{ vars.DEPLOY_USER }}
           DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: bash scripts/ci_ssh.sh baseline "$GITHUB_SHA" > "$RUNNER_TEMP/baseline.json"
+      - name: 生成发布计划（基准不可用时完整发布）
+        id: plan
+        run: python3 scripts/ci_release.py plan --baseline "$RUNNER_TEMP/baseline.json" --sha "$GITHUB_SHA" --output "$RUNNER_TEMP/plan.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-plan-${{ github.sha }}
+          path: ${{ runner.temp }}/plan.json
+          if-no-files-found: error
+          retention-days: 1
+
+  backend:
+    needs: prepare
+    if: needs.prepare.outputs.backend == 'true'
+    uses: ./.github/workflows/backend-ci.yml
+  frontend:
+    needs: prepare
+    if: needs.prepare.outputs.frontend == 'true' || needs.prepare.outputs.app == 'true'
+    uses: ./.github/workflows/frontend-ci.yml
+    with:
+      upload-artifact: true
+      skip-web: ${{ needs.prepare.outputs.frontend != 'true' }}
+      skip-app: ${{ needs.prepare.outputs.app != 'true' }}
+  secrets:
+    uses: ./.github/workflows/secrets.yml
+
+  image:
+    name: 构建后端并推送私有 GHCR（复用缓存）
+    needs: [prepare, backend, frontend, secrets]
+    if: >-
+      ${{ always() && !cancelled() && needs.prepare.result == 'success' &&
+          needs.prepare.outputs.backend == 'true' && needs.backend.result == 'success' &&
+          (needs.frontend.result == 'success' || needs.frontend.result == 'skipped') &&
+          needs.secrets.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: 拒绝向已公开的同名包推送业务镜像
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.error, urllib.request
+          url = 'https://api.github.com/users/1783334779/packages/container/fastapiadmin-backend'
+          request = urllib.request.Request(url, headers={'Authorization': 'Bearer '+os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  assert json.load(response)['visibility'] == 'private', 'Existing image package is not private; stop before publishing'
+          except urllib.error.HTTPError as error:
+              if error.code != 404:
+                  raise
+              print('First publish: GHCR defaults new packages to private; visibility is verified again after push.')
+          PY
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: 构建并推送，未变化的依赖层使用缓存
+        id: build
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          file: docker/backend/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ env.BACKEND_IMAGE_NAME }}:sha-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=fastapiadmin-backend-amd64
+          cache-to: type=gha,scope=fastapiadmin-backend-amd64,mode=max
+      - name: 确认镜像保持私有
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: test "$(gh api users/1783334779/packages/container/fastapiadmin-backend --jq .visibility)" = private
+
+  publish:
+    name: 按需上传、拉取、切换并验证
+    needs: [prepare, backend, frontend, secrets, image]
+    if: >-
+      ${{ always() && !cancelled() && github.ref == 'refs/heads/master' &&
+          needs.prepare.result == 'success' && needs.prepare.outputs.deploy == 'true' &&
+          needs.secrets.result == 'success' &&
+          (needs.backend.result == 'success' || needs.backend.result == 'skipped') &&
+          (needs.frontend.result == 'success' || needs.frontend.result == 'skipped') &&
+          ((needs.prepare.outputs.backend == 'true' && needs.image.result == 'success') ||
+           (needs.prepare.outputs.backend != 'true' && needs.image.result == 'skipped')) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: production
+    permissions:
+      contents: read
+      actions: read
+      packages: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: 读取同一次运行的发布计划
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: release-plan-${{ github.sha }}
+          path: ${{ runner.temp }}/plan
+      - name: 下载同一次提交已通过检查的前端
+        if: needs.prepare.outputs.frontend == 'true'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: web-dist-${{ github.sha }}
+          path: ${{ runner.temp }}/release/web
+      - name: 打包成品和发布清单（不包含后端镜像）
+        env:
+          IMAGE_DIGEST: ${{ needs.image.outputs.digest }}
         run: |
           set -euo pipefail
-          test -n "$DEPLOY_HOST" && test -n "$DEPLOY_USER" && test -n "$DEPLOY_SSH_KEY" && test -n "$DEPLOY_KNOWN_HOSTS"
-          umask 077
-          key_dir=$(mktemp -d "$RUNNER_TEMP/deploy-key.XXXXXXXX")
-          trap 'rm -f "$key_dir/id_ed25519" "$key_dir/known_hosts"; rmdir "$key_dir"' EXIT
-          printf '%s\n' "$DEPLOY_SSH_KEY" > "$key_dir/id_ed25519"
-          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$key_dir/known_hosts"
-          unset DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS
-          ssh_options=(-T -i "$key_dir/id_ed25519" -p "${DEPLOY_PORT:-22}" \
-            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
-            -o "UserKnownHostsFile=$key_dir/known_hosts" -o ConnectTimeout=15 \
-            -o ServerAliveInterval=15 -o ServerAliveCountMax=8)
-          ssh "${ssh_options[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "receive $GITHUB_SHA" < "$RUNNER_TEMP/release.tar.gz"
-          ssh "${ssh_options[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "deploy $GITHUB_SHA"
-          ssh "${ssh_options[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "status $GITHUB_SHA"
-          printf 'Published commit: %s\n' "$GITHUB_SHA"
-
-      - name: 检查公网前端、后端和证书
+          python3 scripts/ci_release.py package --plan "$RUNNER_TEMP/plan/plan.json" --release "$RUNNER_TEMP/release" --digest "$IMAGE_DIGEST"
+          tar -czf "$RUNNER_TEMP/release.tar.gz" -C "$RUNNER_TEMP/release" .
+          stat --printf='SSH bundle: %s bytes\n' "$RUNNER_TEMP/release.tar.gz"
+      - name: 上传小发布包，服务器按 digest 拉取缺少的镜像层
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          REGISTRY_TOKEN: ${{ github.token }}
+          REGISTRY_USER: ${{ github.actor }}
+          BACKEND_CHANGED: ${{ needs.prepare.outputs.backend }}
+        run: |
+          set -euo pipefail
+          SECONDS=0
+          bash scripts/ci_ssh.sh receive "$GITHUB_SHA" < "$RUNNER_TEMP/release.tar.gz"
+          printf 'SSH upload took %ss\n' "$SECONDS"
+          SECONDS=0
+          if [[ "$BACKEND_CHANGED" == true ]]; then
+            python3 -c 'import json,os; print(json.dumps({"username":os.environ["REGISTRY_USER"],"token":os.environ["REGISTRY_TOKEN"]}))' | \
+              bash scripts/ci_ssh.sh deploy "$GITHUB_SHA"
+          else
+            bash scripts/ci_ssh.sh deploy "$GITHUB_SHA" < /dev/null
+          fi
+          printf 'Server deployment took %ss\n' "$SECONDS"
+          bash scripts/ci_ssh.sh status "$GITHUB_SHA" < /dev/null
+      - name: 检查公网前端、后端、证书及发布版本
         env:
           DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
         run: |
@@ -98,6 +198,6 @@ jobs:
           curl --fail --silent --show-error --retry 3 "https://$DEPLOY_HOST/web/" > /dev/null
           curl --fail --silent --show-error --retry 3 "https://$DEPLOY_HOST/api/v1/monitor/health/check"
           curl --fail --silent --show-error "https://$DEPLOY_HOST/web/version.json" | \
-            python3 -c 'import json,os,sys; assert json.load(sys.stdin)["sha"] == os.environ["GITHUB_SHA"]'
-          printf '### Deployment succeeded\n\nCommit: `%s`\n\nURL: https://%s/web/\n' \
-            "$GITHUB_SHA" "$DEPLOY_HOST" >> "$GITHUB_STEP_SUMMARY"
+            python3 -c 'import json,os,sys; d=json.load(sys.stdin); assert d["sha"] == os.environ["GITHUB_SHA"]; print(d)'
+          printf '### Deployment succeeded\n\nRelease: `%s`\n\nFrontend changed: %s\n\nBackend changed: %s\n\nURL: https://%s/web/\n' \
+            "$GITHUB_SHA" '${{ needs.prepare.outputs.frontend }}' '${{ needs.prepare.outputs.backend }}' "$DEPLOY_HOST" >> "$GITHUB_STEP_SUMMARY"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """受限 SSH 发布入口。服务器安装位置：/usr/local/sbin/fastapiadmin-ci。
 
-只接受 receive/deploy/status + 完整 Git SHA，不提供任意远程 shell。
+只接受 baseline/receive/deploy/status + 完整 Git SHA，不提供任意远程 shell。
 bootstrap 只供管理员首次本机执行；密码不经过 GitHub，不进入镜像或日志。
 """
 
@@ -29,6 +29,79 @@ ROOT = Path("/opt/fastapiadmin")
 SHARED = ROOT / "shared"
 RELEASES = ROOT / "releases"
 SHA_PATTERN = re.compile(r"[0-9a-f]{40}\Z")
+IMAGE_PATTERN = re.compile(r"ghcr\.io/1783334779/fastapiadmin-backend@sha256:[0-9a-f]{64}\Z")
+
+
+def manifest(release: Path, expected_sha: str | None = None) -> dict:
+    data = json.loads((release / "release.json").read_text())
+    sha = data.get("sha", "")
+    if not SHA_PATTERN.fullmatch(sha) or sha != (expected_sha or release.name):
+        raise ValueError("Invalid release commit")
+    if "format" not in data:
+        if data != {"sha": sha, "image": f"backend:sha-{sha}"}:
+            raise ValueError("Invalid legacy release")
+        return {**data, "format": 1, "frontend_sha": sha, "backend_sha": sha,
+                "frontend_changed": True, "backend_changed": True}
+    expected = {"format", "sha", "base_sha", "frontend_sha", "backend_sha", "image", "frontend_changed", "backend_changed"}
+    if set(data) != expected or data["format"] != 2:
+        raise ValueError("Invalid release manifest format")
+    for key in ("frontend_sha", "backend_sha"):
+        if not isinstance(data[key], str) or not SHA_PATTERN.fullmatch(data[key]):
+            raise ValueError("Invalid component commit")
+    if data["base_sha"] is not None and not SHA_PATTERN.fullmatch(data["base_sha"]):
+        raise ValueError("Invalid baseline commit")
+    if not isinstance(data["image"], str) or not IMAGE_PATTERN.fullmatch(data["image"]):
+        raise ValueError("Only this repository's immutable GHCR image is allowed")
+    for component in ("frontend", "backend"):
+        if type(data[f"{component}_changed"]) is not bool:
+            raise ValueError("Invalid component change flag")
+        if data[f"{component}_changed"] and data[f"{component}_sha"] != sha:
+            raise ValueError("Changed component does not match this commit")
+    if not data["frontend_changed"] and not data["backend_changed"]:
+        raise ValueError("Empty deployment")
+    return data
+
+
+def release_environment(sha: str) -> dict:
+    data = manifest(RELEASES / sha)
+    return {**os.environ, "BACKEND_IMAGE_TAG": f'sha-{data["backend_sha"]}', "BACKEND_IMAGE": data["image"]}
+
+
+def running_image_matches(data: dict) -> None:
+    actual = subprocess.check_output(["docker", "inspect", "fastapiadmin-backend", "--format", "{{.Image}}"], text=True).strip()
+    expected = subprocess.check_output(["docker", "image", "inspect", data["image"], "--format", "{{.Id}}"], text=True).strip()
+    if actual != expected:
+        raise RuntimeError("Running backend differs from the successful release")
+
+
+def baseline() -> dict:
+    if not (ROOT / "current").is_symlink():
+        if (SHARED / "last-success.json").exists():
+            raise RuntimeError("Successful release exists but current link is missing")
+        return {"sha": None, "format": 0}
+    current = (ROOT / "current").resolve()
+    if current.parent != RELEASES:
+        raise RuntimeError("Current release is outside the release directory")
+    data = manifest(current)
+    success = json.loads((SHARED / "last-success.json").read_text())
+    if success["sha"] != data["sha"]:
+        raise RuntimeError("Current release is not the last successful deployment")
+    running_image_matches(data)
+    health(f'https://{settings()["host"]}/api/v1/monitor/health/check', settings()["host"])
+    return data
+
+
+def validate_baseline(data: dict) -> dict:
+    current = baseline()
+    if data["base_sha"] != current["sha"]:
+        raise RuntimeError("Server baseline changed since planning; rerun the workflow")
+    for component in ("frontend", "backend"):
+        if not data[f"{component}_changed"]:
+            if current["format"] != 2 or data[f"{component}_sha"] != current[f"{component}_sha"]:
+                raise ValueError("Reused component differs from the server baseline")
+    if not data["backend_changed"] and data["image"] != current["image"]:
+        raise ValueError("Frontend-only deployment may not change the backend image")
+    return current
 
 
 def write_atomic(path: Path, content: str, mode: int = 0o600) -> None:
@@ -149,7 +222,7 @@ def receive(sha: str) -> None:
 def extract_release(sha: str) -> Path:
     release = RELEASES / sha
     if release.exists():
-        if release.is_symlink() or json.loads((release / "release.json").read_text())["sha"] != sha:
+        if release.is_symlink() or manifest(release)["sha"] != sha:
             raise ValueError("Existing release is not valid")
         return release
     stage = Path(tempfile.mkdtemp(prefix=f".{sha}-", dir=RELEASES))
@@ -166,12 +239,25 @@ def extract_release(sha: str) -> Path:
                     raise ValueError("Unexpected archive root")
             for member in members:
                 archive.extract(member, stage)
-        metadata = json.loads((stage / "release.json").read_text())
-        if metadata != {"sha": sha, "image": f"backend:sha-{sha}"}:
-            raise ValueError("Release manifest does not match the requested commit")
-        if json.loads((stage / "web/version.json").read_text())["sha"] != sha:
+        # Validate before staging the release under its final name. No files are activated here.
+        metadata = manifest(stage, sha)
+        if metadata.get("format") == 2:
+            if (stage / "backend-image.tar").exists():
+                raise ValueError("Registry releases must not contain a backend image archive")
+            if not metadata.get("frontend_changed"):
+                if (stage / "web").exists():
+                    raise ValueError("Backend-only bundle must not replace the frontend")
+                previous = baseline()
+                if metadata.get("base_sha") != previous["sha"] or metadata.get("frontend_sha") != previous.get("frontend_sha"):
+                    raise ValueError("Cannot reuse a different frontend baseline")
+                shutil.copytree(RELEASES / previous["sha"] / "web", stage / "web")
+            version = {"sha": sha, "frontend_sha": metadata.get("frontend_sha"), "backend_sha": metadata.get("backend_sha")}
+            if metadata.get("frontend_changed") and json.loads((stage / "web/version.json").read_text()) != version:
+                raise ValueError("Checked frontend version mismatch")
+            (stage / "web/version.json").write_text(json.dumps(version))
+        elif json.loads((stage / "web/version.json").read_text())["sha"] != sha:
             raise ValueError("Frontend commit differs from backend commit")
-        for required in ("web/index.html", "docker/docker-compose.yaml", "docker/docker-compose.ci.yaml", "docker/nginx/host-ci.conf.template"):
+        for required in ("web/index.html", "docker/docker-compose.yaml", "docker/docker-compose.ci.yaml", "docker/nginx/host-ci.conf.template", "docker/redis/conf/redis.conf"):
             if not (stage / required).is_file():
                 raise ValueError(f"Release file missing: {required}")
         # tar 不携带服务器文件权限策略；前端目录必须能被 www-data 遍历。
@@ -180,6 +266,11 @@ def extract_release(sha: str) -> Path:
             for name in files:
                 (Path(directory) / name).chmod(0o644)
         stage.rename(release)
+        try:
+            manifest(release)
+        except Exception:
+            release.rename(stage)
+            raise
         return release
     finally:
         if stage.exists():
@@ -193,7 +284,7 @@ def compose(release: Path, *arguments: str) -> list[str]:
 
 
 def run(command: list[str], log, sha: str, timeout: int = 600) -> None:
-    environment = {**os.environ, "BACKEND_IMAGE_TAG": f"sha-{sha}"}
+    environment = release_environment(sha)
     subprocess.run(command, check=True, stdout=log, stderr=subprocess.STDOUT, env=environment, timeout=timeout)
 
 
@@ -212,7 +303,7 @@ def snapshot(release: Path, sha: str, destination: Path, log) -> None:
     dump = compose(release, "exec", "-T", "mysql", "sh", "-c",
                    'MYSQL_PWD="$MYSQL_ROOT_PASSWORD" exec mysqldump --single-transaction --routines --triggers --events --hex-blob --no-tablespaces --set-gtid-purged=OFF --databases "$MYSQL_DATABASE"')
     with subprocess.Popen(dump, stdout=subprocess.PIPE, stderr=log,
-                          env={**os.environ, "BACKEND_IMAGE_TAG": f"sha-{sha}"}) as process:
+                          env=release_environment(sha)) as process:
         with gzip.open(destination / "mysql.sql.gz", "wb") as output:
             shutil.copyfileobj(process.stdout, output)
         if process.wait(timeout=180) != 0:
@@ -234,6 +325,25 @@ def switch_link(name: str, release: Path) -> None:
     os.replace(temporary, ROOT / name)
 
 
+def pull_image(data: dict, log) -> None:
+    """Use this Actions job's ephemeral read token, never a stored PAT or shell argument."""
+    raw = sys.stdin.buffer.read(16_385)
+    if len(raw) > 16_384:
+        raise ValueError("Registry credential envelope too large")
+    credentials = json.loads(raw)
+    username, token = credentials.get("username", ""), credentials.get("token", "")
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9\[\]-]{0,99}", username) or not isinstance(token, str) or not token or "\n" in token:
+        raise ValueError("Invalid short-lived registry credentials")
+    with tempfile.TemporaryDirectory(prefix=".registry-", dir=SHARED) as temporary:
+        # TemporaryDirectory is 0700; credentials are removed on both success and failure.
+        config = Path(temporary)
+        subprocess.run(["docker", "--config", str(config), "login", "ghcr.io", "-u", username, "--password-stdin"],
+                       input=token.encode(), stdout=log, stderr=subprocess.STDOUT, check=True, timeout=60)
+        (config / "config.json").chmod(0o600)
+        print(f'Pulling immutable backend image {data["image"]} (existing layers are reused)...', flush=True)
+        run(["docker", "--config", str(config), "pull", data["image"]], log, data["sha"], timeout=900)
+
+
 def activate(release: Path, destination: Path, log, sha: str) -> None:
     config = Path("/etc/nginx/sites-available/fastapiadmin-ci")
     enabled = Path("/etc/nginx/sites-enabled/fastapiadmin-ci")
@@ -243,20 +353,23 @@ def activate(release: Path, destination: Path, log, sha: str) -> None:
     metadata = settings()
     content = (release / "docker/nginx/host-ci.conf.template").read_text()
     content = content.replace("__PUBLIC_HOST__", metadata["host"]).replace("__CERTIFICATE_DIR__", metadata["certificate_dir"])
+    config_changed = original_config != content or not previously_enabled
     if original_config is not None:
         write_atomic(destination / "nginx.before.conf", original_config)
     try:
         switch_link("current", release)
-        write_atomic(config, content, 0o644)
-        if not enabled.exists():
-            enabled.symlink_to(config)
-        run(["nginx", "-t"], log, sha)
-        run(["systemctl", "reload", "nginx"], log, sha)
+        if config_changed:
+            write_atomic(config, content, 0o644)
+            if not enabled.exists():
+                enabled.symlink_to(config)
+            run(["nginx", "-t"], log, sha)
+            run(["systemctl", "reload", "nginx"], log, sha)
         health(f'https://{metadata["host"]}/api/v1/monitor/health/check', metadata["host"])
         opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
         with opener.open(f'https://{metadata["host"]}/web/version.json', timeout=15) as response:
             if json.load(response)["sha"] != sha:
                 raise RuntimeError("Public frontend version mismatch")
+        running_image_matches(manifest(release))
         if previous and previous != release:
             switch_link("previous", previous)
     except Exception:
@@ -264,14 +377,15 @@ def activate(release: Path, destination: Path, log, sha: str) -> None:
             switch_link("current", previous)
         else:
             (ROOT / "current").unlink(missing_ok=True)
-        if original_config is None:
-            config.unlink(missing_ok=True)
-        else:
-            write_atomic(config, original_config, 0o644)
-        if not previously_enabled:
-            enabled.unlink(missing_ok=True)
-        run(["nginx", "-t"], log, sha)
-        run(["systemctl", "reload", "nginx"], log, sha)
+        if config_changed:
+            if original_config is None:
+                config.unlink(missing_ok=True)
+            else:
+                write_atomic(config, original_config, 0o644)
+            if not previously_enabled:
+                enabled.unlink(missing_ok=True)
+            run(["nginx", "-t"], log, sha)
+            run(["systemctl", "reload", "nginx"], log, sha)
         raise
 
 
@@ -280,56 +394,82 @@ def prune_releases(current: Path) -> None:
     releases = sorted((path for path in RELEASES.iterdir() if SHA_PATTERN.fullmatch(path.name) and path.is_dir() and not path.is_symlink()),
                       key=lambda path: path.stat().st_mtime, reverse=True)
     protected = {current, *(path.resolve() for path in (ROOT / "current", ROOT / "previous") if path.is_symlink())}
-    for release in releases[3:]:
-        if release in protected:
-            continue
-        image = f"backend:sha-{release.name}"
+    removable = [release for release in releases[3:] if release not in protected]
+    # Several frontend releases may reuse one image. Never remove a retained release's image.
+    retained_images = {manifest(release)["image"] for release in releases if release not in removable}
+    for release in removable:
+        image = manifest(release)["image"]
         used = subprocess.check_output(["docker", "ps", "-aq", "--filter", f"ancestor={image}"], text=True).strip()
-        if not used:
+        if not used and image not in retained_images:
             subprocess.run(["docker", "image", "rm", image], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            shutil.rmtree(release)
+        shutil.rmtree(release)
     backups = sorted((path for path in (ROOT / "backups").iterdir()
                       if re.fullmatch(r"\d{8}T\d{6}Z-[0-9a-f]{12}-[0-9a-f]{6}", path.name) and path.is_dir() and not path.is_symlink()),
                      key=lambda path: path.name, reverse=True)
-    for backup in backups[5:]:
-        shutil.rmtree(backup)
+    # A run of frontend-only publishes must not evict the last database backups.
+    for database_backup in (True, False):
+        group = [path for path in backups if (path / "mysql.sql.gz").exists() == database_backup]
+        for backup in group[5:]:
+            shutil.rmtree(backup)
 
 
 def deploy(sha: str) -> None:
+    if (ROOT / "current").is_symlink() and (ROOT / "current").resolve().name == sha:
+        if baseline()["sha"] == sha:
+            (ROOT / "incoming" / f"{sha}.tar.gz").unlink(missing_ok=True)
+            print(f"Already active and healthy: {sha}", flush=True)
+            return
     if shutil.disk_usage(ROOT).free < 2 * 1024**3:
         raise RuntimeError("Less than 2 GiB free disk space; refusing deployment")
     release = extract_release(sha)
+    data = manifest(release)
+    if data["format"] == 2:
+        validate_baseline(data)
+    backend_changed = data["backend_changed"]
+    if not backend_changed:
+        previous_release = RELEASES / data["base_sha"]
+        # Frontend-only mode cannot silently change DB / backend runtime settings.
+        for relative in ("docker/docker-compose.yaml", "docker/docker-compose.ci.yaml", "docker/redis/conf/redis.conf"):
+            if (release / relative).read_bytes() != (previous_release / relative).read_bytes():
+                raise ValueError("Runtime configuration changed; a backend deployment is required")
     timestamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     destination = ROOT / "backups" / f"{timestamp}-{sha[:12]}-{secrets.token_hex(3)}"
     destination.mkdir(mode=0o700)
     old_release = (ROOT / "current").resolve() if (ROOT / "current").is_symlink() else None
     migration_started = False
+    backend_stopped = False
     with (destination / "deploy.log").open("w") as log:
         try:
             image_file = release / "backend-image.tar"
-            if image_file.exists():
+            if data["format"] == 2 and backend_changed:
+                pull_image(data, log)
+            elif image_file.exists():
                 print("Loading backend image...", flush=True)
                 run(["docker", "load", "-i", str(image_file)], log, sha)
                 image_file.unlink()
-            run(["docker", "image", "inspect", f"backend:sha-{sha}"], log, sha)
+            run(["docker", "image", "inspect", data["image"]], log, sha)
             run(compose(release, "config", "--quiet"), log, sha)
-            if old_release:
+            if backend_changed and old_release:
                 print("Stopping only this application's backend for a consistent backup...", flush=True)
                 run(compose(old_release, "stop", "backend"), log, old_release.name)
-            print("Starting database dependencies and saving a pre-migration backup...", flush=True)
-            run(compose(release, "up", "-d", "--no-build", "--wait", "--wait-timeout", "240", "mysql", "redis"), log, sha)
-            snapshot(release, sha, destination, log)
-            migration_started = True
-            print("Applying the application's existing database initialization/migration logic...", flush=True)
-            code = "import asyncio; from app.scripts.initialize import InitializeData; asyncio.run(InitializeData().init_db())"
-            run(compose(release, "run", "--rm", "--no-deps", "backend", "python", "-c", code), log, sha)
-            print("Starting the checked backend image...", flush=True)
-            run(compose(release, "up", "-d", "--no-build", "--no-deps", "--wait", "--wait-timeout", "240", "backend"), log, sha)
+                backend_stopped = True
+            if backend_changed:
+                print("Starting database dependencies and saving a pre-migration backup...", flush=True)
+                run(compose(release, "up", "-d", "--no-build", "--wait", "--wait-timeout", "240", "mysql", "redis"), log, sha)
+                snapshot(release, sha, destination, log)
+                migration_started = True
+                print("Applying the application's existing database initialization/migration logic...", flush=True)
+                code = "import asyncio; from app.scripts.initialize import InitializeData; asyncio.run(InitializeData().init_db())"
+                run(compose(release, "run", "--rm", "--no-deps", "backend", "python", "-c", code), log, sha)
+                print("Starting the checked backend image...", flush=True)
+                run(compose(release, "up", "-d", "--no-build", "--no-deps", "--pull", "never", "--wait", "--wait-timeout", "240", "backend"), log, sha)
+            else:
+                print("Frontend-only release: keeping backend, MySQL and Redis running; no migration or database snapshot.", flush=True)
             health("http://127.0.0.1:8001/api/v1/monitor/health/check", settings()["host"])
             print("Switching frontend release and checking public HTTPS...", flush=True)
             activate(release, destination, log, sha)
         except Exception:
-            if not migration_started and old_release:
+            if backend_stopped and not migration_started and old_release:
                 run(compose(old_release, "up", "-d", "--no-build", "--no-deps", "backend"), log, old_release.name)
             print(f"Deployment FAILED. Private diagnostic log / backups: {destination}", flush=True)
             if migration_started:
@@ -340,7 +480,8 @@ def deploy(sha: str) -> None:
         prune_releases(release)
     except Exception as error:
         print(f"Release is healthy; old-artifact cleanup needs administrator review ({type(error).__name__}).")
-    write_atomic(SHARED / "last-success.json", json.dumps({"sha": sha, "time": timestamp, "backup": str(destination)}))
+    write_atomic(SHARED / "last-success.json", json.dumps({"sha": sha, "frontend_sha": data["frontend_sha"],
+                 "backend_sha": data["backend_sha"], "image": data["image"], "time": timestamp, "backup": str(destination)}))
     print(f'Deployed {sha}: https://{settings()["host"]}/web/', flush=True)
 
 
@@ -358,12 +499,14 @@ def main() -> None:
         bootstrap(arguments.host, arguments.certificate, arguments.seed)
         return
     arguments = shlex.split(original) if original is not None else sys.argv[1:]
-    if len(arguments) != 2 or arguments[0] not in {"receive", "deploy", "status"} or not SHA_PATTERN.fullmatch(arguments[1]):
-        raise ValueError("Only receive/deploy/status followed by a full lowercase Git SHA are allowed")
+    if len(arguments) != 2 or arguments[0] not in {"baseline", "receive", "deploy", "status"} or not SHA_PATTERN.fullmatch(arguments[1]):
+        raise ValueError("Only baseline/receive/deploy/status followed by a full lowercase Git SHA are allowed")
     action, sha = arguments
     with (SHARED / "deploy.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
-        if action == "receive":
+        if action == "baseline":
+            print(json.dumps(baseline()))
+        elif action == "receive":
             receive(sha)
         elif action == "deploy":
             deploy(sha)
@@ -371,6 +514,7 @@ def main() -> None:
             if not (ROOT / "current").is_symlink() or (ROOT / "current").resolve().name != sha:
                 raise RuntimeError("Active release does not match the requested commit")
             health(f'https://{settings()["host"]}/api/v1/monitor/health/check', settings()["host"])
+            running_image_matches(manifest((ROOT / "current").resolve()))
             print(f"Active and healthy: {sha}")
 
 

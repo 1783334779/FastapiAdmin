@@ -5,8 +5,8 @@
 #   docker build --build-arg DB=mysql    -f docker/backend/Dockerfile .   # 默认
 #   docker build --build-arg DB=postgres -f docker/backend/Dockerfile .
 #
-# 注意：正式部署建议用 deploy-artifacts.sh（本地构建镜像 → docker save/load），
-#      这样服务器上不需要源码，也不需要构建工具链。
+# GitHub Actions 构建并推送私有 GHCR；服务器按 digest 拉取，不在服务器编译。
+# 手动离线部署仍可使用 deploy-artifacts.sh（docker save/load）。
 # ============================================================================
 FROM python:3.12-slim
 
@@ -22,8 +22,13 @@ ENV TZ=Asia/Shanghai \
 
 WORKDIR /home
 
+# 在复制业务代码之前创建用户，避免代码变动后重复执行整目录 chown。
+RUN useradd --uid 1000 --create-home --shell /usr/sbin/nologin app \
+ && mkdir -p /home/logs /home/static/upload /home/alembic/versions /home/private/files \
+ && chown -R app:app /home
+
 # 依赖清单先复制（layer 缓存：只改代码时不重装依赖）
-COPY ./backend/requirements/ /home/requirements/
+COPY --chown=app:app ./backend/requirements/ /home/requirements/
 
 # 只装所选数据库的驱动 + 存储与加密依赖
 RUN pip install --no-cache-dir \
@@ -33,12 +38,9 @@ RUN pip install --no-cache-dir \
       -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 应用代码（backend/.venv、logs、缓存、真实 .env.* 由根 .dockerignore 排除）
-COPY ./backend/ /home/
+COPY --chown=app:app ./backend/ /home/
 
-# 以非 root 用户运行；运行时需要写的目录预先建好并交给该用户
-RUN useradd --uid 1000 --create-home --shell /usr/sbin/nologin app \
- && mkdir -p /home/logs /home/static/upload /home/alembic/versions /home/private/files \
- && chown -R app:app /home
+# 以非 root 用户运行。
 USER app
 
 EXPOSE 8001

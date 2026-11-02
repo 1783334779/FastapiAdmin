@@ -33,6 +33,8 @@ services:
         reservations:
           memory: 16m
   backend:
+    # 发布清单中的不可变 digest；历史发布仍使用各自目录内的旧 Compose。
+    image: ${BACKEND_IMAGE:?错误: 缺少本次发布清单的后端镜像}
     container_name: fastapiadmin-backend
     environment:
       DEBUG: "false"
