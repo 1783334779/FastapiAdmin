@@ -33,7 +33,7 @@ async def project_list(
     return SuccessResponse(data=await ProjectService(auth, db).page(page_no, page_size, name, status))
 
 @ProjectRouter.get("/list1", summary="我就测试瞎搞一下")
-async def project_list(
+async def project_list1(
     db: DB,
     auth: Annotated[AuthSchema, Security(AuthPermission(["module_business:project:query"]))],
     page_no: Annotated[int, Query(ge=1)] = 1,
