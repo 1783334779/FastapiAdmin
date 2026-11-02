@@ -32,6 +32,17 @@ async def project_list(
 ):
     return SuccessResponse(data=await ProjectService(auth, db).page(page_no, page_size, name, status))
 
+@ProjectRouter.get("/list1", summary="我就测试瞎搞一下")
+async def project_list(
+    db: DB,
+    auth: Annotated[AuthSchema, Security(AuthPermission(["module_business:project:query"]))],
+    page_no: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1, le=100)] = 10,
+    name: Annotated[str, Query(max_length=200)] = "",
+    status: Annotated[str, Query(max_length=32)] = "",
+):
+    return SuccessResponse(data=await ProjectService(auth, db).page(page_no, page_size, name, status))
+
 
 @ProjectRouter.get("/export", summary="按列表筛选与可见权限导出全部项目")
 async def project_export(
