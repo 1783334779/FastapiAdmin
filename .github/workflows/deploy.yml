@@ -32,6 +32,17 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: 提前校验 Compose（仅占位值，不启动容器）
+        env:
+          MYSQL_ROOT_PASSWORD: ci-validation-only
+          MYSQL_PASSWORD: ci-validation-only
+          REDIS_PASSWORD: ci-validation-only
+          SECRET_KEY: ci-validation-only
+          APP_ROOT: /tmp/fastapiadmin-ci-validation
+          PUBLIC_HOST: 127.0.0.1
+          ALLOWED_HOSTS: '["127.0.0.1"]'
+          BACKEND_IMAGE: ghcr.io/1783334779/fastapiadmin-backend:ci-validation
+        run: docker compose --env-file /dev/null -f docker/docker-compose.yaml -f docker/docker-compose.ci.yaml config --quiet
       - name: 读取服务器实际成功版本（不修改服务）
         env:
           DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}

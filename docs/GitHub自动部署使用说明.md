@@ -207,4 +207,6 @@ docker ps --filter label=com.docker.compose.project=fastapiadmin
 
 第一次 GHCR 推送后，包实际显示 Public，与预期不符；后置私有性检查失败，服务器发布任务被跳过，线上仍运行旧版。已通过账号登录的 Package settings 将该包收紧为 Private，并核对本仓库 Actions 访问权限。公开状态出现的具体原因尚未确定，不能推断为 GHCR 的通用默认行为。为避免再次依赖默认值，前置检查改为必须存在已确认的私有包；404 不再放行。构建上下文排除了真实 .env、上传数据和私有附件，服务器独立口令也从未打入镜像；这不等于可以忽略镜像可见性检查。
 
+随后实机校验发现 Compose 新增的 image 参数错误提示含有冒号和空格，未加引号导致 YAML 解析失败。已将整个插值表达式用双引号包裹，并使用服务器实际的 `docker compose config --quiet` 复查。此处失败发生在停止旧后端之前，旧服务保持运行。镜像首次解包期间 vmstat 显示磁盘 I/O 等待约 80%～90%；磁盘剩余约 28 GiB、可用内存仍有余量，因此没有通过删除数据来处理。
+
 参考：[Docker 构建缓存](https://docs.docker.com/build/ci/github-actions/cache/)、[GHCR 访问和权限](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)。本文描述实现规则；具体提速幅度必须看实际发布记录，不预先保证耗时。
