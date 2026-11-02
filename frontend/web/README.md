@@ -33,6 +33,16 @@ pnpm dev
 2. 前端开发时，浏览器请求发往当前页面同源路径，由 **Vite `server.proxy`** 把 **`VITE_APP_BASE_API`**（如 `/api/v1`）转发到上述后端。
 3. 若页面提示「连接被拒绝」，检查后端是否启动、端口是否一致，或把 **`VITE_API_BASE_URL`** 改成你的实际后端地址。
 
+## 本仓库的 GitHub 自动发布
+
+推送到 `master` 后，由 **Actions → Deploy master** 自动检查和发布。仅修改
+`frontend/web/` 时，只构建并发布 Web，不构建后端镜像、不重启后端，也不执行数据库迁移。
+需要等整条工作流成功，不能只看前端构建任务变绿。
+
+线上 `/web/version.json` 的 `sha` 表示整次发布提交；`frontend_sha`、`backend_sha`
+分别表示前后端成品来源，只更新前端时后端版本保持不变。
+部署步骤、权限、失败排查和回退限制见 [GitHub 自动部署使用说明](../../docs/GitHub自动部署使用说明.md)。
+
 ## 架构概览
 
 ```
