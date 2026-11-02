@@ -394,6 +394,16 @@ def prune_releases(current: Path) -> None:
     releases = sorted((path for path in RELEASES.iterdir() if SHA_PATTERN.fullmatch(path.name) and path.is_dir() and not path.is_symlink()),
                       key=lambda path: path.stat().st_mtime, reverse=True)
     protected = {current, *(path.resolve() for path in (ROOT / "current", ROOT / "previous") if path.is_symlink())}
+    # Redis / MySQL keep their original bind sources across frontend-only releases.
+    # Keep those release directories even when they are older than current / previous.
+    containers = subprocess.check_output(["docker", "ps", "-aq", "--filter", "label=com.docker.compose.project=fastapiadmin"], text=True).split()
+    if containers:
+        mounts = subprocess.check_output(["docker", "inspect", "--format", "{{json .Mounts}}", *containers], text=True)
+        for line in mounts.splitlines():
+            for mount in json.loads(line):
+                if mount.get("Type") == "bind":
+                    source = Path(mount["Source"]).resolve()
+                    protected.update(release for release in releases if source == release or release in source.parents)
     removable = [release for release in releases[3:] if release not in protected]
     # Several frontend releases may reuse one image. Never remove a retained release's image.
     retained_images = {manifest(release)["image"] for release in releases if release not in removable}
