@@ -137,7 +137,9 @@ restrict,command="/usr/local/sbin/fastapiadmin-ci" ssh-ed25519 <专用公钥> <�
 
 ### 私有 GHCR 的权限与临时凭据
 
-镜像包名为 `ghcr.io/1783334779/fastapiadmin-backend`，新建包默认私有。工作流推送前拒绝已有公开同名包，推送后再次检查私有性；不会主动把包设为公开。镜像通过 OCI source 标签关联仓库。
+镜像包名为 `ghcr.io/1783334779/fastapiadmin-backend`，已由管理员核对为私有，并关联本仓库的 Actions 访问权限。工作流推送前必须确认包已经存在且私有；包不存在、无权读取或可见性不是 private 时都停止，不能仅凭文档中“默认私有”的描述就上传业务镜像。推送后再次检查。镜像通过 OCI source 标签关联仓库。
+
+迁移到另一账号/新包名时，管理员应先用不含业务代码和凭据的最小占位镜像准备包，在 Package settings 核对为 Private、授权对应仓库 Actions 访问，再启用业务镜像发布。不要为通过检查把镜像公开，也不要把管理员长期令牌放进普通发布脚本。
 
 - 构建任务：本任务的 `GITHUB_TOKEN` 具备 `packages: write`。
 - 发布任务：**另一份**本任务的 `GITHUB_TOKEN` 仅具备 `packages: read`，通过已经验证主机公钥的 SSH 标准输入传给服务器。
@@ -200,5 +202,9 @@ docker ps --filter label=com.docker.compose.project=fastapiadmin
 4. Actions 的上传步骤显示 SSH bundle 字节数、SSH 上传秒数、服务器部署秒数。每次成功还会核对公网版本和运行容器的实际镜像 ID，不只看“构建通过”。
 
 旧协议仍兼容，用于不中断切换时已在运行的旧工作流；新发布不再生成/上传镜像 tar。升级服务器管理脚本前，先保存现有脚本，在同一 deploy.lock 锁下原子替换并验证 Python 3.10 语法，不覆盖口令和业务数据。后续若要退回旧协议，需要同时审核管理脚本、工作流、Compose 和发布清单，不能只回退一个文件。
+
+### 本次接入遇到的真实问题
+
+第一次 GHCR 推送后，包实际显示 Public，与预期不符；后置私有性检查失败，服务器发布任务被跳过，线上仍运行旧版。已通过账号登录的 Package settings 将该包收紧为 Private，并核对本仓库 Actions 访问权限。公开状态出现的具体原因尚未确定，不能推断为 GHCR 的通用默认行为。为避免再次依赖默认值，前置检查改为必须存在已确认的私有包；404 不再放行。构建上下文排除了真实 .env、上传数据和私有附件，服务器独立口令也从未打入镜像；这不等于可以忽略镜像可见性检查。
 
 参考：[Docker 构建缓存](https://docs.docker.com/build/ci/github-actions/cache/)、[GHCR 访问和权限](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)。本文描述实现规则；具体提速幅度必须看实际发布记录，不预先保证耗时。

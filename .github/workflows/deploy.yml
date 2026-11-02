@@ -96,9 +96,10 @@ jobs:
               with urllib.request.urlopen(request, timeout=30) as response:
                   assert json.load(response)['visibility'] == 'private', 'Existing image package is not private; stop before publishing'
           except urllib.error.HTTPError as error:
-              if error.code != 404:
-                  raise
-              print('First publish: GHCR defaults new packages to private; visibility is verified again after push.')
+              if error.code == 404:
+                  raise RuntimeError('Private package is missing or inaccessible. An administrator must prepare and verify the private package before publishing business images.') from error
+              raise
+          print('Verified existing package is private before uploading business layers.')
           PY
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
       - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
@@ -123,7 +124,10 @@ jobs:
       - name: 确认镜像保持私有
         env:
           GH_TOKEN: ${{ github.token }}
-        run: test "$(gh api users/1783334779/packages/container/fastapiadmin-backend --jq .visibility)" = private
+        run: |
+          visibility=$(gh api users/1783334779/packages/container/fastapiadmin-backend --jq .visibility)
+          printf 'Verified package visibility: %s\n' "$visibility"
+          test "$visibility" = private
 
   publish:
     name: 按需上传、拉取、切换并验证
